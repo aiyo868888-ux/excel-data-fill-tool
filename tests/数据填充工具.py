@@ -1799,11 +1799,15 @@ class DataFiller:
             # 第一步：清空R-W列（从第2行开始）
             self._clear_target_columns(ws, target_start_col, target_end_col)
 
-            # 第二步：扫描所有送货商，找出有数据的
+            # 第二步：扫描所有送货商，找出有数据的（限制在AC-CM列）
             suppliers_with_data = []
             for supplier in suppliers_config["suppliers"]:
                 start_col = self.column_letter_to_number(supplier["start_column"])
                 end_col = self.column_letter_to_number(supplier["end_column"])
+
+                # ✅ 只处理AC-CM范围内的供应商（索引29-91）
+                if start_col < 29 or end_col > 91:
+                    continue  # 跳过不在AC-CM范围内的供应商
 
                 if self.check_supplier_has_data(ws, start_col, end_col):
                     data_range = self.get_supplier_data_range(ws, start_col, end_col)
@@ -1896,11 +1900,15 @@ class DataFiller:
             # 第一步：清空A-F列（从第2行开始）
             self._clear_target_columns(ws, target_start_col, target_end_col)
 
-            # 第二步：扫描所有送货商，找出有数据的
+            # 第二步：扫描所有送货商，找出有数据的（限制在CM列之后）
             suppliers_with_data = []
             for supplier in suppliers_config["suppliers"]:
                 start_col = self.column_letter_to_number(supplier["start_column"])
                 end_col = self.column_letter_to_number(supplier["end_column"])
+
+                # ✅ 只处理CM列之后的供应商（索引>91）
+                if start_col <= 91:  # CM列索引是91
+                    continue  # 跳过CM列及之前的供应商
 
                 if self.check_supplier_has_data(ws, start_col, end_col):
                     data_range = self.get_supplier_data_range(ws, start_col, end_col)
