@@ -1375,16 +1375,17 @@ class DataFiller:
                 # 倒数第三行（合计行）：A-D列复制，E列填求和公式，F列复制
                 self._copy_summary_row(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border, start_row)
 
-            elif idx == total_rows - 2:
-                # 倒数第二行：空行（跳过）
-                pass
+            # ✅ 修复：移除跳过倒数第2行的逻辑，填充所有数据
+            # elif idx == total_rows - 2:
+            #     # 倒数第二行：空行（跳过）
+            #     pass
 
             elif idx == total_rows - 1:
                 # 最后一行：复制所有列
                 self._copy_row_all_columns(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
 
             else:
-                # 中间数据行：A-D列复制，E列填乘法公式，F列复制
+                # 中间数据行（包括倒数第2行）：A-D列复制，E列填乘法公式，F列复制
                 self._copy_data_row_with_formula(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
 
         print(f"     ✅ 成功填充 {len(df_supplier)} 条记录")
