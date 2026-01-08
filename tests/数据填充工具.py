@@ -1362,31 +1362,67 @@ class DataFiller:
             row_num = start_row + idx
 
             # 判断行类型
-            if row_num == 1:
-                # 第1行：保持原样，复制所有6列
-                self._copy_row_all_columns(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
+            # 根据实际数据：索引52（倒数第2行）是"蔬菜蛋合计"
+            is_first_row = (idx == 0)         # 第1行：送货商信息
+            is_second_row = (idx == 1)         # 第2行：表头
+            is_summary_row = (idx == total_rows - 2)  # 倒数第2行：合计（蔬菜蛋合计）
+            is_last_row = (idx == total_rows - 1)      # 倒数第1行：日期/送货人
 
-            elif row_num == 2:
-                # 第2行（表头行）：A-D列复制，E列填"金额"，F列复制
-                self._copy_header_row(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
+            # ✅ 所有行都粘贴，不跳过
 
-            # ✅ 修复：使用索引判断，而不是行号
-            elif idx == total_rows - 3:
-                # 倒数第三行（合计行）：A-D列复制，E列填求和公式，F列复制
-                self._copy_summary_row(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border, start_row)
+            # 1. 复制前4列（A-D列）：全部原样复制
+            for col_offset in range(4):
+                try:
+                    cell = ws.cell(row=row_num, column=col_start_idx + col_offset)
+                    if col_offset == 0:
+                        cell.value = self.safe_get_value(row_data, "名称")
+                    elif col_offset == 1:
+                        cell.value = self.safe_get_value(row_data, "单位")
+                    elif col_offset == 2:
+                        cell.value = self.safe_get_value(row_data, "数量")
+                    elif col_offset == 3:
+                        cell.value = self.safe_get_value(row_data, "单价")
 
-            # ✅ 修复：移除跳过倒数第2行的逻辑，填充所有数据
-            # elif idx == total_rows - 2:
-            #     # 倒数第二行：空行（跳过）
-            #     pass
+                    cell.border = thin_border
+                    cell.alignment = Alignment(horizontal="left", vertical="center")
+                except Exception as e:
+                    print(f"     ⚠️  填充前4列时出错 (行{row_num}, 列{col_offset}): {e}")
 
-            elif idx == total_rows - 1:
-                # 最后一行：复制所有列
-                self._copy_row_all_columns(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
+            # 2. 填充第5列（E列-金额）
+            if col_end_idx - col_start_idx >= 4:  # 确保有第5列
+                cell = ws.cell(row=row_num, column=col_start_idx + 4)
+                cell.border = thin_border
+                cell.alignment = Alignment(horizontal="right", vertical="center")
 
-            else:
-                # 中间数据行（包括倒数第2行）：A-D列复制，E列填乘法公式，F列复制
-                self._copy_data_row_with_formula(ws, row_data, col_start_idx, col_end_idx, row_num, thin_border)
+                if is_second_row:
+                    # 第2行：填"金额"
+                    cell.value = "金额"
+                    cell.font = Font(bold=True)
+                elif is_summary_row:
+                    # ✅ 合计行（倒数第2行）：填求和公式 =SUM(E3:E倒数第3行)
+                    # 倒数第3行 = row_num - 1
+                    sum_col = get_column_letter(col_start_idx + 4)
+                    # 求和范围：从第3行（start_row+2）到倒数第3行（row_num-1）
+                    cell.value = f"=SUM({sum_col}{start_row + 2}:{sum_col}{row_num - 1})"
+                    cell.font = Font(bold=True)
+                elif not is_first_row and not is_summary_row and not is_last_row:
+                    # 第3行到倒数第3行（数据行）：填乘法公式 =C*D
+                    qty_col = get_column_letter(col_start_idx + 2)  # 第3列
+                    price_col = get_column_letter(col_start_idx + 3)  # 第4列
+                    cell.value = f"={qty_col}{row_num}*{price_col}{row_num}"
+                else:
+                    # 第1行、倒数第1行：空
+                    cell.value = ""
+
+            # 3. 复制第6列（F列-备注）：全部原样复制
+            if col_end_idx - col_start_idx >= 5:  # 确保有第6列
+                try:
+                    cell = ws.cell(row=row_num, column=col_start_idx + 5)
+                    cell.value = self.safe_get_value(row_data, "备注")
+                    cell.border = thin_border
+                    cell.alignment = Alignment(horizontal="left", vertical="center")
+                except Exception as e:
+                    print(f"     ⚠️  填充第6列时出错 (行{row_num}): {e}")
 
         print(f"     ✅ 成功填充 {len(df_supplier)} 条记录")
 
