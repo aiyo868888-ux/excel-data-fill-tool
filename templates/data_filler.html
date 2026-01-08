@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据填充工具 - 自动填充Excel报表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .upload-box:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .upload-box.dragover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-box p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 1rem;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-item .file-name {
+            flex: 1;
+            color: #333;
+        }
+
+        .file-item .file-info {
+            color: #666;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .file-item .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .column-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .selector-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .selector-group label {
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .selector-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .status-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .status-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .status-box li {
+            padding: 5px 0;
+            color: #666;
+        }
+
+        .status-box li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+
+            .column-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>📊 数据填充工具</h1>
+            <p>自动将送货商文件数据填充到Excel报表</p>
+        </div>
+
+        <!-- 步骤1: 上传文件 -->
+        <div class="card">
+            <h2 class="card-title">步骤 1: 上传文件</h2>
+
+            <div class="upload-section">
+                <!-- 上传报表 -->
+                <div class="upload-box" id="reportUploadBox">
+                    <div class="upload-icon">📋</div>
+                    <h3>报表文件</h3>
+                    <p>点击或拖拽上传报表文件 (.xlsx)</p>
+                    <input type="file" id="reportFile" class="file-input" accept=".xlsx,.xls">
+                    <button class="btn" onclick="document.getElementById('reportFile').click()">
+                        选择报表文件
+                    </button>
+                    <input type="password" id="reportPassword" class="password-input" placeholder="报表密码（如有）">
+                </div>
+
+                <!-- 上传送货商文件 -->
+                <div class="upload-box" id="supplierUploadBox">
+                    <div class="upload-icon">📦</div>
+                    <h3>送货商文件</h3>
+                    <p>点击或拖拽上传送货商文件 (.xlsx, .xls)</p>
+                    <input type="file" id="supplierFile" class="file-input" accept=".xlsx,.xls" multiple>
+                    <button class="btn" onclick="document.getElementById('supplierFile').click()">
+                        选择送货商文件
+                    </button>
+                </div>
+            </div>
+
+            <!-- 文件列表 -->
+            <div class="file-list" id="fileList"></div>
+
+            <!-- 状态显示 -->
+            <div class="status-box" id="statusBox" style="display: none;">
+                <h4>当前状态:</h4>
+                <ul id="statusList"></ul>
+            </div>
+        </div>
+
+        <!-- 步骤2: 配置列范围 -->
+        <div class="card">
+            <h2 class="card-title">步骤 2: 配置填充列范围</h2>
+
+            <div class="column-selector">
+                <div class="selector-group">
+                    <label>起始列:</label>
+                    <select id="startColumn">
+                        <option value="P">P列 (16)</option>
+                        <option value="Q" selected>Q列 (17)</option>
+                        <option value="R">R列 (18)</option>
+                        <option value="S">S列 (19)</option>
+                        <option value="T">T列 (20)</option>
+                        <option value="U">U列 (21)</option>
+                        <option value="V">V列 (22)</option>
+                        <option value="W">W列 (23)</option>
+                        <option value="X">X列 (24)</option>
+                        <option value="Y">Y列 (25)</option>
+                        <option value="Z">Z列 (26)</option>
+                        <option value="AA">AA列 (27)</option>
+                        <option value="AB">AB列 (28)</option>
+                        <option value="AC">AC列 (29)</option>
+                    </select>
+                </div>
+
+                <div class="selector-group">
+                    <label>结束列:</label>
+                    <select id="endColumn">
+                        <option value="Q">Q列 (17)</option>
+                        <option value="R">R列 (18)</option>
+                        <option value="S">S列 (19)</option>
+                        <option value="T">T列 (20)</option>
+                        <option value="U" selected>U列 (21)</option>
+                        <option value="V">V列 (22)</option>
+                        <option value="W">W列 (23)</option>
+                        <option value="X">X列 (24)</option>
+                        <option value="Y">Y列 (25)</option>
+                        <option value="Z">Z列 (26)</option>
+                        <option value="AA">AA列 (27)</option>
+                        <option value="AB">AB列 (28)</option>
+                        <option value="AC">AC列 (29)</option>
+                        <option value="AD">AD列 (30)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤3: 处理数据 -->
+        <div class="card">
+            <h2 class="card-title">步骤 3: 开始填充</h2>
+
+            <div style="text-align: center;">
+                <button class="btn btn-success" id="processBtn" onclick="processData()" disabled style="font-size: 1.2rem; padding: 15px 50px;">
+                    🚀 开始填充数据
+                </button>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+                <p id="progressText">正在处理...</p>
+            </div>
+
+            <!-- 成功消息 -->
+            <div class="success-message" id="successMessage">
+                <h4>✅ 填充完成!</h4>
+                <p>数据已成功填充到报表中。</p>
+                <button class="btn" onclick="downloadFile()">📥 下载填充后的报表</button>
+            </div>
+
+            <!-- 错误消息 -->
+            <div class="error-message" id="errorMessage">
+                <h4>❌ 处理失败</h4>
+                <p id="errorText"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let reportFilePath = null;
+        let reportPassword = '';
+        let supplierFiles = [];
+        let outputFilename = null;
+
+        // 拖拽上传
+        ['reportUploadBox', 'supplierUploadBox'].forEach(boxId => {
+            const box = document.getElementById(boxId);
+            const fileInput = box.querySelector('input[type="file"]');
+
+            box.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                box.classList.add('dragover');
+            });
+
+            box.addEventListener('dragleave', () => {
+                box.classList.remove('dragover');
+            });
+
+            box.addEventListener('drop', (e) => {
+                e.preventDefault();
+                box.classList.remove('dragover');
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect(fileInput);
+            });
+
+            fileInput.addEventListener('change', () => handleFileSelect(fileInput));
+        });
+
+        // 处理文件选择
+        function handleFileSelect(input) {
+            const files = input.files;
+            if (files.length === 0) return;
+
+            // 验证文件格式
+            for (const file of Array.from(files)) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['xlsx', 'xls'].includes(ext)) {
+                    showError('文件格式错误: ' + file.name + '\n只支持 .xlsx 或 .xls 格式的Excel文件');
+                    input.value = ''; // 清空选择
+                    return;
+                }
+            }
+
+            if (input.id === 'reportFile') {
+                handleReportUpload(files[0]);
+            } else {
+                handleSupplierUpload(files);
+            }
+        }
+
+        // 上传报表文件
+        async function handleReportUpload(file) {
+            // 再次验证文件格式
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['xlsx', 'xls'].includes(ext)) {
+                showError('文件格式错误: 只支持 .xlsx 或 .xls 格式的Excel文件');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('report', file);
+            formData.append('password', document.getElementById('reportPassword').value);
+
+            try {
+                const response = await fetch('/api/upload-report', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    reportFilePath = result.filepath;
+                    reportPassword = document.getElementById('reportPassword').value;
+                    updateStatus('report', `✅ 报表已加载: ${result.filename} (${result.dates_count} 个日期)`);
+                    updateProcessButton();
+                } else {
+                    showError('报表上传失败: ' + result.error);
+                }
+            } catch (error) {
+                showError('上传失败: ' + error.message);
+            }
+        }
+
+        // 上传送货商文件
+        async function handleSupplierUpload(files) {
+            for (const file of Array.from(files)) {
+                const formData = new FormData();
+                formData.append('supplier', file);
+
+                try {
+                    const response = await fetch('/api/upload-supplier', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        supplierFiles.push({
+                            path: result.filepath,
+                            name: result.filename,
+                            dates: result.dates
+                        });
+                        updateFileList();
+                        updateStatus('supplier', `✅ ${result.filename} (${result.dates_count} 个日期)`);
+                        updateProcessButton();
+                    } else {
+                        showError('送货商文件上传失败: ' + result.error);
+                    }
+                } catch (error) {
+                    showError('上传失败: ' + error.message);
+                }
+            }
+        }
+
+        // 更新文件列表显示
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = `
+                <div class="file-item">
+                    <div class="file-name"><strong>📋 报表:</strong> ${reportFilePath ? '已上传' : '未上传'}</div>
+                </div>
+            `;
+
+            supplierFiles.forEach((file, index) => {
+                fileList.innerHTML += `
+                    <div class="file-item">
+                        <div class="file-name"><strong>📦 ${file.name}</strong></div>
+                        <div class="file-info">${file.dates.length} 个日期</div>
+                        <button class="remove-btn" onclick="removeSupplier(${index})">删除</button>
+                    </div>
+                `;
+            });
+        }
+
+        // 删除送货商文件
+        function removeSupplier(index) {
+            supplierFiles.splice(index, 1);
+            updateFileList();
+            updateProcessButton();
+        }
+
+        // 更新状态显示
+        function updateStatus(type, message) {
+            const statusBox = document.getElementById('statusBox');
+            const statusList = document.getElementById('statusList');
+
+            statusBox.style.display = 'block';
+
+            if (type === 'report') {
+                statusList.innerHTML = `<li>${message}</li>`;
+            } else {
+                statusList.innerHTML += `<li>${message}</li>`;
+            }
+        }
+
+        // 更新处理按钮状态
+        function updateProcessButton() {
+            const btn = document.getElementById('processBtn');
+            btn.disabled = !(reportFilePath && supplierFiles.length > 0);
+        }
+
+        // 处理数据
+        async function processData() {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const processBtn = document.getElementById('processBtn');
+
+            // 隐藏消息
+            successMessage.classList.remove('active');
+            errorMessage.classList.remove('active');
+
+            // 显示进度
+            progressContainer.classList.add('active');
+            processBtn.disabled = true;
+
+            try {
+                const startColumn = document.getElementById('startColumn').value;
+                const endColumn = document.getElementById('endColumn').value;
+
+                // 更新进度
+                progressFill.style.width = '20%';
+                progressFill.textContent = '20%';
+                progressText.textContent = '正在处理数据...';
+
+                const response = await fetch('/api/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        report_path: reportFilePath,
+                        report_password: reportPassword,
+                        supplier_files: supplierFiles.map(f => f.path),
+                        start_column: startColumn,
+                        end_column: endColumn
+                    })
+                });
+
+                const result = await response.json();
+
+                // 更新进度
+                progressFill.style.width = '100%';
+                progressFill.textContent = '100%';
+                progressText.textContent = '处理完成!';
+
+                if (result.success) {
+                    outputFilename = result.output_filename;
+                    successMessage.classList.add('active');
+                } else {
+                    showError(result.error);
+                }
+            } catch (error) {
+                showError('处理失败: ' + error.message);
+            } finally {
+                processBtn.disabled = false;
+            }
+        }
+
+        // 下载文件
+        function downloadFile() {
+            if (outputFilename) {
+                window.location.href = `/api/download/${outputFilename}`;
+            }
+        }
+
+        // 显示错误
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMessage.classList.add('active');
+        }
+    </script>
+</body>
+</html>

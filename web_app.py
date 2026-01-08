@@ -14,8 +14,13 @@ import uuid
 import json
 
 # 导入核心数据填充类
-sys.path.insert(0, os.path.dirname(__file__))
-from tests.数据填充工具 import DataFiller
+import importlib.util
+# 使用绝对路径避免编码问题
+module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'tests', '数据填充工具.py'))
+spec = importlib.util.spec_from_file_location("data_filler", module_path)
+DataFillerModule = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(DataFillerModule)
+DataFiller = DataFillerModule.DataFiller
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB最大文件上传
