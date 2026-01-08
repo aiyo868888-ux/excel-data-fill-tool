@@ -1397,22 +1397,28 @@ class DataFiller:
                 if is_second_row:
                     # 第2行：填"金额"
                     cell.value = "金额"
-                    cell.font = Font(bold=True)
+                    # ✅ 设置与其他单元格一致的字体（取消黑体）
+                    cell.font = Font(name='宋体', size=11)
                 elif is_summary_row:
                     # ✅ 合计行（倒数第2行）：填求和公式 =SUM(E3:E倒数第3行)
                     # 倒数第3行 = row_num - 1
                     sum_col = get_column_letter(col_start_idx + 4)
                     # 求和范围：从第3行（start_row+2）到倒数第3行（row_num-1）
                     cell.value = f"=SUM({sum_col}{start_row + 2}:{sum_col}{row_num - 1})"
-                    cell.font = Font(bold=True)
+                    # ✅ 设置与其他单元格一致的字体
+                    cell.font = Font(name='宋体', size=11, bold=True)
                 elif not is_first_row and not is_summary_row and not is_last_row:
                     # 第3行到倒数第3行（数据行）：填乘法公式 =C*D
                     qty_col = get_column_letter(col_start_idx + 2)  # 第3列
                     price_col = get_column_letter(col_start_idx + 3)  # 第4列
                     cell.value = f"={qty_col}{row_num}*{price_col}{row_num}"
+                    # ✅ 设置与其他单元格一致的字体
+                    cell.font = Font(name='宋体', size=11)
                 else:
                     # 第1行、倒数第1行：空
                     cell.value = ""
+                    # ✅ 设置与其他单元格一致的字体
+                    cell.font = Font(name='宋体', size=11)
 
             # 3. 复制第6列（F列-备注）：全部原样复制
             if col_end_idx - col_start_idx >= 5:  # 确保有第6列
@@ -1767,12 +1773,160 @@ class DataFiller:
 
         return num_rows
 
-    def compile_handover_from_suppliers(self, suppliers_config):
+    def _add_header_to_worksheet(self, ws, header_text, sheet_name,
+                                 start_col, end_col, row=1):
+        """
+        在工作表指定位置添加表首（交接单：1个输入框 + 工作表名称）
+
+        Args:
+            ws: 工作表对象
+            header_text: 用户输入的表首文本（如："餐饮交接单"）
+            sheet_name: 工作表名称（如："9"）
+            start_col: 起始列号（1-based）
+            end_col: 结束列号（1-based）
+            row: 插入行号（默认为1）
+
+        生成的表首：用户输入 + 工作表名称 + "日"
+        示例：header_text="餐饮交接单", sheet_name="9" → "餐饮交接单9日"
+        """
+        from openpyxl.utils import get_column_letter
+        from openpyxl.styles import Font, Alignment
+
+        if not header_text or not header_text.strip():
+            return
+
+        header_text = header_text.strip()
+
+        # 构建表首内容：用户输入 + 工作表名称
+        # ✅ 不添加"日"字，直接使用工作表名称
+        date_str = sheet_name if sheet_name.isdigit() else sheet_name
+        final_header = f"{header_text}{date_str}"
+
+        # ✅ 不插入新行，直接覆盖现有行（避免数据被推到下一行）
+        # ws.insert_rows(row, 1)  # ❌ 删除这行
+
+        # 合并单元格
+        start_col_letter = get_column_letter(start_col)
+        end_col_letter = get_column_letter(end_col)
+        ws.merge_cells(f"{start_col_letter}{row}:{end_col_letter}{row}")
+
+        # 设置内容和样式
+        cell = ws.cell(row=row, column=start_col)
+        cell.value = final_header
+        cell.font = Font(name='宋体', size=16, bold=True)
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+
+        print(f"   ✅ 已添加表首：{final_header}")
+
+    def _add_simple_header_to_worksheet(self, ws, header_text, start_col, end_col, row=1):
+        """
+        在工作表指定位置添加简单表首（入库单：1个输入框，直接文本）
+
+        Args:
+            ws: 工作表对象
+            header_text: 表首文本（直接使用）
+            start_col: 起始列号（1-based）
+            end_col: 结束列号（1-based）
+            row: 插入行号（默认为1）
+        """
+        from openpyxl.utils import get_column_letter
+        from openpyxl.styles import Font, Alignment
+
+        # 如果表首文本为空，不添加
+        if not header_text or not header_text.strip():
+            return
+
+        header_text = header_text.strip()
+
+        # ✅ 不插入新行，直接覆盖现有行（避免数据被推到下一行）
+        # ws.insert_rows(row, 1)  # ❌ 删除这行
+
+        # 合并单元格
+        start_col_letter = get_column_letter(start_col)
+        end_col_letter = get_column_letter(end_col)
+        ws.merge_cells(f"{start_col_letter}{row}:{end_col_letter}{row}")
+
+        # 设置内容和样式
+        cell = ws.cell(row=row, column=start_col)
+        cell.value = header_text
+        cell.font = Font(name='宋体', size=16, bold=True)
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+
+        print(f"   ✅ 已添加表首：{header_text}")
+
+    def _add_footer_to_worksheet(self, ws, footer_config, sheet_name,
+                                 start_col, end_col):
+        """
+        在工作表末尾添加表尾
+
+        Args:
+            ws: 工作表对象
+            footer_config: 表尾配置 [prefix1, suffix]
+            sheet_name: 工作表名称（日期）
+            start_col: 起始列号（1-based）
+            end_col: 结束列号（1-based）
+        """
+        from openpyxl.utils import get_column_letter
+        from openpyxl.styles import Font, Alignment
+
+        if not footer_config or len(footer_config) < 2:
+            return
+
+        prefix1 = footer_config[0].strip()
+        suffix = footer_config[1].strip()
+
+        # 如果所有内容都为空，不添加表尾
+        if not prefix1 and not suffix:
+            return
+
+        # 构建表尾内容：prefix1 + 日期 + suffix
+        # ✅ 不添加"日"字，直接使用工作表名称
+        date_str = sheet_name if sheet_name.isdigit() else sheet_name
+        footer_text = f"{prefix1}{date_str}{suffix}"
+
+        # 找到最后一行数据
+        last_data_row = ws.max_row
+        for row in range(ws.max_row, 0, -1):
+            has_data = False
+            for col in range(start_col, end_col + 1):
+                cell = ws.cell(row=row, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    has_data = True
+                    break
+            if has_data:
+                last_data_row = row
+                break
+
+        # ✅ 在最后一行数据后插入1行（紧挨着，不间隔）
+        footer_row = last_data_row + 1
+        ws.insert_rows(footer_row, 1)
+
+        # 合并单元格
+        start_col_letter = get_column_letter(start_col)
+        end_col_letter = get_column_letter(end_col)
+        ws.merge_cells(f"{start_col_letter}{footer_row}:{end_col_letter}{footer_row}")
+
+        # 设置内容和样式
+        cell = ws.cell(row=footer_row, column=start_col)
+        cell.value = footer_text
+        # ✅ 设置与表内容一致的字体（size=11，不特殊）
+        cell.font = Font(name='宋体', size=11)
+        # ✅ 修改对齐方式：从居中改为靠左
+        cell.alignment = Alignment(horizontal='left', vertical='center')
+
+        print(f"   ✅ 已添加表尾：{footer_text}")
+
+    def compile_handover_from_suppliers(self, suppliers_config, header_footer_config=None):
         """
         从所有供应商列复制数据到R-W列（交接单列）
 
         Args:
             suppliers_config: 送货商配置
+            header_footer_config: 表首表尾配置（可选）
+                {
+                    'header': ['header_text'],  # 1个输入框
+                    'footer': ['prefix1', 'suffix']  # 2个输入框
+                }
 
         Returns:
             复制的送货商数量
@@ -1799,7 +1953,23 @@ class DataFiller:
             # 第一步：清空R-W列（从第2行开始）
             self._clear_target_columns(ws, target_start_col, target_end_col)
 
-            # 第二步：扫描所有送货商，找出有数据的（限制在AC-CM列）
+            # ✅ 第二步：添加表首（如果有配置）
+            current_start_row = 2  # 默认从第2行开始
+            if header_footer_config and 'header' in header_footer_config:
+                header_config = header_footer_config['header']
+                # ✅ 交接单使用简化表首（1个输入框 + 工作表名称）
+                if len(header_config) == 1:
+                    self._add_header_to_worksheet(
+                        ws,
+                        header_config[0],
+                        sheet_name,
+                        target_start_col,
+                        target_end_col,
+                        row=1
+                    )
+                    current_start_row = 2  # 表首在第1行，数据从第2行开始
+
+            # 第三步：扫描所有送货商，找出有数据的（限制在AC-CM列）
             suppliers_with_data = []
             for supplier in suppliers_config["suppliers"]:
                 start_col = self.column_letter_to_number(supplier["start_column"])
@@ -1830,8 +2000,8 @@ class DataFiller:
                 print("⚠️ 当前工作表没有找到任何送货商数据")
                 continue
 
-            # 第三步：按顺序复制数据到R-W列
-            target_row = 2  # 从第2行开始（第1行是标题行）
+            # 第四步：按顺序复制数据到R-W列
+            target_row = current_start_row  # ✅ 使用调整后的起始行
             for idx, supplier_info in enumerate(suppliers_with_data):
                 if idx == 0:
                     print(f"\n📋 第1个送货商：{supplier_info['name']}")
@@ -1855,6 +2025,16 @@ class DataFiller:
                 # 更新目标行：下一个送货商间隔1个空行
                 target_row += rows_copied + 1  # +1 是空行
 
+            # ✅ 第五步：添加表尾（如果有配置）
+            if header_footer_config and 'footer' in header_footer_config:
+                self._add_footer_to_worksheet(
+                    ws,
+                    header_footer_config['footer'],
+                    sheet_name,
+                    target_start_col,
+                    target_end_col
+                )
+
             total_suppliers_count += len(suppliers_with_data)
             print(
                 f"\n✅ 工作表 '{sheet_name}' 处理完成！共复制 {len(suppliers_with_data)} 个送货商的数据"
@@ -1868,12 +2048,17 @@ class DataFiller:
 
         return total_suppliers_count
 
-    def compile_stock_in_from_suppliers(self, suppliers_config):
+    def compile_stock_in_from_suppliers(self, suppliers_config, header_footer_config=None):
         """
         从所有供应商列复制数据到入库单列（A-F列）
 
         Args:
             suppliers_config: 送货商配置
+            header_footer_config: 表首表尾配置（可选）
+                {
+                    'header': ['直接文本'],  # 1个输入框
+                    'footer': ['prefix1', 'suffix']  # 2个输入框
+                }
 
         Returns:
             复制的送货商数量
@@ -1900,7 +2085,22 @@ class DataFiller:
             # 第一步：清空A-F列（从第2行开始）
             self._clear_target_columns(ws, target_start_col, target_end_col)
 
-            # 第二步：扫描所有送货商，找出有数据的（限制在CM列之后）
+            # ✅ 第二步：添加表首（如果有配置）
+            current_start_row = 2  # 默认从第2行开始
+            if header_footer_config and 'header' in header_footer_config:
+                header_config = header_footer_config['header']
+                # ✅ 入库单使用简单表首（1个输入框，直接文本）
+                if len(header_config) == 1:
+                    self._add_simple_header_to_worksheet(
+                        ws,
+                        header_config[0],  # 直接使用文本
+                        target_start_col,
+                        target_end_col,
+                        row=1
+                    )
+                current_start_row = 2  # 表首在第1行，数据从第2行开始
+
+            # 第三步：扫描所有送货商，找出有数据的（限制在CM列之后）
             suppliers_with_data = []
             for supplier in suppliers_config["suppliers"]:
                 start_col = self.column_letter_to_number(supplier["start_column"])
@@ -1931,8 +2131,8 @@ class DataFiller:
                 print("⚠️ 当前工作表没有找到任何送货商数据")
                 continue
 
-            # 第三步：按顺序复制数据到A-F列
-            target_row = 2  # 从第2行开始（第1行是标题行）
+            # 第四步：按顺序复制数据到A-F列
+            target_row = current_start_row  # ✅ 使用调整后的起始行
             for idx, supplier_info in enumerate(suppliers_with_data):
                 if idx == 0:
                     print(f"\n📋 第1个送货商：{supplier_info['name']}")
@@ -1955,6 +2155,16 @@ class DataFiller:
 
                 # 更新目标行：下一个送货商间隔1个空行
                 target_row += rows_copied + 1  # +1 是空行
+
+            # ✅ 第五步：添加表尾（如果有配置）
+            if header_footer_config and 'footer' in header_footer_config:
+                self._add_footer_to_worksheet(
+                    ws,
+                    header_footer_config['footer'],
+                    sheet_name,
+                    target_start_col,
+                    target_end_col
+                )
 
             total_suppliers_count += len(suppliers_with_data)
             print(

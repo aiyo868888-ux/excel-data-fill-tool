@@ -171,6 +171,47 @@
             <div id="reportStatus" class="hidden mt-3 p-4 rounded-lg"></div>
         </div>
 
+        <!-- 表首表尾配置区域 -->
+        <div id="headerFooterSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📝 步骤2.5：配置表首表尾</h2>
+
+            <!-- 入库单配置 -->
+            <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-bold text-blue-800 mb-3">📦 入库单（A-F列）</h3>
+                <div class="mb-3">
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表首内容</label>
+                    <input type="text" id="stockinHeader1" placeholder="直接输入表首内容（如：2026年1月入库单）" class="w-full border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    <p class="text-xs text-gray-500 mt-1">💡 直接作为表首，不自动插入日期</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表尾内容</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="stockinFooter1" placeholder="前缀（如：送货人：）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                        <input type="text" id="stockinFooter2" placeholder="后缀（如：收货人：张三）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
+                </div>
+            </div>
+
+            <!-- 交接单配置 -->
+            <div class="p-4 bg-purple-50 rounded-lg">
+                <h3 class="font-bold text-purple-800 mb-3">📋 交接单（R-W列）</h3>
+                <div class="mb-3">
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表首内容</label>
+                    <input type="text" id="handoverHeader1" placeholder="输入表首内容（如：餐饮交接单）" class="w-full border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    <p class="text-xs text-gray-500 mt-1">💡 系统会自动添加工作表名称（如：餐饮交接单9）</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表尾内容</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="handoverFooter1" placeholder="前缀（如：送货人：）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                        <input type="text" id="handoverFooter2" placeholder="后缀（如：收货人：张三）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
+                </div>
+            </div>
+        </div>
+
         <!-- 交接单和入库单生成区域 -->
         <div id="handoverSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
             <h2 class="text-xl font-bold mb-4 text-gray-800">📋 步骤3 & 4：生成交接单和入库单</h2>
@@ -298,7 +339,67 @@
         }
 
         // 页面加载时创建会话
-        window.addEventListener('DOMContentLoaded', initSession);
+        window.addEventListener('DOMContentLoaded', () => {
+            initSession();
+            loadHeaderFooterConfig();  // ✅ 加载保存的表首表尾配置
+        });
+
+        // ✅ 从本地存储加载表首表尾配置
+        function loadHeaderFooterConfig() {
+            const savedConfig = localStorage.getItem('headerFooterConfig');
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+
+                    // 入库单配置
+                    if (config.stockin) {
+                        if (config.stockin.header && config.stockin.header[0]) {
+                            document.getElementById('stockinHeader1').value = config.stockin.header[0];
+                        }
+                        if (config.stockin.footer && config.stockin.footer[0]) {
+                            document.getElementById('stockinFooter1').value = config.stockin.footer[0];
+                        }
+                        if (config.stockin.footer && config.stockin.footer[1]) {
+                            document.getElementById('stockinFooter2').value = config.stockin.footer[1];
+                        }
+                    }
+
+                    // 交接单配置
+                    if (config.handover) {
+                        if (config.handover.header && config.handover.header[0]) {
+                            document.getElementById('handoverHeader1').value = config.handover.header[0];
+                        }
+                        if (config.handover.footer && config.handover.footer[0]) {
+                            document.getElementById('handoverFooter1').value = config.handover.footer[0];
+                        }
+                        if (config.handover.footer && config.handover.footer[1]) {
+                            document.getElementById('handoverFooter2').value = config.handover.footer[1];
+                        }
+                    }
+
+                    console.log('✅ 已加载保存的表首表尾配置');
+                } catch (error) {
+                    console.error('❌ 加载配置失败:', error);
+                }
+            }
+        }
+
+        // ✅ 保存表首表尾配置到本地存储
+        function saveHeaderFooterConfig(config) {
+            try {
+                localStorage.setItem('headerFooterConfig', JSON.stringify(config));
+                console.log('✅ 已保存表首表尾配置到本地存储');
+            } catch (error) {
+                console.error('❌ 保存配置失败:', error);
+            }
+        }
+
+        // ✅ 自动保存表首表尾配置（输入框改变时调用）
+        function autoSaveHeaderFooterConfig() {
+            const config = collectHeaderFooterConfig();
+            saveHeaderFooterConfig(config);
+            console.log('✅ 自动保存表首表尾配置');
+        }
 
         // 配置加载后显示送货商上传区域（即使还没有上传报表）
         function showSupplierUploadArea() {
@@ -397,6 +498,9 @@
                     // 显示交接单上传区域
                     document.getElementById('handoverSection').style.display = 'block';
 
+                    // 显示表首表尾配置区域
+                    document.getElementById('headerFooterSection').style.display = 'block';
+
                     // 显示删除列区域
                     document.getElementById('deleteColumnsSection').style.display = 'block';
 
@@ -494,6 +598,31 @@
         }
 
         // 上传交接单（生成交接单）
+        // 收集表首表尾配置
+        function collectHeaderFooterConfig() {
+            return {
+                stockin: {
+                    header: [
+                        document.getElementById('stockinHeader1').value || ''  // ✅ 只取1个值
+                    ],
+                    footer: [
+                        document.getElementById('stockinFooter1').value || '',
+                        document.getElementById('stockinFooter2').value || ''
+                    ]
+                },
+                handover: {
+                    header: [
+                        document.getElementById('handoverHeader1').value || ''  // ✅ 只取1个值
+                    ],
+                    footer: [
+                        document.getElementById('handoverFooter1').value || '',
+                        document.getElementById('handoverFooter2').value || ''
+                    ]
+                }
+            };
+        }
+
+        // 上传交接单（生成交接单）
         async function uploadHandover() {
             const statusDiv = document.getElementById('handoverStatus');
 
@@ -502,8 +631,17 @@
             statusDiv.classList.remove('hidden');
 
             try {
+                // ✅ 收集表首表尾配置
+                const headerFooterConfig = collectHeaderFooterConfig();
+
                 const response = await fetchWithSession('/api/paste-handover', {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headerFooterConfig: headerFooterConfig.handover
+                    })
                 });
 
                 const result = await response.json();
@@ -511,6 +649,9 @@
                 if (result.success) {
                     statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
                     statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // ✅ 保存表首表尾配置到本地存储
+                    saveHeaderFooterConfig(headerFooterConfig);
 
                     // 更新填充历史
                     fillHistory = result.fillHistory || {};
@@ -542,8 +683,17 @@
             statusDiv.classList.remove('hidden');
 
             try {
+                // ✅ 收集表首表尾配置
+                const headerFooterConfig = collectHeaderFooterConfig();
+
                 const response = await fetchWithSession('/api/paste-stockin', {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headerFooterConfig: headerFooterConfig.stockin
+                    })
                 });
 
                 const result = await response.json();
@@ -551,6 +701,9 @@
                 if (result.success) {
                     statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
                     statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // ✅ 保存表首表尾配置到本地存储
+                    saveHeaderFooterConfig(headerFooterConfig);
 
                     // 更新填充历史
                     fillHistory = result.fillHistory || {};
@@ -619,7 +772,8 @@
                     alert('✅ 删除完成！点击"下载报表"按钮下载文件');
                 } else {
                     statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
-                    statusDiv.innerHTML = `❌ ${result.message}`;
+                    // ✅ 修复：使用 result.error 而不是 result.message
+                    statusDiv.innerHTML = `❌ ${result.error || result.message || '未知错误'}`;
                 }
             } catch (error) {
                 statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';

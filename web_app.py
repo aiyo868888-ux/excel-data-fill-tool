@@ -385,8 +385,15 @@ def paste_handover():
         if not filler:
             return jsonify({'success': False, 'error': '请先上传报表'}), 400
 
-        # 生成交接单数据
-        filler.compile_handover_from_suppliers(session['suppliers_config'])
+        # ✅ 获取表首表尾配置
+        data = request.json or {}
+        header_footer_config = data.get('headerFooterConfig', {})
+
+        # 生成交接单数据（传递表首表尾配置）
+        filler.compile_handover_from_suppliers(
+            session['suppliers_config'],
+            header_footer_config=header_footer_config
+        )
 
         # 保存结果
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -427,8 +434,15 @@ def paste_stockin():
         if not filler:
             return jsonify({'success': False, 'error': '请先上传报表'}), 400
 
-        # 生成入库单数据
-        filler.compile_stock_in_from_suppliers(session['suppliers_config'])
+        # ✅ 获取表首表尾配置
+        data = request.json or {}
+        header_footer_config = data.get('headerFooterConfig', {})
+
+        # 生成入库单数据（传递表首表尾配置）
+        filler.compile_stock_in_from_suppliers(
+            session['suppliers_config'],
+            header_footer_config=header_footer_config
+        )
 
         # 保存结果
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
