@@ -325,18 +325,29 @@ def fill_supplier_data():
         else:
             start_col = end_col = column_range
 
+        print(f"🔍 开始填充: column_range={column_range}, dates={dates}")
+        print(f"🔍 supplier_files: {session.get('supplier_files', [])}")
+
         # ✅ 修复：清空现有数据，避免多次填充时数据累积
         filler.supplier_data = {}
 
         # ✅ 修复：只读取最近上传的一个文件（最后一个）
         # 因为每个送货商上传自己的文件，填充时只应该使用当前送货商的文件
-        if session['supplier_files']:
-            latest_file = session['supplier_files'][-1]  # 获取最后一个（最近上传的）
-            print(f"📂 读取送货商文件: {latest_file}")
-            filler.read_supplier_file(latest_file)
-        else:
-            print("⚠️ 没有上传的送货商文件")
+        supplier_files = session.get('supplier_files', [])
+        if not supplier_files:
+            print("❌ 没有上传的送货商文件")
             return jsonify({'success': False, 'error': '请先上传送货商文件'}), 400
+
+        latest_file = supplier_files[-1]  # 获取最后一个（最近上传的）
+        print(f"📂 读取送货商文件: {latest_file}")
+
+        # 检查文件是否存在
+        if not os.path.exists(latest_file):
+            print(f"❌ 文件不存在: {latest_file}")
+            return jsonify({'success': False, 'error': f'文件不存在: {latest_file}'}), 400
+
+        filler.read_supplier_file(latest_file)
+        print(f"✅ 文件读取成功，supplier_data keys: {list(filler.supplier_data.keys())}")
 
         # 执行智能填充
         filler.fill_data_smart(
@@ -345,12 +356,14 @@ def fill_supplier_data():
             col_start=start_col,
             col_end=end_col
         )
+        print("✅ 智能填充完成")
 
         # 保存结果
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         output_filename = f"金融岛报表_已填充_{timestamp}.xlsx"
         output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
         filler.save_report(output_path)
+        print(f"✅ 报表已保存: {output_path}")
 
         # 更新填充历史
         supplierData = filler.count_supplier_data_in_columns(
@@ -359,6 +372,7 @@ def fill_supplier_data():
         )
         session['supplier_data'] = supplierData
         session['last_output_file'] = output_filename
+        print(f"✅ 填充历史: {supplierData}")
 
         return jsonify({
             'success': True,
@@ -368,6 +382,7 @@ def fill_supplier_data():
         })
 
     except Exception as e:
+        print(f"❌ 填充失败: {str(e)}")
         traceback.print_exc()
         return jsonify({'success': False, 'error': f'填充失败: {str(e)}'}), 500
 
@@ -388,6 +403,13 @@ def paste_handover():
         # ✅ 获取表首表尾配置
         data = request.json or {}
         header_footer_config = data.get('headerFooterConfig', {})
+
+        # 🔍 调试日志：打印表首表尾配置
+        print(f"🔍 交接单表首表尾配置: {header_footer_config}")
+        if 'header' in header_footer_config:
+            print(f"   表首: {header_footer_config['header']}")
+        if 'footer' in header_footer_config:
+            print(f"   表尾: {header_footer_config['footer']}")
 
         # 生成交接单数据（传递表首表尾配置）
         filler.compile_handover_from_suppliers(
@@ -438,6 +460,13 @@ def paste_stockin():
         data = request.json or {}
         header_footer_config = data.get('headerFooterConfig', {})
 
+        # 🔍 调试日志：打印表首表尾配置
+        print(f"🔍 入库单表首表尾配置: {header_footer_config}")
+        if 'header' in header_footer_config:
+            print(f"   表首: {header_footer_config['header']}")
+        if 'footer' in header_footer_config:
+            print(f"   表尾: {header_footer_config['footer']}")
+
         # 生成入库单数据（传递表首表尾配置）
         filler.compile_stock_in_from_suppliers(
             session['suppliers_config'],
@@ -487,7 +516,7 @@ def delete_columns():
         startColumn = data.get('startColumn')
 
         # 删除列
-        filler.delete_columns_from_all_sheets(start_col=startColumn)
+        filler.delete_columns_after(start_column_letter=startColumn)
 
         # 保存结果
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -522,7 +551,7 @@ def clear_fill_history():
         # 清空所有供应商列的数据
         suppliers = session['suppliers_config']['suppliers']
         for supplier in suppliers:
-            filler.clear_supplier_columns(
+            filler._clear_all_data_in_column_range(
                 supplier['start_column'],
                 supplier['end_column']
             )
