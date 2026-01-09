@@ -1,0 +1,82 @@
+{
+  "suppliers": [
+    {
+      "name": "菜1",
+      "start_column": "AC",
+      "end_column": "AH",
+      "file_pattern": "菜1"
+    },
+    {
+      "name": "菜2",
+      "start_column": "AJ",
+      "end_column": "AO",
+      "file_pattern": "菜2"
+    },
+    {
+      "name": "冻品",
+      "start_column": "AQ",
+      "end_column": "AV",
+      "file_pattern": "冻品"
+    },
+    {
+      "name": "水果1",
+      "start_column": "AX",
+      "end_column": "BC",
+      "file_pattern": "水果1"
+    },
+    {
+      "name": "水果2",
+      "start_column": "BE",
+      "end_column": "BJ",
+      "file_pattern": "水果2"
+    },
+    {
+      "name": "肉1",
+      "start_column": "BL",
+      "end_column": "BQ",
+      "file_pattern": "肉1"
+    },
+    {
+      "name": "肉2",
+      "start_column": "BS",
+      "end_column": "BX",
+      "file_pattern": "肉2"
+    },
+    {
+      "name": "散调1",
+      "start_column": "BZ",
+      "end_column": "CE",
+      "file_pattern": "散调1"
+    },
+    {
+      "name": "散调2",
+      "start_column": "CG",
+      "end_column": "CL",
+      "file_pattern": "散调2"
+    },
+    {
+      "name": "瓶调1",
+      "start_column": "CN",
+      "end_column": "CS",
+      "file_pattern": "瓶调1"
+    },
+    {
+      "name": "瓶调 2",
+      "start_column": "CU",
+      "end_column": "CZ",
+      "file_pattern": "瓶调 2"
+    },
+    {
+      "name": "米1",
+      "start_column": "DB",
+      "end_column": "DG",
+      "file_pattern": "米1"
+    },
+    {
+      "name": "米2",
+      "start_column": "DI",
+      "end_column": "DN",
+      "file_pattern": "米2"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+python311.zip
+.
+Lib/site-packages
+
+# 启用 site-packages（关键！）
+import site

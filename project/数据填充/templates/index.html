@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据填充工具 - 进度追踪</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover {
+            border-color: #667eea;
+            background-color: #f8fafc;
+        }
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .progress-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .progress-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .progress-table td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .progress-table tr:hover {
+            background-color: #f9fafb;
+        }
+        /* 第一列（日期列）固定 */
+        .progress-table td:first-child,
+        .progress-table th:first-child {
+            position: sticky;
+            left: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            z-index: 20;
+            font-weight: 600;
+            border-right: 2px solid #4c5568;
+        }
+        .progress-table td:first-child {
+            background: #f9fafb;
+            color: #1f2937;
+            font-weight: 600;
+        }
+        /* 状态单元格 */
+        .status-cell {
+            min-width: 70px;
+            padding: 6px !important;
+            font-size: 0.875rem;
+        }
+        .status-filled {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .status-empty {
+            background-color: #f9fafb;
+        }
+        .status-processing {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .supplier-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .column-range {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .upload-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .upload-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+        .upload-btn small {
+            opacity: 0.9;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body class="py-8 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- 标题 -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">📊 数据填充工具 - 进度追踪</h1>
+            <p class="text-white opacity-90">自动追踪每个送货商的填充进度</p>
+            <div class="mt-4 flex justify-center gap-4">
+                <a href="/whisper" class="inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-sm py-2 px-4 rounded-lg">
+                    🎤 语音识别
+                </a>
+                <a href="/config" class="inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-sm py-2 px-4 rounded-lg">
+                    ⚙️ 配置管理
+                </a>
+                <button onclick="clearHistory()" class="inline-block bg-red-500 bg-opacity-80 hover:bg-opacity-100 text-white text-sm py-2 px-4 rounded-lg">
+                    🗑️ 清空历史
+                </button>
+            </div>
+        </div>
+
+        <!-- 报表上传区域 -->
+        <div class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📤 步骤1：上传报表文件</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">报表文件</label>
+                    <input type="file" id="reportFile" accept=".xlsx" class="w-full border rounded-lg p-3">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">密码（默认为1）</label>
+                    <input type="text" id="reportPassword" value="1" class="w-full border rounded-lg p-3">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="uploadReport()" class="btn-primary w-full text-white font-bold py-3 px-6 rounded-lg">
+                        上传报表
+                    </button>
+                </div>
+            </div>
+            <div id="reportStatus" class="hidden mt-3 p-4 rounded-lg"></div>
+        </div>
+
+        <!-- 表首表尾配置区域 -->
+        <div id="headerFooterSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📝 步骤2.5：配置表首表尾</h2>
+
+            <!-- 入库单配置 -->
+            <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-bold text-blue-800 mb-3">📦 入库单（A-F列）</h3>
+                <div class="mb-3">
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表首内容</label>
+                    <input type="text" id="stockinHeader1" placeholder="直接输入表首内容（如：2026年1月入库单）" class="w-full border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    <p class="text-xs text-gray-500 mt-1">💡 直接作为表首，不自动插入日期</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表尾内容</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="stockinFooter1" placeholder="前缀（如：送货人：）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                        <input type="text" id="stockinFooter2" placeholder="后缀（如：收货人：张三）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
+                </div>
+            </div>
+
+            <!-- 交接单配置 -->
+            <div class="p-4 bg-purple-50 rounded-lg">
+                <h3 class="font-bold text-purple-800 mb-3">📋 交接单（R-W列）</h3>
+                <div class="mb-3">
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表首内容</label>
+                    <input type="text" id="handoverHeader1" placeholder="输入表首内容（如：餐饮交接单）" class="w-full border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    <p class="text-xs text-gray-500 mt-1">💡 系统会自动添加工作表名称（如：餐饮交接单9）</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表尾内容</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="handoverFooter1" placeholder="前缀（如：送货人：）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                        <input type="text" id="handoverFooter2" placeholder="后缀（如：收货人：张三）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 交接单和入库单生成区域 -->
+        <div id="handoverSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📋 步骤3 & 4：生成交接单和入库单</h2>
+            <p class="text-sm text-gray-600 mb-2">从所有送货商列（AC-CM）复制数据到指定列，每个送货商内容之间间隔一个空行</p>
+            <ul class="text-sm text-gray-600 mb-4 list-disc list-inside">
+                <li><strong>交接单</strong>：复制到 R-W 列</li>
+                <li><strong>入库单</strong>：复制到 A-F 列</li>
+            </ul>
+            <div class="flex gap-4 items-end flex-wrap">
+                <button onclick="uploadHandover()" class="btn-primary text-white font-bold py-3 px-6 rounded-lg">
+                    📋 步骤3：生成交接单（R-W列）
+                </button>
+                <button onclick="uploadStockIn()" class="btn-primary text-white font-bold py-3 px-6 rounded-lg">
+                    📦 步骤4：生成入库单（A-F列）
+                </button>
+                <a id="handoverDownloadBtn" href="#" class="btn-primary text-white font-bold py-3 px-6 rounded-lg" style="display:none;">
+                    📥 步骤5：下载报表
+                </a>
+            </div>
+            <div id="handoverStatus" class="hidden mt-3 p-4 rounded-lg"></div>
+        </div>
+
+        <!-- 删除列区域 -->
+        <div id="deleteColumnsSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">🗑️ 删除指定列之后的所有列</h2>
+            <p class="text-sm text-gray-600 mb-4">删除指定列之后的所有内容和格式（例如：删除AB列之后的所有列，只保留A到AB列）</p>
+            <div class="flex gap-4 items-end">
+                <div class="flex-1">
+                    <label class="block text-sm text-gray-600 mb-1">起始列</label>
+                    <input type="text" id="deleteStartColumn" value="AB" class="w-full border rounded-lg p-3 uppercase font-bold text-center" maxlength="3" placeholder="AB">
+                </div>
+                <button onclick="deleteColumns()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg">
+                    🗑️ 删除列
+                </button>
+                <a id="deleteDownloadBtn" href="#" class="btn-primary text-white font-bold py-3 px-6 rounded-lg" style="display:none;">
+                    📥 下载报表
+                </a>
+            </div>
+            <div id="deleteColumnsStatus" class="hidden mt-3 p-4 rounded-lg"></div>
+        </div>
+
+        <!-- 进度追踪表格 -->
+        <div id="progressSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">📋 填充进度追踪表</h2>
+
+                <!-- 送货商上传按钮区域 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-4" id="uploadButtonsArea">
+                    <!-- 动态生成上传按钮 -->
+                </div>
+            </div>
+
+            <div class="flex justify-end mb-4">
+                <a id="downloadBtn" href="#" class="btn-primary text-white font-bold py-2 px-6 rounded-lg" style="display:none;">
+                    📥 下载报表
+                </a>
+            </div>
+
+            <div class="table-container">
+                <table class="progress-table" id="progressTable">
+                    <thead>
+                        <tr id="tableHeader">
+                            <!-- 动态生成 -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="text-center mt-8 text-white opacity-75">
+            <p>数据填充工具 v3.0 | 进度追踪版</p>
+        </div>
+    </div>
+
+    <!-- 隐藏的文件输入框 -->
+    <input type="file" id="supplierFileInput" accept=".xls,.xlsx" class="hidden">
+
+    <script>
+        let suppliersConfig = { suppliers: [] };
+        let fillHistory = {};
+        let currentColumnRange = null; // 当前正在上传的列范围（格式：AC-AH）
+        let allDates = []; // 所有有数据的日期（使用数组而不是Set）
+        let sessionId = null; // 会话ID
+
+        // 初始化：创建会话并加载配置
+        async function initSession() {
+            try {
+                // 1. 创建会话
+                const response = await fetch('/api/session/create', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    sessionId = result.session_id;
+                    console.log('✅ 会话已创建:', sessionId);
+                } else {
+                    console.error('❌ 创建会话失败:', result.message);
+                    return;
+                }
+
+                // 2. 加载送货商配置
+                console.log('📥 加载送货商配置...');
+                const configResponse = await fetch('/api/suppliers-config');
+                const configResult = await configResponse.json();
+
+                if (configResult.suppliers) {
+                    suppliersConfig = configResult;
+                    console.log('✅ 配置已加载:', suppliersConfig.suppliers.length, '个送货商');
+                    suppliersConfig.suppliers.forEach((s, i) => {
+                        console.log(`   ${i+1}. ${s.name}: ${s.start_column}-${s.end_column}`);
+                    });
+
+                    // 显示送货商上传区域
+                    showSupplierUploadArea();
+                } else {
+                    console.error('❌ 加载配置失败:', configResult.error || '未知错误');
+                }
+            } catch (error) {
+                console.error('❌ 初始化异常:', error);
+            }
+        }
+
+        // 页面加载时创建会话
+        window.addEventListener('DOMContentLoaded', () => {
+            initSession();
+            loadHeaderFooterConfig();  // ✅ 加载保存的表首表尾配置
+        });
+
+        // ✅ 从本地存储加载表首表尾配置
+        function loadHeaderFooterConfig() {
+            const savedConfig = localStorage.getItem('headerFooterConfig');
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+
+                    // 入库单配置
+                    if (config.stockin) {
+                        if (config.stockin.header && config.stockin.header[0]) {
+                            document.getElementById('stockinHeader1').value = config.stockin.header[0];
+                        }
+                        if (config.stockin.footer && config.stockin.footer[0]) {
+                            document.getElementById('stockinFooter1').value = config.stockin.footer[0];
+                        }
+                        if (config.stockin.footer && config.stockin.footer[1]) {
+                            document.getElementById('stockinFooter2').value = config.stockin.footer[1];
+                        }
+                    }
+
+                    // 交接单配置
+                    if (config.handover) {
+                        if (config.handover.header && config.handover.header[0]) {
+                            document.getElementById('handoverHeader1').value = config.handover.header[0];
+                        }
+                        if (config.handover.footer && config.handover.footer[0]) {
+                            document.getElementById('handoverFooter1').value = config.handover.footer[0];
+                        }
+                        if (config.handover.footer && config.handover.footer[1]) {
+                            document.getElementById('handoverFooter2').value = config.handover.footer[1];
+                        }
+                    }
+
+                    console.log('✅ 已加载保存的表首表尾配置');
+                } catch (error) {
+                    console.error('❌ 加载配置失败:', error);
+                }
+            }
+        }
+
+        // ✅ 保存表首表尾配置到本地存储
+        function saveHeaderFooterConfig(config) {
+            try {
+                localStorage.setItem('headerFooterConfig', JSON.stringify(config));
+                console.log('✅ 已保存表首表尾配置到本地存储');
+            } catch (error) {
+                console.error('❌ 保存配置失败:', error);
+            }
+        }
+
+        // ✅ 自动保存表首表尾配置（输入框改变时调用）
+        function autoSaveHeaderFooterConfig() {
+            const config = collectHeaderFooterConfig();
+            saveHeaderFooterConfig(config);
+            console.log('✅ 自动保存表首表尾配置');
+        }
+
+        // 配置加载后显示送货商上传区域（即使还没有上传报表）
+        function showSupplierUploadArea() {
+            if (suppliersConfig && suppliersConfig.suppliers && suppliersConfig.suppliers.length > 0) {
+                // 渲染上传按钮
+                renderUploadButtons();
+
+                // 如果已经有报表数据，显示进度表格
+                if (allDates && allDates.length > 0) {
+                    renderProgressTable();
+                    document.getElementById('progressSection').style.display = 'block';
+                }
+            }
+        }
+
+        // 通用的 fetch 包装函数，自动添加会话ID
+        async function fetchWithSession(url, options = {}) {
+            if (!sessionId) {
+                throw new Error('会话未初始化');
+            }
+
+            // 添加会话ID到请求头
+            if (!options.headers) {
+                options.headers = {};
+            }
+            options.headers['X-Session-ID'] = sessionId;
+
+            return fetch(url, options);
+        }
+
+        // 上传报表
+        async function uploadReport() {
+            // 等待会话创建完成
+            if (!sessionId) {
+                console.log('⏳ 等待会话创建...');
+                await initSession();
+                if (!sessionId) {
+                    alert('会话创建失败，请刷新页面重试');
+                    return;
+                }
+            }
+
+            const fileInput = document.getElementById('reportFile');
+            const password = document.getElementById('reportPassword').value;
+            const statusDiv = document.getElementById('reportStatus');
+
+            if (!fileInput.files[0]) {
+                alert('请选择报表文件');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('report', fileInput.files[0]);
+            formData.append('password', password);
+
+            statusDiv.className = 'mt-3 p-4 rounded-lg bg-blue-50 text-blue-800';
+            statusDiv.innerHTML = '⏳ 正在上传报表...';
+            statusDiv.classList.remove('hidden');
+
+            try {
+                const response = await fetchWithSession('/api/upload-report', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
+                    statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // 调试：打印后端返回的suppliersConfig
+                    console.log('📦 后端返回的 suppliersConfig:', result.suppliersConfig);
+                    console.log('📦 suppliersConfig.suppliers 长度:', result.suppliersConfig?.suppliers?.length);
+
+                    suppliersConfig = result.suppliersConfig;
+
+                    // 调试：确认赋值后的suppliersConfig
+                    console.log('📦 赋值后的 suppliersConfig:', suppliersConfig);
+                    console.log('📦 suppliersConfig.suppliers 长度:', suppliersConfig?.suppliers?.length);
+
+                    // 使用从报表中读取的实时日期数据
+                    allDates = result.dates || [];
+                    console.log('📅 从报表读取到', allDates.length, '个日期:', allDates);
+
+                    // 使用从报表中读取的实时送货商数据
+                    fillHistory = result.supplierData || {};
+                    console.log('📊 从报表读取到', Object.keys(fillHistory).length, '个送货商的数据');
+                    console.log('📊 supplierData 详情:', fillHistory);
+
+                    // 渲染上传按钮区域
+                    console.log('🎨 准备渲染上传按钮，当前 suppliersConfig.suppliers 数量:', suppliersConfig?.suppliers?.length);
+                    renderUploadButtons();
+                    console.log('✅ 已渲染上传按钮');
+
+                    // 显示交接单上传区域
+                    document.getElementById('handoverSection').style.display = 'block';
+
+                    // 显示表首表尾配置区域
+                    document.getElementById('headerFooterSection').style.display = 'block';
+
+                    // 显示删除列区域
+                    document.getElementById('deleteColumnsSection').style.display = 'block';
+
+                    // 显示进度表格
+                    renderProgressTable();
+                    document.getElementById('progressSection').style.display = 'block';
+                } else {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                    statusDiv.innerHTML = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                statusDiv.innerHTML = `❌ 上传失败: ${error.message}`;
+            }
+        }
+
+        // 收集所有有数据的日期（现在改为直接使用1-31）
+        function collectAllDates() {
+            allDates = []; // 重置为空数组
+            // 生成1-31的日期
+            for (let i = 1; i <= 31; i++) {
+                allDates.push(i.toString());
+            }
+        }
+
+        // 渲染上传按钮区域
+        function renderUploadButtons() {
+            console.log('🎨 renderUploadButtons() 被调用');
+            console.log('   suppliersConfig:', suppliersConfig);
+            console.log('   suppliersConfig.suppliers:', suppliersConfig?.suppliers);
+
+            const uploadArea = document.getElementById('uploadButtonsArea');
+
+            if (!suppliersConfig || !suppliersConfig.suppliers || suppliersConfig.suppliers.length === 0) {
+                console.error('❌ suppliersConfig 或 suppliersConfig.suppliers 为空！');
+                uploadArea.innerHTML = '<p class="text-red-500">错误：没有送货商配置</p>';
+                return;
+            }
+
+            console.log(`✅ 准备渲染 ${suppliersConfig.suppliers.length} 个按钮`);
+
+            uploadArea.innerHTML = suppliersConfig.suppliers.map(supplier => `
+                <button class="upload-btn w-full" onclick="uploadSupplierFile('${supplier.start_column}-${supplier.end_column}')">
+                    📤 ${supplier.start_column}-${supplier.end_column}<br>
+                    <small style="font-size:0.75rem">${supplier.name}</small>
+                </button>
+            `).join('');
+        }
+
+        // 渲染进度表格（转置：日期为行，列范围为列）
+        function renderProgressTable() {
+            console.log('🎨 开始渲染进度表格');
+            console.log('   allDates:', allDates);
+            console.log('   suppliersConfig:', suppliersConfig);
+            console.log('   fillHistory:', fillHistory);
+
+            const headerRow = document.getElementById('tableHeader');
+            const tbody = document.getElementById('tableBody');
+
+            // 生成表头：日期 | AC-AH | AJ-AO | ...
+            let headerHTML = '<th>日期</th>';
+            suppliersConfig.suppliers.forEach(supplier => {
+                const columnRange = `${supplier.start_column}-${supplier.end_column}`;
+                headerHTML += `<th>${columnRange}<br><small style="font-weight:normal;opacity:0.9">${supplier.name}</small></th>`;
+            });
+            headerRow.innerHTML = headerHTML;
+            console.log('✅ 表头已生成');
+
+            // 生成表体：每个日期一行
+            tbody.innerHTML = allDates.map(date => {
+                let rowHTML = `<tr><td>${date}日</td>`;
+
+                suppliersConfig.suppliers.forEach(supplier => {
+                    const columnRange = `${supplier.start_column}-${supplier.end_column}`;
+                    const history = fillHistory[columnRange] || {};
+                    const amount = history[date];
+
+                    if (amount && amount > 0) {
+                        // 格式化金额：保留2位小数，添加千位分隔符
+                        const formattedAmount = amount.toLocaleString('zh-CN', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                        rowHTML += `<td class="status-cell status-filled">¥${formattedAmount}</td>`;
+                    } else {
+                        rowHTML += `<td class="status-cell status-empty"></td>`;
+                    }
+                });
+
+                rowHTML += '</tr>';
+                return rowHTML;
+            }).join('');
+
+            console.log('✅ 表格渲染完成，共', allDates.length, '行');
+        }
+
+        // 上传交接单（生成交接单）
+        // 收集表首表尾配置
+        function collectHeaderFooterConfig() {
+            return {
+                stockin: {
+                    header: [
+                        document.getElementById('stockinHeader1').value || ''  // ✅ 只取1个值
+                    ],
+                    footer: [
+                        document.getElementById('stockinFooter1').value || '',
+                        document.getElementById('stockinFooter2').value || ''
+                    ]
+                },
+                handover: {
+                    header: [
+                        document.getElementById('handoverHeader1').value || ''  // ✅ 只取1个值
+                    ],
+                    footer: [
+                        document.getElementById('handoverFooter1').value || '',
+                        document.getElementById('handoverFooter2').value || ''
+                    ]
+                }
+            };
+        }
+
+        // 上传交接单（生成交接单）
+        async function uploadHandover() {
+            const statusDiv = document.getElementById('handoverStatus');
+
+            statusDiv.className = 'mt-3 p-4 rounded-lg bg-blue-50 text-blue-800';
+            statusDiv.innerHTML = '⏳ 正在生成交接单...';
+            statusDiv.classList.remove('hidden');
+
+            try {
+                // ✅ 收集表首表尾配置
+                const headerFooterConfig = collectHeaderFooterConfig();
+
+                const response = await fetchWithSession('/api/paste-handover', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headerFooterConfig: headerFooterConfig.handover
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
+                    statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // ✅ 保存表首表尾配置到本地存储
+                    saveHeaderFooterConfig(headerFooterConfig);
+
+                    // 更新填充历史
+                    fillHistory = result.fillHistory || {};
+
+                    // 重新渲染表格
+                    renderProgressTable();
+
+                    // 显示下载按钮
+                    document.getElementById('handoverDownloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('handoverDownloadBtn').style.display = 'inline-block';
+                    document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                } else {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                    statusDiv.innerHTML = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                statusDiv.innerHTML = `❌ 生成失败: ${error.message}`;
+            }
+        }
+
+        // 生成入库单
+        async function uploadStockIn() {
+            const statusDiv = document.getElementById('handoverStatus');
+
+            statusDiv.className = 'mt-3 p-4 rounded-lg bg-blue-50 text-blue-800';
+            statusDiv.innerHTML = '⏳ 正在生成入库单...';
+            statusDiv.classList.remove('hidden');
+
+            try {
+                // ✅ 收集表首表尾配置
+                const headerFooterConfig = collectHeaderFooterConfig();
+
+                const response = await fetchWithSession('/api/paste-stockin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headerFooterConfig: headerFooterConfig.stockin
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
+                    statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // ✅ 保存表首表尾配置到本地存储
+                    saveHeaderFooterConfig(headerFooterConfig);
+
+                    // 更新填充历史
+                    fillHistory = result.fillHistory || {};
+
+                    // 重新渲染表格
+                    renderProgressTable();
+
+                    // 显示下载按钮
+                    document.getElementById('handoverDownloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('handoverDownloadBtn').style.display = 'inline-block';
+                    document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                } else {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                    statusDiv.innerHTML = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                statusDiv.innerHTML = `❌ 生成失败: ${error.message}`;
+            }
+        }
+
+        // 删除指定列之后的所有列
+        async function deleteColumns() {
+            const startColumn = document.getElementById('deleteStartColumn').value.trim().toUpperCase();
+            const statusDiv = document.getElementById('deleteColumnsStatus');
+
+            if (!startColumn) {
+                alert('请输入起始列');
+                return;
+            }
+
+            if (!confirm(`确定要删除 ${startColumn} 列之后的所有列吗？此操作不可恢复！`)) {
+                return;
+            }
+
+            statusDiv.className = 'mt-3 p-4 rounded-lg bg-blue-50 text-blue-800';
+            statusDiv.innerHTML = `⏳ 正在删除 ${startColumn} 列之后的所有列...`;
+            statusDiv.classList.remove('hidden');
+
+            try {
+                const response = await fetchWithSession('/api/delete-columns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        startColumn: startColumn
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
+                    statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // 显示删除列区域的下载按钮
+                    document.getElementById('deleteDownloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('deleteDownloadBtn').style.display = 'inline-block';
+
+                    // 同时显示进度表格区域的下载按钮
+                    document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+
+                    alert('✅ 删除完成！点击"下载报表"按钮下载文件');
+                } else {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                    // ✅ 修复：使用 result.error 而不是 result.message
+                    statusDiv.innerHTML = `❌ ${result.error || result.message || '未知错误'}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                statusDiv.innerHTML = `❌ 删除失败: ${error.message}`;
+            }
+        }
+
+        // 上传送货商文件
+        function uploadSupplierFile(columnRange) {
+            currentColumnRange = columnRange;
+            const fileInput = document.getElementById('supplierFileInput');
+            // 先清空文件输入框,确保即使选择相同文件也能触发change事件
+            fileInput.value = '';
+            fileInput.click();
+        }
+
+        // 监听文件选择
+        document.getElementById('supplierFileInput').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            if (!currentColumnRange) {
+                alert('请先选择列范围');
+                return;
+            }
+
+            // 更新表格状态为处理中
+            updateTableStatus(currentColumnRange, 'processing');
+
+            const formData = new FormData();
+            formData.append('files', file);
+            formData.append('column_range', currentColumnRange);  // 添加列范围参数
+
+            try {
+                // 【步骤1】上传并解析送货商文件
+                console.log('📤 上传送货商文件...');
+                const uploadResponse = await fetchWithSession('/api/upload-suppliers', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const uploadResult = await uploadResponse.json();
+
+                if (!uploadResult.success) {
+                    alert('上传失败: ' + uploadResult.message);
+                    updateTableStatus(currentColumnRange, 'error');
+                    return;
+                }
+
+                console.log('✅ 上传成功，日期:', uploadResult.dates);
+                console.log('📊 列范围:', currentColumnRange);
+
+                // 【步骤2】检查是否有数据冲突
+                console.log('🔍 检查数据冲突...');
+                const checkResponse = await fetchWithSession('/api/check-supplier-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        column_range: currentColumnRange,
+                        dates: uploadResult.dates
+                    })
+                });
+
+                const checkResult = await checkResponse.json();
+
+                if (!checkResult.success) {
+                    alert('检查数据失败: ' + checkResult.message);
+                    updateTableStatus(currentColumnRange, 'error');
+                    return;
+                }
+
+                console.log('✅ 检查完成，冲突日期:', checkResult.conflict_dates);
+
+                // 【步骤3】显示确认对话框（统一逻辑）
+                const datesText = uploadResult.dates.join('日、') + '日';
+                const confirmMsg = `检测到 ${uploadResult.dates.length} 个日期的数据：${datesText}\n\n` +
+                                  `即将执行以下操作：\n` +
+                                  `1. 已清空原有数据，将添加上传文件数据。\n` +
+                                  `2. 只填充检测到的 ${uploadResult.dates.length} 个日期。\n\n` +
+                                  `是否继续？`;
+
+                if (!confirm(confirmMsg)) {
+                    // 用户取消：重新渲染表格以恢复原始数据显示
+                    renderProgressTable();
+                    console.log('❌ 用户取消操作');
+                    return;
+                }
+
+                // 【步骤4】执行智能填充
+                console.log('🚀 开始填充...');
+                const fillResponse = await fetchWithSession('/api/fill-supplier-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        column_range: currentColumnRange,
+                        dates: uploadResult.dates
+                        // 移除 mode 参数
+                    })
+                });
+
+                const fillResult = await fillResponse.json();
+
+                if (fillResult.success) {
+                    // 更新填充历史
+                    fillHistory = fillResult.fillHistory;
+
+                    // 重新渲染表格
+                    renderProgressTable();
+
+                    // 显示下载按钮
+                    document.getElementById('downloadBtn').href = `/api/download/${fillResult.output_file}`;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+
+                    alert('✅ 填充完成！\n\n已清空原有数据，将添加上传文件数据。\n\n点击"下载报表"按钮下载文件');
+                } else {
+                    alert('❌ ' + fillResult.message);
+                    updateTableStatus(currentColumnRange, 'error');
+                }
+
+            } catch (error) {
+                console.error('❌ 处理失败:', error);
+                alert('处理失败: ' + error.message);
+                updateTableStatus(currentColumnRange, 'error');
+            }
+
+            // 清空文件输入
+            this.value = '';
+            currentColumnRange = null;
+        });
+
+        // 更新表格状态（表格已转置：日期为行，列范围为列）
+        function updateTableStatus(columnRange, status) {
+            // 找到该列范围在表头中的列索引
+            const headerCells = document.querySelectorAll('#tableHeader th');
+            let columnIndex = -1;
+
+            for (let i = 1; i < headerCells.length; i++) {  // 从1开始，跳过"日期"列
+                if (headerCells[i].textContent.includes(columnRange)) {
+                    columnIndex = i;
+                    break;
+                }
+            }
+
+            if (columnIndex === -1) return;  // 未找到该列范围
+
+            // 更新该列所有单元格的状态
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells[columnIndex]) {
+                    const cell = cells[columnIndex];
+                    cell.className = 'status-cell';
+
+                    if (status === 'processing') {
+                        cell.classList.add('status-processing');
+                        cell.innerHTML = '🔄 处理中';
+                    } else if (status === 'error') {
+                        cell.style.backgroundColor = '#fee2e2';
+                        cell.style.color = '#991b1b';
+                        cell.innerHTML = '❌ 失败';
+                    }
+                }
+            });
+        }
+
+        // 清空历史
+        async function clearHistory() {
+            if (!confirm('确定要清空所有填充历史吗？此操作不可恢复。')) {
+                return;
+            }
+
+            try {
+                const response = await fetchWithSession('/api/fill-history', {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    fillHistory = {};
+                    allDates = [];
+                    renderProgressTable();
+                    alert('✅ 填充历史已清空');
+                } else {
+                    alert('❌ ' + (result.message || result.error || '未知错误'));
+                }
+            } catch (error) {
+                alert('清空失败: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
