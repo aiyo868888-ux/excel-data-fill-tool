@@ -35,6 +35,18 @@ desktop.ini
 *.log
 nul
 
+# Node.js
+node_modules/
+package-lock.json
+
+# 备份文件
+*.backup
+*.gh
+*.bak
+
+# Claude Code
+.claude/
+
 # 项目特定（根据需要调整）
 # project/数据填充/uploads/
 # project/数据填充/filled_reports/

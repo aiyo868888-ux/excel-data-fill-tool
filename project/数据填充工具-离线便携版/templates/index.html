@@ -141,9 +141,6 @@
             <h1 class="text-4xl font-bold text-white mb-2">📊 数据填充工具 - 进度追踪</h1>
             <p class="text-white opacity-90">自动追踪每个送货商的填充进度</p>
             <div class="mt-4 flex justify-center gap-4">
-                <a href="/whisper" class="inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-sm py-2 px-4 rounded-lg">
-                    🎤 语音识别
-                </a>
                 <a href="/config" class="inline-block bg-white bg-opacity-20 hover:bg-opacity-30 text-white text-sm py-2 px-4 rounded-lg">
                     ⚙️ 配置管理
                 </a>
@@ -174,9 +171,34 @@
             <div id="reportStatus" class="hidden mt-3 p-4 rounded-lg"></div>
         </div>
 
+        <!-- 进度追踪表格 -->
+        <div id="progressSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">📋 步骤2：粘贴送货单</h2>
+
+                <!-- 送货商上传按钮区域 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-4" id="uploadButtonsArea">
+                    <!-- 动态生成上传按钮 -->
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="progress-table" id="progressTable">
+                    <thead>
+                        <tr id="tableHeader">
+                            <!-- 动态生成 -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- 表首表尾配置区域 -->
         <div id="headerFooterSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">📝 步骤2.5：配置表首表尾</h2>
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📝 步骤3：配置表首表尾</h2>
 
             <!-- 入库单配置 -->
             <div class="mb-6 p-4 bg-blue-50 rounded-lg">
@@ -213,11 +235,29 @@
                     <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
                 </div>
             </div>
+
+            <!-- 需求单配置 -->
+            <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                <h3 class="font-bold text-green-800 mb-3">📝 需求单（H-P列）</h3>
+                <div class="mb-3">
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表首内容</label>
+                    <input type="text" id="requestHeader1" placeholder="直接输入表首内容（如：2026年1月需求单）" class="w-full border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    <p class="text-xs text-gray-500 mt-1">💡 直接作为表首，不自动插入日期</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700 font-semibold mb-1">表尾内容</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="requestFooter1" placeholder="前缀（如：送货人：）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                        <input type="text" id="requestFooter2" placeholder="后缀（如：收货人：张三）" class="flex-1 border rounded p-2 text-sm" onchange="autoSaveHeaderFooterConfig()">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">💡 格式：前缀 + 日期 + 后缀（如：送货人：9收货人：张三）</p>
+                </div>
+            </div>
         </div>
 
         <!-- 交接单和入库单生成区域 -->
         <div id="handoverSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">📋 步骤3 & 4：生成交接单和入库单</h2>
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📋 步骤4 & 5：生成交接单和入库单</h2>
             <p class="text-sm text-gray-600 mb-2">从所有送货商列（AC-CM）复制数据到指定列，每个送货商内容之间间隔一个空行</p>
             <ul class="text-sm text-gray-600 mb-4 list-disc list-inside">
                 <li><strong>交接单</strong>：复制到 R-W 列</li>
@@ -225,16 +265,28 @@
             </ul>
             <div class="flex gap-4 items-end flex-wrap">
                 <button onclick="uploadHandover()" class="btn-primary text-white font-bold py-3 px-6 rounded-lg">
-                    📋 步骤3：生成交接单（R-W列）
+                    📋 步骤4：生成交接单（R-W列）
                 </button>
                 <button onclick="uploadStockIn()" class="btn-primary text-white font-bold py-3 px-6 rounded-lg">
-                    📦 步骤4：生成入库单（A-F列）
+                    📦 步骤5：生成入库单（A-F列）
                 </button>
-                <a id="handoverDownloadBtn" href="#" class="btn-primary text-white font-bold py-3 px-6 rounded-lg" style="display:none;">
-                    📥 步骤5：下载报表
-                </a>
             </div>
             <div id="handoverStatus" class="hidden mt-3 p-4 rounded-lg"></div>
+        </div>
+
+        <!-- 需求单生成区域 -->
+        <div id="requestSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">📝 步骤6：生成需求单（H-P列）</h2>
+            <p class="text-sm text-gray-600 mb-4">为H-P列添加表首表尾，仅插入表首和表尾并合并单元格，不复制数据</p>
+            <div class="flex gap-4 items-end">
+                <button onclick="uploadRequest()" class="btn-primary text-white font-bold py-3 px-6 rounded-lg">
+                    📝 生成需求单
+                </button>
+                <a id="downloadBtn" href="#" class="btn-primary text-white font-bold py-3 px-6 rounded-lg" style="display:none;">
+                    📥 下载报表
+                </a>
+            </div>
+            <div id="requestStatus" class="hidden mt-3 p-4 rounded-lg"></div>
         </div>
 
         <!-- 删除列区域 -->
@@ -254,37 +306,6 @@
                 </a>
             </div>
             <div id="deleteColumnsStatus" class="hidden mt-3 p-4 rounded-lg"></div>
-        </div>
-
-        <!-- 进度追踪表格 -->
-        <div id="progressSection" style="display:none;" class="bg-white rounded-2xl card-shadow p-8">
-            <div class="mb-4">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">📋 填充进度追踪表</h2>
-
-                <!-- 送货商上传按钮区域 -->
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-4" id="uploadButtonsArea">
-                    <!-- 动态生成上传按钮 -->
-                </div>
-            </div>
-
-            <div class="flex justify-end mb-4">
-                <a id="downloadBtn" href="#" class="btn-primary text-white font-bold py-2 px-6 rounded-lg" style="display:none;">
-                    📥 下载报表
-                </a>
-            </div>
-
-            <div class="table-container">
-                <table class="progress-table" id="progressTable">
-                    <thead>
-                        <tr id="tableHeader">
-                            <!-- 动态生成 -->
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- 动态生成 -->
-                    </tbody>
-                </table>
-            </div>
         </div>
 
         <!-- 页脚 -->
@@ -350,9 +371,11 @@
         // ✅ 从本地存储加载表首表尾配置
         function loadHeaderFooterConfig() {
             const savedConfig = localStorage.getItem('headerFooterConfig');
+            console.log('🔍 加载表首表尾配置:', savedConfig);
             if (savedConfig) {
                 try {
                     const config = JSON.parse(savedConfig);
+                    console.log('✅ 解析后的配置:', config);
 
                     // 入库单配置
                     if (config.stockin) {
@@ -377,6 +400,19 @@
                         }
                         if (config.handover.footer && config.handover.footer[1]) {
                             document.getElementById('handoverFooter2').value = config.handover.footer[1];
+                        }
+                    }
+
+                    // 需求单配置
+                    if (config.request) {
+                        if (config.request.header && config.request.header[0]) {
+                            document.getElementById('requestHeader1').value = config.request.header[0];
+                        }
+                        if (config.request.footer && config.request.footer[0]) {
+                            document.getElementById('requestFooter1').value = config.request.footer[0];
+                        }
+                        if (config.request.footer && config.request.footer[1]) {
+                            document.getElementById('requestFooter2').value = config.request.footer[1];
                         }
                     }
 
@@ -507,6 +543,9 @@
                     // 显示删除列区域
                     document.getElementById('deleteColumnsSection').style.display = 'block';
 
+                    // 显示需求单区域
+                    document.getElementById('requestSection').style.display = 'block';
+
                     // 显示进度表格
                     renderProgressTable();
                     document.getElementById('progressSection').style.display = 'block';
@@ -603,23 +642,38 @@
         // 上传交接单（生成交接单）
         // 收集表首表尾配置
         function collectHeaderFooterConfig() {
+            // 安全获取元素值的辅助函数
+            function getValue(id) {
+                const el = document.getElementById(id);
+                return el ? el.value : '';
+            }
+
             return {
                 stockin: {
                     header: [
-                        document.getElementById('stockinHeader1').value || ''  // ✅ 只取1个值
+                        getValue('stockinHeader1')  // ✅ 只取1个值
                     ],
                     footer: [
-                        document.getElementById('stockinFooter1').value || '',
-                        document.getElementById('stockinFooter2').value || ''
+                        getValue('stockinFooter1'),
+                        getValue('stockinFooter2')
                     ]
                 },
                 handover: {
                     header: [
-                        document.getElementById('handoverHeader1').value || ''  // ✅ 只取1个值
+                        getValue('handoverHeader1')  // ✅ 只取1个值
                     ],
                     footer: [
-                        document.getElementById('handoverFooter1').value || '',
-                        document.getElementById('handoverFooter2').value || ''
+                        getValue('handoverFooter1'),
+                        getValue('handoverFooter2')
+                    ]
+                },
+                request: {
+                    header: [
+                        getValue('requestHeader1')  // ✅ 只取1个值
+                    ],
+                    footer: [
+                        getValue('requestFooter1'),
+                        getValue('requestFooter2')
                     ]
                 }
             };
@@ -663,8 +717,6 @@
                     renderProgressTable();
 
                     // 显示下载按钮
-                    document.getElementById('handoverDownloadBtn').href = `/api/download/${result.output_file}`;
-                    document.getElementById('handoverDownloadBtn').style.display = 'inline-block';
                     document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
                     document.getElementById('downloadBtn').style.display = 'inline-block';
                 } else {
@@ -715,8 +767,61 @@
                     renderProgressTable();
 
                     // 显示下载按钮
-                    document.getElementById('handoverDownloadBtn').href = `/api/download/${result.output_file}`;
-                    document.getElementById('handoverDownloadBtn').style.display = 'inline-block';
+                    document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                } else {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                    statusDiv.innerHTML = `❌ ${result.message}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'mt-3 p-4 rounded-lg bg-red-50 text-red-800';
+                statusDiv.innerHTML = `❌ 生成失败: ${error.message}`;
+            }
+        }
+
+        // 生成需求单
+        async function uploadRequest() {
+            const statusDiv = document.getElementById('requestStatus');
+
+            if (!statusDiv) {
+                alert('❌ 错误：找不到 requestStatus 元素');
+                return;
+            }
+
+            statusDiv.className = 'mt-3 p-4 rounded-lg bg-blue-50 text-blue-800';
+            statusDiv.innerHTML = '⏳ 正在生成需求单...';
+            statusDiv.classList.remove('hidden');
+
+            try {
+                // ✅ 收集表首表尾配置
+                const headerFooterConfig = collectHeaderFooterConfig();
+                console.log('🔍 需求单配置:', headerFooterConfig);
+                console.log('🔍 request 对象:', headerFooterConfig.request);
+
+                if (!headerFooterConfig.request) {
+                    throw new Error('需求单配置未定义');
+                }
+
+                const response = await fetchWithSession('/api/paste-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        headerFooterConfig: headerFooterConfig.request
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    statusDiv.className = 'mt-3 p-4 rounded-lg bg-green-50 text-green-800';
+                    statusDiv.innerHTML = `✅ ${result.message}`;
+
+                    // ✅ 保存表首表尾配置到本地存储
+                    saveHeaderFooterConfig(headerFooterConfig);
+
+                    // 显示下载按钮
                     document.getElementById('downloadBtn').href = `/api/download/${result.output_file}`;
                     document.getElementById('downloadBtn').style.display = 'inline-block';
                 } else {
