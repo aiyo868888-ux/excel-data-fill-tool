@@ -1770,8 +1770,11 @@ class DataFiller:
                 source_cell = ws.cell(row=source_row, column=source_col)
                 target_cell = ws.cell(row=target_row_num, column=target_col)
 
-                # 复制值
-                target_cell.value = source_cell.value
+                # 复制值（跳过合并单元格，它们的value是只读的）
+                # 检查是否为合并单元格
+                from openpyxl.cell import MergedCell
+                if not isinstance(source_cell, MergedCell):
+                    target_cell.value = source_cell.value
 
                 # 复制格式
                 if source_cell.has_style:
@@ -1855,6 +1858,20 @@ class DataFiller:
         # 合并单元格
         start_col_letter = get_column_letter(start_col)
         end_col_letter = get_column_letter(end_col)
+
+        # 🔍 检查并取消已存在的合并单元格
+        merged_ranges_to_unmerge = []
+        for merged_cell in ws.merged_cells.ranges:
+            if merged_cell.min_row <= row <= merged_cell.max_row:
+                # 如果这个合并单元格与我们的目标范围有重叠
+                if not (merged_cell.min_col > end_col or merged_cell.max_col < start_col):
+                    merged_ranges_to_unmerge.append(str(merged_cell))
+
+        # 取消合并
+        for merged_range in merged_ranges_to_unmerge:
+            ws.unmerge_cells(merged_range)
+
+        # 合并单元格
         ws.merge_cells(f"{start_col_letter}{row}:{end_col_letter}{row}")
 
         # 设置内容和样式
@@ -1918,9 +1935,30 @@ class DataFiller:
                 last_data_row = row
                 break
 
-        # ✅ 在最后一行数据后插入1行（紧挨着，不间隔）
+        # ✅ 在最后一行数据后插入1行（仅移动目标列的数据，不影响其他列）
         footer_row = last_data_row + 1
-        ws.insert_rows(footer_row, 1)
+
+        # 将目标列从 footer_row 开始的所有数据向下移动1行
+        # ⚠️ 不使用 ws.insert_rows()，因为那会影响所有列（包括H-P列）
+        if footer_row <= ws.max_row:
+            from openpyxl.cell import MergedCell
+            for row in range(ws.max_row, footer_row - 1, -1):
+                for col in range(start_col, end_col + 1):
+                    source_cell = ws.cell(row=row, column=col)
+                    target_cell = ws.cell(row=row + 1, column=col)
+
+                    # 复制值（跳过合并单元格）
+                    if not isinstance(source_cell, MergedCell):
+                        target_cell.value = source_cell.value
+
+                    # 复制格式
+                    if source_cell.has_style:
+                        if source_cell.font:
+                            target_cell.font = source_cell.font.copy()
+                        if source_cell.border:
+                            target_cell.border = source_cell.border.copy()
+                        if source_cell.alignment:
+                            target_cell.alignment = source_cell.alignment.copy()
 
         # 合并单元格
         start_col_letter = get_column_letter(start_col)
@@ -1936,6 +1974,87 @@ class DataFiller:
         cell.alignment = Alignment(horizontal='left', vertical='center')
 
         print(f"   ✅ 已添加表尾：{footer_text}")
+
+    def _add_footer_to_worksheet_for_request(self, ws, footer_config, sheet_name,
+                                              start_col, end_col):
+        """
+        为需求单在工作表末尾添加表尾
+        ⚠️ 与 _add_footer_to_worksheet 的区别：
+           - 不查找H-P列的最后一行数据（因为需求单不复制数据）
+           - 直接覆盖工作表最后一行，不插入新行
+           - 与入库单不同：入库单会插入行，需求单直接覆盖
+
+        Args:
+            ws: 工作表对象
+            footer_config: 表尾配置 [prefix1, suffix]
+            sheet_name: 工作表名称（日期）
+            start_col: 起始列号（1-based）
+            end_col: 结束列号（1-based）
+        """
+        from openpyxl.utils import get_column_letter
+        from openpyxl.styles import Font, Alignment
+
+        # 🔍 调试日志
+        print(f"🔍 _add_footer_to_worksheet_for_request 被调用")
+        print(f"   footer_config: {footer_config}")
+        print(f"   sheet_name: {sheet_name}")
+
+        if not footer_config or len(footer_config) < 2:
+            print(f"❌ 表尾配置无效：footer_config={footer_config}")
+            return
+
+        prefix1 = footer_config[0].strip()
+        suffix = footer_config[1].strip()
+
+        # 如果所有内容都为空，不添加表尾
+        if not prefix1 and not suffix:
+            print(f"❌ 表尾内容为空，不添加")
+            return
+
+        # 构建表尾内容：prefix1 + 日期 + suffix
+        date_str = sheet_name if sheet_name.isdigit() else sheet_name
+        footer_text = f"{prefix1}{date_str}{suffix}"
+
+        # ✅ 关键修改：查找H-P列的最后一行数据，而不是整个工作表的最后一行
+        # 因为需求单在入库单完成的基础上生成，需要找到H-P列数据的实际最后一行
+        last_data_row = 1
+        for row in range(ws.max_row, 0, -1):
+            has_data = False
+            for col in range(start_col, end_col + 1):  # 只检查H-P列
+                cell = ws.cell(row=row, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    has_data = True
+                    break
+            if has_data:
+                last_data_row = row
+                break
+
+        footer_row = last_data_row  # 覆盖H-P列的最后一行数据
+
+        # 检查并取消已存在的合并单元格
+        merged_ranges_to_unmerge = []
+        for merged_cell in ws.merged_cells.ranges:
+            if merged_cell.min_row <= footer_row <= merged_cell.max_row:
+                # 如果这个合并单元格与我们的目标范围有重叠
+                if not (merged_cell.min_col > end_col or merged_cell.max_col < start_col):
+                    merged_ranges_to_unmerge.append(str(merged_cell))
+
+        # 取消合并
+        for merged_range in merged_ranges_to_unmerge:
+            ws.unmerge_cells(merged_range)
+
+        # 合并单元格
+        start_col_letter = get_column_letter(start_col)
+        end_col_letter = get_column_letter(end_col)
+        ws.merge_cells(f"{start_col_letter}{footer_row}:{end_col_letter}{footer_row}")
+
+        # 设置内容和样式
+        cell = ws.cell(row=footer_row, column=start_col)
+        cell.value = footer_text
+        cell.font = Font(name='宋体', size=11)
+        cell.alignment = Alignment(horizontal='left', vertical='center')
+
+        print(f"   ✅ 已添加表尾（需求单）：{footer_text}（覆盖第{footer_row}行）")
 
     def compile_handover_from_suppliers(self, suppliers_config, header_footer_config=None):
         """
@@ -1966,7 +2085,9 @@ class DataFiller:
 
         # 处理所有工作表
         total_suppliers_count = 0
-        for sheet_name in self.wb.sheetnames:
+        # ✅ 只处理1-31的数字工作表
+        numeric_sheets = self.get_all_numeric_sheets()
+        for sheet_name in numeric_sheets:
             ws = self.wb[sheet_name]
 
             print(f"\n📋 处理工作表：{sheet_name}")
@@ -2098,7 +2219,9 @@ class DataFiller:
 
         # 处理所有工作表
         total_suppliers_count = 0
-        for sheet_name in self.wb.sheetnames:
+        # ✅ 只处理1-31的数字工作表
+        numeric_sheets = self.get_all_numeric_sheets()
+        for sheet_name in numeric_sheets:
             ws = self.wb[sheet_name]
 
             print(f"\n📋 处理工作表：{sheet_name}")
@@ -2264,6 +2387,72 @@ class DataFiller:
 
         print("\n" + "=" * 70)
         print(f"✅ 删除完成！所有工作表共删除了 {total_deleted} 列")
+        print("=" * 70)
+
+        return True
+
+    def add_request_header_footer(self, header_footer_config=None):
+        """
+        为需求单添加表首和表尾（H-P列）
+        ⚠️ 只添加表首表尾并合并单元格，不复制数据
+
+        Args:
+            header_footer_config: 表首表尾配置（可选）
+                {
+                    'header': ['header_text'],  # 1个输入框
+                    'footer': ['prefix1', 'suffix']  # 2个输入框
+                }
+
+        Returns:
+            成功返回 True
+        """
+        # 目标列：H-P（8-16）
+        target_start_col = 8   # H列
+        target_end_col = 16    # P列
+
+        print("\n" + "=" * 70)
+        print("🚀 开始为需求单添加表首表尾（H-P列）")
+        print("=" * 70)
+
+        if not self.wb.sheetnames:
+            print("❌ 没有工作表")
+            return False
+
+        # 处理所有工作表
+        # ✅ 只处理1-31的数字工作表
+        numeric_sheets = self.get_all_numeric_sheets()
+        for sheet_name in numeric_sheets:
+            ws = self.wb[sheet_name]
+            print(f"\n📋 处理工作表：{sheet_name}")
+
+            # ✅ 第一步：添加表首（如果有配置）
+            if header_footer_config and 'header' in header_footer_config:
+                header_config = header_footer_config['header']
+                # ✅ 需求单使用简单表首（1个输入框，直接文本）
+                if len(header_config) == 1:
+                    self._add_simple_header_to_worksheet(
+                        ws,
+                        header_config[0],  # 直接使用文本
+                        target_start_col,
+                        target_end_col,
+                        row=1
+                    )
+
+            # ✅ 第二步：添加表尾（如果有配置）
+            if header_footer_config and 'footer' in header_footer_config:
+                footer_config_list = header_footer_config['footer']
+                # ✅ 表尾：前缀 + 日期 + 后缀
+                if len(footer_config_list) == 2:
+                    self._add_footer_to_worksheet_for_request(
+                        ws,
+                        footer_config_list,  # [前缀, 后缀]
+                        sheet_name,          # 日期（工作表名称）
+                        target_start_col,
+                        target_end_col
+                    )
+
+        print("\n" + "=" * 70)
+        print("✅ 需求单表首表尾添加完成！")
         print("=" * 70)
 
         return True

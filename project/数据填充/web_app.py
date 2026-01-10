@@ -513,6 +513,50 @@ def paste_stockin():
         return jsonify({'success': False, 'error': f'操作失败: {str(e)}'}), 500
 
 
+@app.route('/api/paste-request', methods=['POST'])
+def paste_request():
+    """生成需求单数据"""
+    try:
+        session_id = request.headers.get('X-Session-ID')
+        if not session_id or session_id not in sessions:
+            return jsonify({'success': False, 'error': '无效的会话'}), 400
+
+        session = get_session(session_id)
+        filler = session.get('filler')
+        if not filler:
+            return jsonify({'success': False, 'error': '请先上传报表'}), 400
+
+        # ✅ 获取表首表尾配置
+        data = request.json or {}
+        header_footer_config = data.get('headerFooterConfig', {})
+
+        # 🔍 调试日志：打印表首表尾配置
+        print(f"🔍 需求单表首表尾配置: {header_footer_config}")
+        if 'header' in header_footer_config:
+            print(f"   表首: {header_footer_config['header']}")
+        if 'footer' in header_footer_config:
+            print(f"   表尾: {header_footer_config['footer']}")
+
+        # 生成需求单表首表尾（传递表首表尾配置）
+        filler.add_request_header_footer(header_footer_config=header_footer_config)
+
+        # 保存结果
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        output_filename = f"金融岛报表_需求单_{timestamp}.xlsx"
+        output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+        filler.save_report(output_path)
+
+        return jsonify({
+            'success': True,
+            'message': '需求单表首表尾添加完成！',
+            'output_file': output_filename
+        })
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': f'操作失败: {str(e)}'}), 500
+
+
 @app.route('/api/delete-columns', methods=['POST'])
 def delete_columns():
     """删除指定列"""
@@ -875,4 +919,4 @@ if __name__ == '__main__':
     print("   数据填充工具 - Web应用 (高级版)")
     print("   访问地址: http://localhost:8888")
     print("=" * 70)
-    app.run(host='0.0.0.0', port=8888, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=8888, debug=False, use_reloader=False)
