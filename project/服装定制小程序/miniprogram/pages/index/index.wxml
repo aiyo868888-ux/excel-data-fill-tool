@@ -1,0 +1,100 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search-bar" bindtap="onSearch">
+    <image class="search-icon" src="/images/icon-search.png" mode="aspectFit" />
+    <text class="search-placeholder">搜索你想要的商品</text>
+  </view>
+
+  <!-- 轮播图 -->
+  <view class="banner-container">
+    <swiper class="banner" indicator-dots autoplay circular interval="3000" duration="500">
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image class="banner-image" src="{{item.image}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 分类网格 -->
+  <view class="category-section">
+    <view class="section-title">商品分类</view>
+    <view class="category-grid">
+      <view
+        class="category-item"
+        wx:for="{{categories}}"
+        wx:key="_id"
+        bindtap="onCategoryTap"
+        data-id="{{item._id}}"
+        data-name="{{item.name}}"
+      >
+        <image class="category-icon" src="{{item.icon}}" mode="aspectFill" />
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门商品 -->
+  <view class="products-section">
+    <view class="section-title">
+      <text>热门推荐</text>
+      <text class="more" bindtap="onMoreProducts">更多 ></text>
+    </view>
+    <scroll-view class="products-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="product-scroll-item" wx:for="{{hotProducts}}" wx:key="_id" bindtap="onProductTap" data-id="{{item._id}}">
+        <image class="product-thumb" src="{{item.images[0]}}" mode="aspectFill" />
+        <text class="product-name-small">{{item.name}}</text>
+        <text class="product-price">¥{{item.price}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 新品上市 -->
+  <view class="new-products-section">
+    <view class="section-title">
+      <text>新品上市</text>
+      <text class="more" bindtap="onMoreProducts">更多 ></text>
+    </view>
+    <view class="new-products-grid">
+      <view
+        class="new-product-card"
+        wx:for="{{newProducts}}"
+        wx:key="_id"
+        bindtap="onProductTap"
+        data-id="{{item._id}}"
+      >
+        <image class="new-product-image" src="{{item.images[0]}}" mode="aspectFill" />
+        <view class="new-product-info">
+          <text class="new-product-name">{{item.name}}</text>
+          <view class="new-product-footer">
+            <text class="new-product-price">¥{{item.price}}</text>
+            <text class="new-product-sales">已售{{item.sales}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 服务优势 -->
+  <view class="services-section">
+    <view class="service-item">
+      <image class="service-icon" src="/images/icon-quality.png" mode="aspectFit" />
+      <text class="service-title">品质保证</text>
+      <text class="service-desc">100%正品保证</text>
+    </view>
+    <view class="service-item">
+      <image class="service-icon" src="/images/icon-shipping.png" mode="aspectFit" />
+      <text class="service-title">极速发货</text>
+      <text class="service-desc">24小时内发货</text>
+    </view>
+    <view class="service-item">
+      <image class="service-icon" src="/images/icon-return.png" mode="aspectFit" />
+      <text class="service-title">七天退换</text>
+      <text class="service-desc">无理由退换货</text>
+    </view>
+    <view class="service-item">
+      <image class="service-icon" src="/images/icon-service.png" mode="aspectFit" />
+      <text class="service-title">售后无忧</text>
+      <text class="service-desc">贴心售后服务</text>
+    </view>
+  </view>
+</view>

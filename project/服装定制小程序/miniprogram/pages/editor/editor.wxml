@@ -1,0 +1,45 @@
+<!--pages/editor/editor.wxml - 自助设计编辑页-->
+<view class="container">
+  <!-- 商品图片画布 -->
+  <view class="canvas-area">
+    <image class="canvas-background" src="{{productImage}}" mode="aspectFit" />
+
+    <!-- 设计元素覆盖层 -->
+    <view class="elements-layer">
+      <view
+        class="design-element {{selectedId === item.id ? 'selected' : ''}}"
+        wx:for="{{elements}}"
+        wx:key="id"
+        style="left: {{item.x}}rpx; top: {{item.y}}rpx; width: {{item.width}}rpx; height: {{item.height}}rpx; transform: rotate({{item.rotation}}deg);"
+        bindtap="onSelectElement"
+        data-id="{{item.id}}"
+      >
+        <image wx:if="{{item.type === 'image'}}" class="element-image" src="{{item.url}}" mode="aspectFill" />
+        <text wx:if="{{item.type === 'text'}}" class="element-text" style="font-size: {{item.fontSize}}rpx; color: {{item.color}};">{{item.content}}</text>
+      </view>
+    </view>
+
+    <!-- 选中元素的操作按钮 -->
+    <view class="element-actions" wx:if="{{selectedId}}">
+      <view class="action-btn-small" bindtap="onDeleteElement">
+        <text>删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部工具栏 -->
+  <view class="bottom-toolbar">
+    <view class="toolbar-item" bindtap="onUploadImage">
+      <text class="toolbar-icon">📤</text>
+      <text class="toolbar-text">上传图片</text>
+    </view>
+    <view class="toolbar-item" bindtap="onAddText">
+      <text class="toolbar-icon">T</text>
+      <text class="toolbar-text">添加文字</text>
+    </view>
+    <view class="toolbar-item primary" bindtap="onComplete">
+      <text class="toolbar-icon">✓</text>
+      <text class="toolbar-text">完成</text>
+    </view>
+  </view>
+</view>

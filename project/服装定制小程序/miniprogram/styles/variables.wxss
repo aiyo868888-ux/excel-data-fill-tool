@@ -1,0 +1,61 @@
+/**
+ * 全局样式变量
+ */
+page {
+  /* 主题色 */
+  --primary-color: #E60012;
+  --secondary-color: #0070C9;
+  --accent-color: #FFA500;
+
+  /* 功能色 */
+  --success-color: #07C160;
+  --warning-color: #FFB800;
+  --error-color: #E60012;
+  --info-color: #0070C9;
+
+  /* 中性色 */
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --text-placeholder: #999999;
+
+  /* 背景色 */
+  --bg-white: #FFFFFF;
+  --bg-gray: #F5F5F5;
+  --bg-dark: #000000;
+
+  /* 边框色 */
+  --border-color: #EEEEEE;
+  --border-color-light: #F0F0F0;
+
+  /* 字体大小 */
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+
+  /* 字体粗细 */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* 间距 */
+  --spacing-xs: 4rpx;
+  --spacing-sm: 8rpx;
+  --spacing-md: 12rpx;
+  --spacing-lg: 16rpx;
+  --spacing-xl: 20rpx;
+  --spacing-xxl: 24rpx;
+
+  /* 圆角 */
+  --radius-sm: 4rpx;
+  --radius-md: 8rpx;
+  --radius-lg: 12rpx;
+  --radius-xl: 16rpx;
+
+  /* 阴影 */
+  --shadow-sm: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8rpx 16rpx rgba(0, 0, 0, 0.1);
+}

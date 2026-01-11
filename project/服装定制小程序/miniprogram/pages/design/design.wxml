@@ -1,0 +1,61 @@
+<!--pages/design/design.wxml - 商品详情页-->
+<view class="container">
+  <!-- 商品图片轮播 -->
+  <view class="product-image-section">
+    <swiper class="product-swiper" indicator-dots autoplay circular interval="3000" duration="500">
+      <swiper-item wx:for="{{productImages}}" wx:key="index">
+        <image class="product-image" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 商品信息卡片 -->
+  <view class="product-info-card">
+    <!-- 价格和销量 -->
+    <view class="price-row">
+      <text class="price">¥{{productPrice}}</text>
+      <text class="sales">已售{{productSales}}件</text>
+    </view>
+
+    <!-- 商品名称 -->
+    <view class="product-name">{{productName}}</view>
+
+    <!-- 商品规格 -->
+    <view class="specs-row">
+      <view class="spec-item">
+        <text class="spec-label">品类</text>
+        <text class="spec-value">{{productType}}</text>
+      </view>
+      <view class="spec-item">
+        <text class="spec-label">版型</text>
+        <text class="spec-value">{{productStyle}}</text>
+      </view>
+      <view class="spec-item">
+        <text class="spec-label">材质</text>
+        <text class="spec-value">{{productMaterial}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品详情图片展示 -->
+  <view class="detail-images-card">
+    <view class="detail-title">商品详情</view>
+    <view class="detail-images">
+      <image
+        wx:for="{{detailImages}}"
+        wx:key="index"
+        class="detail-image"
+        src="{{item}}"
+        mode="widthFix"
+        lazy-load
+      />
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn primary" bindtap="onStartDesign">
+      <text class="btn-text">自助设计</text>
+    </view>
+  </view>
+</view>
