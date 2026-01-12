@@ -28,6 +28,34 @@ Page({
     this.loadProducts();
   },
 
+  onShow() {
+    console.log('分类页 onShow');
+
+    // 每次显示时检查是否有新的分类选择
+    const app = getApp();
+    if (app.globalData.selectedCategoryId) {
+      const categoryId = app.globalData.selectedCategoryId;
+      console.log('onShow: 检测到新的分类选择:', categoryId);
+
+      // 查找分类信息
+      const category = mockData.categories.find(c => c._id === categoryId);
+      if (category) {
+        console.log('找到分类:', category);
+
+        // 更新选中的分类并加载商品
+        this.setData({
+          selectedCategoryId: categoryId,
+          categoryName: category.name
+        });
+
+        this.loadProducts();
+
+        // 清除 globalData
+        app.globalData.selectedCategoryId = null;
+      }
+    }
+  },
+
   /**
    * 加载商品列表（本地模式）
    */

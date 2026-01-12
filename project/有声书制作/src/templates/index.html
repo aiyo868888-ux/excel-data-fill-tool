@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonicLab - 环境音效生成器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-primary: #0d0d0d;
+            --bg-secondary: #1a1a1a;
+            --bg-elevated: #242424;
+            --border-color: #333333;
+            --accent-green: #00ff9d;
+            --accent-green-dim: rgba(0, 255, 157, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* 顶部导航栏 */
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #00cc7d 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .status-badge {
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* 主容器 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero 区 */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        /* 卡片 */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* 音效类型网格 */
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .sound-card {
+            background: var(--bg-elevated);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sound-card:hover {
+            border-color: var(--accent-green);
+            background: var(--bg-secondary);
+        }
+
+        .sound-card.active {
+            border-color: var(--accent-green);
+            background: var(--accent-green-dim);
+        }
+
+        .sound-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .sound-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .sound-desc {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* 参数控制 */
+        .param-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 80px;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .param-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .param-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--bg-elevated);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .param-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .param-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .param-value {
+            text-align: right;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        /* 按钮组 */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-green);
+            color: #000;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #00e68e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            flex: 1;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            border-color: var(--accent-green);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* 进度条 */
+        .progress-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-green);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 成功状态 */
+        .success-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--accent-green-dim);
+            border: 1px solid var(--accent-green);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .success-container.active {
+            display: block;
+        }
+
+        .success-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* 工作流程步骤 */
+        .workflow {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #000;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: 2;
+            }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🎙️</div>
+            <div>
+                <div>SonicLab</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">环境音效生成器</div>
+            </div>
+        </div>
+        <div class="status-badge mono">● ONLINE</div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Hero 区 -->
+        <div class="hero">
+            <h1>音效生成工作室</h1>
+            <p>选择音效类型 → 调整参数 → 生成高质量环境音效</p>
+        </div>
+
+        <!-- 工作流程指示器 -->
+        <div class="workflow mono">
+            <div class="step active" id="step1">1. 选择音效</div>
+            <div class="step" id="step2">2. 调整参数</div>
+            <div class="step" id="step3">3. 生成下载</div>
+        </div>
+
+        <div class="main-content" style="display: grid; grid-template-columns: 1fr 380px; gap: 2rem;">
+            <!-- 主操作区 -->
+            <div class="main-panel">
+                <!-- 音效选择 -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>🎭</span>
+                            <span>选择音效类型</span>
+                        </div>
+                        <span style="font-size: 0.875rem; color: var(--text-muted);">点击选择</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="sound-grid" id="soundTypeGrid">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 参数调整 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>⚙️</span>
+                            <span>参数调整</span>
+                        </div>
+                        <span id="currentSoundName" style="font-size: 0.875rem; color: var(--text-muted);">未选择</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="paramsContainer">
+                            <p style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                请先选择一个音效类型
+                            </p>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="generateBtn" onclick="generateSound()" disabled>
+                                <span>🎬</span>
+                                <span>生成音效</span>
+                            </button>
+                            <button class="btn btn-secondary" id="previewBtn" onclick="previewSound()" disabled>
+                                <span>▶️</span>
+                                <span>试听</span>
+                            </button>
+                        </div>
+
+                        <!-- 进度条 -->
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-header">
+                                <span id="progressMessage" style="color: var(--text-secondary);">正在生成...</span>
+                                <span id="progressPercent" class="mono" style="color: var(--accent-green);">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- 成功状态 -->
+                        <div class="success-container" id="downloadContainer">
+                            <div class="success-header">
+                                <div class="success-icon">✓</div>
+                                <div>
+                                    <div style="font-weight: 600;">音效生成成功！</div>
+                                    <div id="downloadFileName" style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;"></div>
+                                </div>
+                            </div>
+                            <div class="success-actions">
+                                <button class="btn btn-primary" onclick="downloadCurrentFile()">
+                                    <span>📥</span>
+                                    <span>下载文件</span>
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetGenerator()">
+                                    <span>🔄</span>
+                                    <span>再生成一个</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 生成的文件 -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>📁</span>
+                            <span>已生成的文件</span>
+                        </div>
+                        <span id="fileCount" class="mono" style="font-size: 0.875rem; color: var(--text-muted);">0</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="file-list" id="fileList">
+                            <p style="text-align: center; color: var(--text-muted); font-size: 0.875rem;">暂无文件</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 使用说明 -->
+                <div class="card" style="background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--accent-green-dim) 100%);">
+                    <div class="card-header" style="border-color: var(--border-color);">
+                        <div class="card-title">
+                            <span>💡</span>
+                            <span>使用提示</span>
+                        </div>
+                    </div>
+                    <div class="card-body" style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">
+                        <p style="margin-bottom: 0.75rem;">• 所有音效均由算法实时生成，无需下载素材</p>
+                        <p style="margin-bottom: 0.75rem;">• 支持 WAV 格式输出，可直接用于音频编辑</p>
+                        <p>• 生成的音效可自由用于商业项目，无版权限制</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

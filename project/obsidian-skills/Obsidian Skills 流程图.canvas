@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "id": "center-node",
+      "type": "text",
+      "x": 600,
+      "y": 50,
+      "width": 400,
+      "height": 120,
+      "text": "# Obsidian Skills\n\n**Claude Code 技能包**\n\n用于创建和编辑 Obsidian 兼容的文件格式",
+      "color": "5"
+    },
+    {
+      "id": "markdown-skill",
+      "type": "text",
+      "x": 0,
+      "y": 300,
+      "width": 450,
+      "height": 500,
+      "text": "# 📝 obsidian-markdown\n\n**Markdown 增强技能**\n\n## 核心功能\n\n### 语法扩展\n- **Wiki 链接**：`[[笔记名]]`\n- **嵌入**：`![[图片.png]]`\n- **标注框**：`> [!tip]`\n- **高亮**：`==文本==`\n- **属性**：YAML frontmatter\n\n### 特殊元素\n- 任务列表：`- [ ]` / `- [x]`\n- 数学公式：`$E=mc^2$`\n- Mermaid 图表\n- 脚注、标签、别名\n\n## 文件格式\n- `.md` 文件\n- Obsidian Flavored Markdown\n\n## 应用场景\n✓ 笔记记录\n✓ 文档编写\n✓ 知识库管理\n✓ 日记和日志",
+      "color": "4"
+    },
+    {
+      "id": "bases-skill",
+      "type": "text",
+      "x": 575,
+      "y": 300,
+      "width": 450,
+      "height": 500,
+      "text": "# 🗃️ obsidian-bases\n\n**数据库视图技能**\n\n## 核心功能\n\n### 视图类型\n- **表格视图**：数据列表\n- **卡片视图**：画廊展示\n- **列表视图**：简洁清单\n- **地图视图**：地理位置\n\n### 高级特性\n- **过滤器**：按标签/属性筛选\n- **公式**：计算字段\n- **分组**：按属性归类\n- **汇总**：统计计算\n\n## 文件格式\n- `.base` 文件\n- YAML 配置\n\n## 应用场景\n✓ 任务追踪\n✓ 项目管理\n✓ 阅读清单\n✓ 资产管理\n✓ 联系人列表",
+      "color": "3"
+    },
+    {
+      "id": "canvas-skill",
+      "type": "text",
+      "x": 1150,
+      "y": 300,
+      "width": 450,
+      "height": 500,
+      "text": "# 🎨 json-canvas\n\n**可视化画布技能**\n\n## 核心功能\n\n### 节点类型\n- **文本节点**：Markdown 内容\n- **文件节点**：引用文件/图片\n- **链接节点**：外部 URL\n- **分组节点**：容器框\n\n### 编辑功能\n- 无限画布\n- 连接线（箭头）\n- 颜色标记\n- 拖拽布局\n\n## 文件格式\n- `.canvas` 文件\n- JSON 格式\n\n## 应用场景\n✓ 思维导图\n✓ 流程图\n✓ 项目看板\n✓ 知识网络\n✓ 概念图",
+      "color": "6"
+    },
+    {
+      "id": "use-case-1",
+      "type": "text",
+      "x": 0,
+      "y": 850,
+      "width": 280,
+      "height": 150,
+      "text": "## 📚 笔记系统\n\n使用 **markdown** 技能\n\n创建日常笔记、\n学习资料、\n项目文档",
+      "color": "1"
+    },
+    {
+      "id": "use-case-2",
+      "type": "text",
+      "x": 575,
+      "y": 850,
+      "width": 450,
+      "height": 180,
+      "text": "## 🎯 项目管理\n\n组合使用三个技能\n\n1. **markdown** → 项目文档\n2. **bases** → 任务追踪表\n3. **canvas** → 流程图/看板",
+      "color": "2"
+    },
+    {
+      "id": "use-case-3",
+      "type": "text",
+      "x": 1150,
+      "y": 850,
+      "width": 280,
+      "height": 150,
+      "text": "## 🧠 知识图谱\n\n使用 **canvas** 技能\n\n连接概念、\n建立关系、\n可视化思维",
+      "color": "1"
+    },
+    {
+      "id": "example-1",
+      "type": "text",
+      "x": 50,
+      "y": 1070,
+      "width": 350,
+      "height": 120,
+      "text": "### 示例：日记\n\n```markdown\n---\ndags: 2024-01-15\n---\n\n## 今天完成\n- [x] 学习 Obsidian Skills\n```"
+    },
+    {
+      "id": "example-2",
+      "type": "text",
+      "x": 600,
+      "y": 1070,
+      "width": 400,
+      "height": 150,
+      "text": "### 示例：任务追踪器\n\n```yaml\nfilters:\n  - file.hasTag(\"task\")\nformulas:\n  is_overdue: 'date(due) < today()'\nviews:\n  - type: table\n```"
+    },
+    {
+      "id": "example-3",
+      "type": "text",
+      "x": 1100,
+      "y": 1070,
+      "width": 350,
+      "height": 120,
+      "text": "### 示例：思维导图\n\n创建中心主题\n  ↓\n添加分支节点\n  ↓\n用箭头连接"
+    },
+    {
+      "id": "install-note",
+      "type": "text",
+      "x": 600,
+      "y": 1250,
+      "width": 400,
+      "height": 100,
+      "text": "## 💡 如何使用\n\n直接对 Claude 说：\n- \"创建一个 Obsidian 笔记\"\n- \"做一个任务追踪表\"\n- \"画一个流程图\"",
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "fromNode": "center-node",
+      "fromSide": "bottom",
+      "toNode": "markdown-skill",
+      "toSide": "top",
+      "label": "包含",
+      "color": "4"
+    },
+    {
+      "id": "edge-2",
+      "fromNode": "center-node",
+      "fromSide": "bottom",
+      "toNode": "bases-skill",
+      "toSide": "top",
+      "label": "包含",
+      "color": "3"
+    },
+    {
+      "id": "edge-3",
+      "fromNode": "center-node",
+      "fromSide": "bottom",
+      "toNode": "canvas-skill",
+      "toSide": "top",
+      "label": "包含",
+      "color": "6"
+    },
+    {
+      "id": "edge-4",
+      "fromNode": "markdown-skill",
+      "fromSide": "bottom",
+      "toNode": "use-case-1",
+      "toSide": "top",
+      "label": "适用于"
+    },
+    {
+      "id": "edge-5",
+      "fromNode": "bases-skill",
+      "fromSide": "bottom",
+      "toNode": "use-case-2",
+      "toSide": "top",
+      "label": "适用于"
+    },
+    {
+      "id": "edge-6",
+      "fromNode": "canvas-skill",
+      "fromSide": "bottom",
+      "toNode": "use-case-3",
+      "toSide": "top",
+      "label": "适用于"
+    },
+    {
+      "id": "edge-7",
+      "fromNode": "use-case-1",
+      "fromSide": "bottom",
+      "toNode": "example-1",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-8",
+      "fromNode": "use-case-2",
+      "fromSide": "bottom",
+      "toNode": "example-2",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-9",
+      "fromNode": "use-case-3",
+      "fromSide": "bottom",
+      "toNode": "example-3",
+      "toSide": "top"
+    },
+    {
+      "id": "edge-10",
+      "fromNode": "use-case-2",
+      "fromSide": "bottom",
+      "toNode": "install-note",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "color": "5"
+    }
+  ]
+}

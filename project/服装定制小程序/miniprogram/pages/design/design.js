@@ -113,5 +113,88 @@ Page({
     wx.navigateTo({
       url: `/pages/editor/editor?productId=${this.data.productId}`
     });
+  },
+
+  /**
+   * 保存图片到相册
+   */
+  onSaveImage() {
+    wx.showLoading({ title: '保存中...', mask: true });
+
+    // TODO: 这里需要使用 canvas 绘制设计图并保存
+    // 暂时先提示功能开发中
+    setTimeout(() => {
+      wx.hideLoading();
+      wx.showToast({
+        title: '功能开发中',
+        icon: 'none',
+        duration: 2000
+      });
+    }, 1000);
+  },
+
+  /**
+   * 收藏商品
+   */
+  onCollect() {
+    // 检查是否已收藏
+    const collections = wx.getStorageSync('my_collections') || [];
+    const isCollected = collections.some(item => item.productId === this.data.productId);
+
+    if (isCollected) {
+      wx.showModal({
+        title: '取消收藏',
+        content: '确定要取消收藏吗？',
+        success: (res) => {
+          if (res.confirm) {
+            const newCollections = collections.filter(item => item.productId !== this.data.productId);
+            wx.setStorageSync('my_collections', newCollections);
+            wx.showToast({ title: '已取消收藏', icon: 'success' });
+          }
+        }
+      });
+    } else {
+      // 添加到收藏
+      const collectionData = {
+        designId: `design_${Date.now()}`,
+        productId: this.data.productId,
+        productName: this.data.productName,
+        productImage: this.data.productImages[0] || '',
+        collectTime: new Date().toISOString()
+      };
+
+      collections.unshift(collectionData);
+      wx.setStorageSync('my_collections', collections);
+
+      wx.showToast({ title: '收藏成功', icon: 'success' });
+    }
+  },
+
+  /**
+   * 海报分享
+   */
+  onSharePoster() {
+    wx.showLoading({ title: '生成中...', mask: true });
+
+    // TODO: 这里需要生成海报图片
+    // 暂时先提示功能开发中
+    setTimeout(() => {
+      wx.hideLoading();
+
+      wx.showModal({
+        title: '分享海报',
+        content: '是否保存海报到相册？',
+        confirmText: '保存',
+        success: (res) => {
+          if (res.confirm) {
+            wx.showToast({
+              title: '海报生成功能开发中',
+              icon: 'none',
+              duration: 2000
+            });
+          }
+        }
+      });
+    }, 1000);
   }
 });

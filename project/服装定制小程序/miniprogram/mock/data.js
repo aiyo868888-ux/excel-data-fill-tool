@@ -193,6 +193,45 @@ module.exports = {
       sales: 423,
       status: 1,
       description: '保暖透气，亲肤舒适'
+    },
+    {
+      _id: 'product_009',
+      name: '加厚保暖棉服',
+      categoryId: 'category_001',
+      images: ['/images/products/product-9.jpg'],
+      type: '外套',
+      material: '棉',
+      style: '宽松款',
+      price: 399,
+      sales: 56,
+      status: 1,
+      description: '加厚保暖，适合秋冬'
+    },
+    {
+      _id: 'product_010',
+      name: '时尚羽绒马甲',
+      categoryId: 'category_001',
+      images: ['/images/products/product-10.jpg'],
+      type: '马甲',
+      material: '羽绒',
+      style: '轻薄款',
+      price: 259,
+      sales: 89,
+      status: 1,
+      description: '轻便保暖，时尚百搭'
+    },
+    {
+      _id: 'product_011',
+      name: '防风保暖冲锋衣',
+      categoryId: 'category_001',
+      images: ['/images/products/product-11.jpg'],
+      type: '外套',
+      material: '聚酯纤维',
+      style: '运动款',
+      price: 459,
+      sales: 134,
+      status: 1,
+      description: '防风防水，户外必备'
     }
   ],
 

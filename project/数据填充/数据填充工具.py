@@ -14,8 +14,11 @@ import argparse
 import tempfile
 from typing import Optional, Dict, List, Tuple
 
-# 设置输出编码
-sys.stdout.reconfigure(encoding="utf-8")
+# 设置输出编码（Windows）
+if sys.platform == 'win32':
+    import io
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 # ============ 样式管理器 ============

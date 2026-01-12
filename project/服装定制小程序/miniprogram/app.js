@@ -10,6 +10,7 @@ App({
   globalData: {
     userInfo: null,
     version: '1.0.0-local',
-    selectedProductId: null  // 用于传递选中的商品ID
+    selectedProductId: null,      // 用于传递选中的商品ID
+    selectedCategoryId: null      // 用于传递选中的分类ID
   }
 });

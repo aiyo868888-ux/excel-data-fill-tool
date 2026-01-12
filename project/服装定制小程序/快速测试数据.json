@@ -1,0 +1,80 @@
+{
+  "categories": [
+    {
+      "_id": "category_001",
+      "name": "2025秋冬款",
+      "parentId": "",
+      "icon": "/images/category-1.png",
+      "sortOrder": 1
+    },
+    {
+      "_id": "category_002",
+      "name": "冲锋衣系列",
+      "parentId": "",
+      "icon": "/images/category-2.png",
+      "sortOrder": 2
+    },
+    {
+      "_id": "category_003",
+      "name": "翻领短袖",
+      "parentId": "category_002",
+      "icon": "/images/category-3.png",
+      "sortOrder": 1
+    },
+    {
+      "_id": "category_004",
+      "name": "圆领T恤",
+      "parentId": "",
+      "icon": "/images/category-4.png",
+      "sortOrder": 3
+    },
+    {
+      "_id": "category_005",
+      "name": "马甲",
+      "parentId": "",
+      "icon": "/images/category-5.png",
+      "sortOrder": 4
+    }
+  ],
+  "products": [
+    {
+      "_id": "product_001",
+      "name": "1618三合一冲锋衣",
+      "categoryId": "category_002",
+      "images": ["/images/product-1.jpg"],
+      "type": "三合一",
+      "material": "100%聚酯纤维",
+      "style": "通款",
+      "price": 299,
+      "sales": 100,
+      "status": 1,
+      "description": "专业户外三合一冲锋衣，防风防水"
+    },
+    {
+      "_id": "product_002",
+      "name": "纯棉圆领T恤",
+      "categoryId": "category_004",
+      "images": ["/images/product-2.jpg"],
+      "type": "圆领",
+      "material": "100%棉",
+      "style": "通款",
+      "price": 89,
+      "sales": 230,
+      "status": 1,
+      "description": "纯棉材质，舒适透气"
+    },
+    {
+      "_id": "product_003",
+      "name": "反光条骑行马甲",
+      "categoryId": "category_005",
+      "images": ["/images/product-3.jpg"],
+      "type": "套头",
+      "material": "100%聚酯纤维",
+      "style": "运动款",
+      "price": 159,
+      "sales": 178,
+      "status": 1,
+      "description": "夜间骑行安全，反光条设计"
+    }
+  ]
+}

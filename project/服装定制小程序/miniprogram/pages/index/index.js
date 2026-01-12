@@ -61,9 +61,21 @@ Page({
     const { id, name } = e.currentTarget.dataset;
     console.log('点击分类:', id, name);
 
-    // 跳转到分类页
-    wx.navigateTo({
-      url: `/pages/category/category?id=${id}&name=${name}`
+    // 保存选中的分类ID到全局数据
+    const app = getApp();
+    app.globalData.selectedCategoryId = id;
+    console.log('已保存分类ID到 globalData:', app.globalData.selectedCategoryId);
+
+    // 跳转到分类页（使用 switchTab 因为分类页在 tabBar 中）
+    wx.switchTab({
+      url: '/pages/category/category',
+      success: () => {
+        console.log('跳转到分类页成功');
+      },
+      fail: (err) => {
+        console.error('跳转失败:', err);
+        wx.showToast({ title: '跳转失败', icon: 'none' });
+      }
     });
   },
 

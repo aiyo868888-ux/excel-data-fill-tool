@@ -15,7 +15,13 @@ import tempfile
 from typing import Optional, Dict, List, Tuple
 
 # 设置输出编码
-sys.stdout.reconfigure(encoding="utf-8")
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        # Python 3.6或更早版本不支持reconfigure
+        import codecs
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
 
 
 # ============ 样式管理器 ============
