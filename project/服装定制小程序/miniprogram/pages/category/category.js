@@ -137,9 +137,9 @@ Page({
     app.globalData.selectedProductId = id;
     console.log('已保存到 globalData:', app.globalData.selectedProductId);
 
-    // 跳转到商品详情页（使用 navigateTo 因为详情页不在 tabBar 中）
+    // 跳转到商品详情页（使用 navigateTo 因为详情页在分包中）
     wx.navigateTo({
-      url: `/pages/design/design?productId=${id}`,
+      url: `/packageA/pages/design/design?productId=${id}`,
       success: () => {
         console.log('跳转到商品详情页成功');
       },

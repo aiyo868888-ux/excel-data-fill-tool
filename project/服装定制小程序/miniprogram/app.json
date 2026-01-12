@@ -2,11 +2,31 @@
   "pages": [
     "pages/index/index",
     "pages/category/category",
-    "pages/design/design",
-    "pages/editor/editor",
-    "pages/poster/poster",
     "pages/profile/profile"
   ],
+  "subpackages": [
+    {
+      "root": "packageA",
+      "name": "design",
+      "pages": [
+        "pages/design/design",
+        "pages/editor/editor"
+      ]
+    },
+    {
+      "root": "packageB",
+      "name": "poster",
+      "pages": [
+        "pages/poster/poster"
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["design"]
+    }
+  },
   "window": {
     "navigationBarBackgroundColor": "#000000",
     "navigationBarTitleText": "鼎盛服装定制供应链",
@@ -28,7 +48,7 @@
         "text": "分类"
       },
       {
-        "pagePath": "pages/editor/editor",
+        "pagePath": "packageA/pages/editor/editor",
         "text": "设计"
       },
       {

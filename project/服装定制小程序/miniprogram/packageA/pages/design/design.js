@@ -1,5 +1,5 @@
 // pages/design/design.js - 商品详情页
-const mockData = require('../../mock/data.js');
+const mockData = require('../../../mock/data.js');
 
 Page({
   data: {
@@ -161,7 +161,7 @@ Page({
 
     // 跳转到设计编辑页（editor在TabBar中，应该使用switchTab）
     wx.switchTab({
-      url: '/pages/editor/editor',
+      url: '/packageA/pages/editor/editor',
       success: () => {
         console.log('跳转到设计编辑页成功');
       },
@@ -232,11 +232,11 @@ Page({
   onCreatePoster() {
     wx.showLoading({ title: '生成中...', mask: true });
 
-    // 跳转到海报生成页面
+    // 跳转到海报生成页面（在分包B中）
     setTimeout(() => {
       wx.hideLoading();
       wx.navigateTo({
-        url: `/pages/poster/poster?productId=${this.data.productId}`
+        url: `/packageB/pages/poster/poster?productId=${this.data.productId}`
       });
     }, 500);
   },

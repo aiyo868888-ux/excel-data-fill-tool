@@ -1,5 +1,5 @@
 // pages/poster/poster.js - 海报生成与预览页
-const mockData = require('../../mock/data.js');
+const mockData = require('../../../mock/data.js');
 
 Page({
   data: {
