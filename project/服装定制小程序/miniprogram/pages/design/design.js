@@ -3,14 +3,22 @@ const mockData = require('../../mock/data.js');
 
 Page({
   data: {
+    // 导航栏相关
+    navigationBarTitle: '鼎盛服装定制供应链',
+    statusBarHeight: 0,
+    totalNavbarHeight: 44,
+
+    // 商品相关
     productId: '',
     productName: '',
-    productImages: [],    // 商品图片数组（轮播）
+    productImages: [],    // 商品图片数组
+    currentImageIndex: 0, // 当前显示的图片索引
     productPrice: 0,      // 商品价格
     productSales: 0,      // 商品销量
     productType: '',      // 商品类型
     productMaterial: '',  // 商品材质
     productStyle: '',     // 商品版型
+    productPattern: '',   // 商品款式
     productDescription: '', // 商品描述
     detailImages: [],      // 商品详情图片数组
     hasDetailImages: true, // 是否有详情图片
@@ -20,8 +28,23 @@ Page({
   onLoad(options) {
     console.log('商品详情页加载', options);
 
-    // 从 globalData 获取商品ID
+    // 获取系统信息，计算导航栏高度
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight || 0;
+    const navigationBarHeight = systemInfo.platform === 'ios' ? 44 : 48;
+    const totalNavbarHeight = statusBarHeight + navigationBarHeight;
+
+    // 获取导航栏标题
     const app = getApp();
+    const navigationBarTitle = app.globalData.navigationTitle || '鼎盛服装定制供应链';
+
+    this.setData({
+      statusBarHeight,
+      totalNavbarHeight,
+      navigationBarTitle
+    });
+
+    // 从 globalData 获取商品ID
     const productId = app.globalData.selectedProductId || options.productId;
 
     console.log('从 globalData 获取的 productId:', productId);
@@ -106,6 +129,7 @@ Page({
       productType: product.type,
       productMaterial: product.material,
       productStyle: product.style,
+      productPattern: product.pattern || '', // 添加款式字段
       productDescription: product.description,
       detailImages: detailImages,
       hasDetailImages: hasDetailImages,
@@ -183,7 +207,7 @@ Page({
   /**
    * 海报分享
    */
-  onSharePoster() {
+  onCreatePoster() {
     wx.showLoading({ title: '生成中...', mask: true });
 
     // TODO: 这里需要生成海报图片
@@ -206,5 +230,64 @@ Page({
         }
       });
     }, 1000);
+  },
+
+  /**
+   * 自定义导航栏返回
+   */
+  onBack() {
+    wx.navigateBack({
+      fail: () => {
+        // 如果无法返回，跳转到首页
+        wx.switchTab({
+          url: '/pages/index/index'
+        });
+      }
+    });
+  },
+
+  /**
+   * 分享
+   */
+  onShare() {
+    wx.showToast({
+      title: '分享功能开发中',
+      icon: 'none',
+      duration: 2000
+    });
+  },
+
+  /**
+   * 返回首页
+   */
+  goHome() {
+    wx.switchTab({
+      url: '/pages/index/index'
+    });
+  },
+
+  /**
+   * 联系客服
+   */
+  contactService() {
+    wx.showModal({
+      title: '联系客服',
+      content: '客服电话: 400-XXX-XXXX',
+      confirmText: '拨打',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          wx.makePhoneCall({
+            phoneNumber: '400-XXX-XXXX',
+            fail: () => {
+              wx.showToast({
+                title: '拨号失败',
+                icon: 'none'
+              });
+            }
+          });
+        }
+      }
+    });
   }
 });

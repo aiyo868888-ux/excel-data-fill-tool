@@ -1,10 +1,64 @@
-<!--pages/editor/editor.wxml - 自助设计编辑页-->
-<view class="container">
-  <!-- 商品图片画布 -->
-  <view class="canvas-area">
-    <image class="canvas-background" src="{{productImage}}" mode="aspectFit" />
+<!-- pages/editor/editor.wxml - 自助设计编辑页 -->
+<view class="page-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px; height: {{totalNavbarHeight}}px;">
+    <view class="navbar-back" bindtap="onBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <view class="navbar-title">{{navigationBarTitle}}</view>
+    <view class="navbar-placeholder"></view>
+  </view>
 
-    <!-- 设计元素覆盖层 -->
+  <!-- 导航栏占位符 -->
+  <view class="navbar-placeholder" style="height: {{totalNavbarHeight}}px;"></view>
+
+  <!-- 顶部工具栏 -->
+  <view class="top-toolbar">
+    <view class="toolbar-btn" bindtap="onChangeStyle">
+      <text class="toolbar-btn-text">款式</text>
+    </view>
+    <view class="toolbar-btn" bindtap="onNewDesign">
+      <text class="toolbar-btn-text">新建</text>
+    </view>
+    <view class="toolbar-btn" bindtap="onShowHelp">
+      <text class="toolbar-btn-text">?</text>
+    </view>
+    <view class="toolbar-btn" bindtap="onSaveDesign">
+      <text class="toolbar-btn-text">保存</text>
+    </view>
+    <view class="toolbar-btn marked">
+      <text class="toolbar-btn-text">1</text>
+    </view>
+    <view class="toolbar-btn" bindtap="onEditDesign">
+      <text class="toolbar-btn-text">编辑</text>
+    </view>
+  </view>
+
+  <!-- 画布区域 -->
+  <view class="canvas-area">
+    <!-- 产品图背景 -->
+    <image class="canvas-bg" src="{{productImage}}" mode="aspectFit" />
+
+    <!-- 左侧颜色选择器 -->
+    <view class="color-picker">
+      <view
+        class="color-item {{selectedColorIndex === index ? 'active' : ''}}"
+        wx:for="{{colorList}}"
+        wx:key="index"
+        style="background-color: {{item.color}};"
+        bindtap="onSelectColor"
+        data-index="{{index}}"
+        data-color="{{item.color}}"
+        data-name="{{item.name}}"
+      ></view>
+    </view>
+
+    <!-- 右侧颜色标签 -->
+    <view class="color-label" wx:if="{{selectedColorName}}">
+      <text class="label-text">当前颜色: {{selectedColorName}}</text>
+    </view>
+
+    <!-- 设计元素层 -->
     <view class="elements-layer">
       <view
         class="design-element {{selectedId === item.id ? 'selected' : ''}}"
@@ -18,24 +72,21 @@
         <text wx:if="{{item.type === 'text'}}" class="element-text" style="font-size: {{item.fontSize}}rpx; color: {{item.color}};">{{item.content}}</text>
       </view>
     </view>
-
-    <!-- 选中元素的操作按钮 -->
-    <view class="element-actions" wx:if="{{selectedId}}">
-      <view class="action-btn-small" bindtap="onDeleteElement">
-        <text>删除</text>
-      </view>
-    </view>
   </view>
 
   <!-- 底部工具栏 -->
   <view class="bottom-toolbar">
+    <view class="toolbar-item" bindtap="onSelectMaterial">
+      <text class="toolbar-icon">🎨</text>
+      <text class="toolbar-text">素材</text>
+    </view>
     <view class="toolbar-item" bindtap="onUploadImage">
       <text class="toolbar-icon">📤</text>
-      <text class="toolbar-text">上传图片</text>
+      <text class="toolbar-text">上传</text>
     </view>
     <view class="toolbar-item" bindtap="onAddText">
       <text class="toolbar-icon">T</text>
-      <text class="toolbar-text">添加文字</text>
+      <text class="toolbar-text">文字</text>
     </view>
     <view class="toolbar-item primary" bindtap="onComplete">
       <text class="toolbar-icon">✓</text>

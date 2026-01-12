@@ -3,15 +3,56 @@ const mockData = require('../../mock/data.js');
 
 Page({
   data: {
+    // 导航栏相关
+    navigationBarTitle: '鼎盛服装定制供应链',
+    statusBarHeight: 0,
+    totalNavbarHeight: 44,
+
+    // 商品相关
     productId: '',
     productName: '',
     productImage: '',
+
+    // 颜色选择器
+    colorList: [
+      { name: '红色', color: '#E60012' },
+      { name: '黑色', color: '#000000' },
+      { name: '白色', color: '#FFFFFF' },
+      { name: '蓝色', color: '#0066CC' },
+      { name: '黄色', color: '#FFCC00' },
+      { name: '绿色', color: '#009944' },
+      { name: '紫色', color: '#9933CC' },
+      { name: '灰色', color: '#999999' },
+      { name: '粉色', color: '#FF6699' },
+      { name: '橙色', color: '#FF6600' }
+    ],
+    selectedColorIndex: 0,
+    selectedColorName: '红色',
+    selectedColorValue: '#E60012',
+
+    // 设计元素
     elements: [],
     selectedId: null
   },
 
   onLoad(options) {
     console.log('设计编辑页加载', options);
+
+    // 获取系统信息，计算导航栏高度
+    const systemInfo = wx.getSystemInfoSync();
+    const statusBarHeight = systemInfo.statusBarHeight || 0;
+    const navigationBarHeight = systemInfo.platform === 'ios' ? 44 : 48;
+    const totalNavbarHeight = statusBarHeight + navigationBarHeight;
+
+    // 获取导航栏标题
+    const app = getApp();
+    const navigationBarTitle = app.globalData.navigationTitle || '鼎盛服装定制供应链';
+
+    this.setData({
+      statusBarHeight,
+      totalNavbarHeight,
+      navigationBarTitle
+    });
 
     const productId = options.productId;
     if (productId) {
@@ -151,5 +192,93 @@ Page({
         }
       }
     });
+  },
+
+  /**
+   * 选择颜色
+   */
+  onSelectColor(e) {
+    const { index, color, name } = e.currentTarget.dataset;
+
+    this.setData({
+      selectedColorIndex: parseInt(index),
+      selectedColorName: name,
+      selectedColorValue: color
+    });
+
+    // 如果有选中的文字元素，改变其颜色
+    if (this.data.selectedId) {
+      const elements = this.data.elements.map(el => {
+        if (el.id === this.data.selectedId && el.type === 'text') {
+          return { ...el, color: color };
+        }
+        return el;
+      });
+
+      this.setData({ elements });
+    }
+
+    wx.showToast({
+      title: `已选择${name}`,
+      icon: 'none',
+      duration: 1000
+    });
+  },
+
+  /**
+   * 自定义导航栏返回
+   */
+  onBack() {
+    wx.navigateBack({
+      fail: () => {
+        wx.switchTab({
+          url: '/pages/index/index'
+        });
+      }
+    });
+  },
+
+  /**
+   * 顶部工具栏按钮（预留功能）
+   */
+  onChangeStyle() {
+    wx.showToast({ title: '款式切换功能开发中', icon: 'none' });
+  },
+
+  onNewDesign() {
+    wx.showModal({
+      title: '新建',
+      content: '确定清空当前设计？',
+      success: (res) => {
+        if (res.confirm) {
+          this.setData({ elements: [], selectedId: null });
+          wx.showToast({ title: '已清空', icon: 'success' });
+        }
+      }
+    });
+  },
+
+  onShowHelp() {
+    wx.showModal({
+      title: '使用帮助',
+      content: '选择颜色→添加素材/文字→调整位置→完成设计',
+      showCancel: false
+    });
+  },
+
+  onSaveDesign() {
+    // 调用完成方法
+    this.onComplete();
+  },
+
+  onEditDesign() {
+    wx.showToast({ title: '编辑模式开发中', icon: 'none' });
+  },
+
+  /**
+   * 选择素材
+   */
+  onSelectMaterial() {
+    wx.showToast({ title: '素材库功能开发中', icon: 'none' });
   }
 });

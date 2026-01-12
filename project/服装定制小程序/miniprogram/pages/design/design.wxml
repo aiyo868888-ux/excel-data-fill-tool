@@ -1,83 +1,85 @@
-<!--pages/design/design.wxml - 商品详情页-->
-<view class="container">
-  <!-- 商品图片轮播 -->
-  <view class="product-image-section">
-    <swiper class="product-swiper" indicator-dots autoplay circular interval="3000" duration="500">
-      <swiper-item wx:for="{{productImages}}" wx:key="index">
-        <image class="product-image" src="{{item}}" mode="aspectFill" />
-      </swiper-item>
-    </swiper>
-  </view>
-
-  <!-- 商品信息卡片 -->
-  <view class="product-info-card">
-    <!-- 价格和销量 -->
-    <view class="price-row">
-      <text class="price">¥{{productPrice}}</text>
-      <text class="sales">已售{{productSales}}件</text>
+<!-- pages/design/design.wxml - 商品详情页 -->
+<view class="page-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px; height: {{totalNavbarHeight}}px;">
+    <view class="navbar-back" bindtap="onBack">
+      <text class="back-icon">‹</text>
     </view>
-
-    <!-- 商品名称 -->
-    <view class="product-name">{{productName}}</view>
-
-    <!-- 商品规格 -->
-    <view class="specs-row">
-      <view class="spec-item">
-        <text class="spec-label">品类</text>
-        <text class="spec-value">{{productType}}</text>
-      </view>
-      <view class="spec-item">
-        <text class="spec-label">版型</text>
-        <text class="spec-value">{{productStyle}}</text>
-      </view>
-      <view class="spec-item">
-        <text class="spec-label">材质</text>
-        <text class="spec-value">{{productMaterial}}</text>
-      </view>
+    <view class="navbar-title">{{navigationBarTitle}}</view>
+    <view class="navbar-share" bindtap="onShare">
+      <text class="share-icon">⋮</text>
     </view>
   </view>
 
-  <!-- 商品详情图片展示 -->
-  <view class="detail-images-card">
-    <view class="detail-title">商品详情</view>
-    <block wx:if="{{hasDetailImages}}">
-      <view class="detail-images">
-        <image
-          wx:for="{{detailImages}}"
-          wx:key="index"
-          class="detail-image"
-          src="{{item}}"
-          mode="widthFix"
-          lazy-load
-        />
-      </view>
-    </block>
-    <view wx:else class="empty-state">
-      <text class="empty-icon">📷</text>
-      <text class="empty-text">暂无详情图片</text>
+  <!-- 导航栏占位符 -->
+  <view class="navbar-placeholder" style="height: {{totalNavbarHeight}}px;"></view>
+
+  <!-- 商品主图区域 -->
+  <view class="product-image-container">
+    <image
+      class="product-image"
+      src="{{productImages[currentImageIndex] || '/images/placeholder.png'}}"
+      mode="aspectFill"
+    />
+
+    <!-- 图片序号指示器 -->
+    <view class="image-indicator">
+      {{currentImageIndex + 1}}/{{productImages.length || 1}}
     </view>
   </view>
 
-  <!-- 功能按钮区域 -->
-  <view class="action-buttons">
-    <view class="action-button" bindtap="onSaveImage">
+  <!-- 图片操作栏 -->
+  <view class="image-action-bar">
+    <view class="action-btn" bindtap="onSaveImage">
       <text class="action-icon">💾</text>
       <text class="action-text">保存图片</text>
     </view>
-    <view class="action-button" bindtap="onCollect">
-      <text class="action-icon">{{isCollected ? '⭐' : '☆'}}</text>
-      <text class="action-text">{{isCollected ? '已收藏' : '收藏'}}</text>
+    <view class="action-btn" bindtap="onCreatePoster">
+      <text class="action-icon">📄</text>
+      <text class="action-text">海报</text>
     </view>
-    <view class="action-button" bindtap="onSharePoster">
-      <text class="action-icon">📤</text>
-      <text class="action-text">海报分享</text>
+    <view class="action-btn" bindtap="onCollect">
+      <text class="action-icon">{{isCollected ? '★' : '☆'}}</text>
+      <text class="action-text">{{isCollected ? '已收藏' : '收藏'}}</text>
     </view>
   </view>
 
-  <!-- 底部操作栏 -->
-  <view class="bottom-bar">
-    <view class="action-btn primary" bindtap="onStartDesign">
-      <text class="btn-text">自助设计</text>
+  <!-- 商品信息框（黑色边框） -->
+  <view class="product-info-box">
+    <view class="product-name">{{productName}}</view>
+
+    <view class="product-specs">
+      <view class="spec-row">
+        <text class="spec-label">品类:</text>
+        <text class="spec-value">{{productType}}</text>
+      </view>
+      <view class="spec-row">
+        <text class="spec-label">版型:</text>
+        <text class="spec-value">{{productStyle}}</text>
+      </view>
+      <view class="spec-row">
+        <text class="spec-label">材质:</text>
+        <text class="spec-value">{{productMaterial}}</text>
+      </view>
+      <view class="spec-row">
+        <text class="spec-label">款式:</text>
+        <text class="spec-value">{{productPattern || '常规款'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航栏 -->
+  <view class="bottom-nav-bar">
+    <view class="nav-item" bindtap="goHome">
+      <text class="nav-icon">🏠</text>
+      <text class="nav-text">首页</text>
+    </view>
+    <view class="nav-item" bindtap="contactService">
+      <text class="nav-icon">🎧</text>
+      <text class="nav-text">客服</text>
+    </view>
+    <view class="design-btn" bindtap="onStartDesign">
+      <text class="design-btn-text">自助设计</text>
     </view>
   </view>
 </view>

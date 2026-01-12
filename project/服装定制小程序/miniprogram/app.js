@@ -11,6 +11,7 @@ App({
     userInfo: null,
     version: '1.0.0-local',
     selectedProductId: null,      // 用于传递选中的商品ID
-    selectedCategoryId: null      // 用于传递选中的分类ID
+    selectedCategoryId: null,     // 用于传递选中的分类ID
+    navigationTitle: '鼎盛服装定制供应链'  // 导航栏标题（可从后台配置）
   }
 });
