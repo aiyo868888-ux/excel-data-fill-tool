@@ -137,11 +137,11 @@ Page({
     app.globalData.selectedProductId = id;
     console.log('已保存到 globalData:', app.globalData.selectedProductId);
 
-    // 跳转到设计页（使用 switchTab 因为设计页在 tabBar 中）
-    wx.switchTab({
-      url: '/pages/design/design',
+    // 跳转到商品详情页（使用 navigateTo 因为详情页不在 tabBar 中）
+    wx.navigateTo({
+      url: `/pages/design/design?productId=${id}`,
       success: () => {
-        console.log('跳转到设计页成功');
+        console.log('跳转到商品详情页成功');
       },
       fail: (err) => {
         console.error('跳转失败:', err);
