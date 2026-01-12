@@ -15,8 +15,7 @@
 }
 
 .search-icon {
-  width: 32rpx;
-  height: 32rpx;
+  font-size: 32rpx;
   margin-right: 15rpx;
 }
 
@@ -220,8 +219,7 @@
 }
 
 .service-icon {
-  width: 60rpx;
-  height: 60rpx;
+  font-size: 60rpx;
   margin-bottom: 15rpx;
 }
 

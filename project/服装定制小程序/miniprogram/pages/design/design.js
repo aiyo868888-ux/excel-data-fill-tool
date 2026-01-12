@@ -12,7 +12,9 @@ Page({
     productMaterial: '',  // 商品材质
     productStyle: '',     // 商品版型
     productDescription: '', // 商品描述
-    detailImages: []      // 商品详情图片数组
+    detailImages: [],      // 商品详情图片数组
+    hasDetailImages: true, // 是否有详情图片
+    isCollected: false     // 是否已收藏
   },
 
   onLoad(options) {
@@ -83,7 +85,17 @@ Page({
     const productImages = product.images || [];
 
     // 构建详情图片数组
-    const detailImages = product.detailImages || product.images || [];
+    const detailImages = product.detailImages || [];
+    const hasDetailImages = detailImages.length > 0;
+
+    // 如果没有详情图片，记录日志
+    if (!hasDetailImages) {
+      console.warn(`商品 ${productId} 暂无详情图片`);
+    }
+
+    // 检查是否已收藏
+    const collections = wx.getStorageSync('my_collections') || [];
+    const isCollected = collections.some(item => item.productId === productId);
 
     this.setData({
       productId: product._id,
@@ -95,7 +107,9 @@ Page({
       productMaterial: product.material,
       productStyle: product.style,
       productDescription: product.description,
-      detailImages: detailImages
+      detailImages: detailImages,
+      hasDetailImages: hasDetailImages,
+      isCollected: isCollected
     });
 
     return true;
@@ -137,35 +151,31 @@ Page({
    * 收藏商品
    */
   onCollect() {
-    // 检查是否已收藏
     const collections = wx.getStorageSync('my_collections') || [];
-    const isCollected = collections.some(item => item.productId === this.data.productId);
+    const isCollected = this.data.isCollected;
 
     if (isCollected) {
-      wx.showModal({
-        title: '取消收藏',
-        content: '确定要取消收藏吗？',
-        success: (res) => {
-          if (res.confirm) {
-            const newCollections = collections.filter(item => item.productId !== this.data.productId);
-            wx.setStorageSync('my_collections', newCollections);
-            wx.showToast({ title: '已取消收藏', icon: 'success' });
-          }
-        }
-      });
+      // 取消收藏
+      const newCollections = collections.filter(item => item.productId !== this.data.productId);
+      wx.setStorageSync('my_collections', newCollections);
+
+      this.setData({ isCollected: false });
+      wx.showToast({ title: '已取消收藏', icon: 'success' });
     } else {
       // 添加到收藏
       const collectionData = {
-        designId: `design_${Date.now()}`,
+        collectionId: `collection_${Date.now()}`,  // 修复：使用 collectionId
         productId: this.data.productId,
         productName: this.data.productName,
         productImage: this.data.productImages[0] || '',
-        collectTime: new Date().toISOString()
+        collectTime: new Date().toISOString(),
+        type: 'product'  // 标识类型
       };
 
       collections.unshift(collectionData);
       wx.setStorageSync('my_collections', collections);
 
+      this.setData({ isCollected: true });
       wx.showToast({ title: '收藏成功', icon: 'success' });
     }
   },

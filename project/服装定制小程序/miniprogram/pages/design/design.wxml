@@ -40,30 +40,36 @@
   <!-- 商品详情图片展示 -->
   <view class="detail-images-card">
     <view class="detail-title">商品详情</view>
-    <view class="detail-images">
-      <image
-        wx:for="{{detailImages}}"
-        wx:key="index"
-        class="detail-image"
-        src="{{item}}"
-        mode="widthFix"
-        lazy-load
-      />
+    <block wx:if="{{hasDetailImages}}">
+      <view class="detail-images">
+        <image
+          wx:for="{{detailImages}}"
+          wx:key="index"
+          class="detail-image"
+          src="{{item}}"
+          mode="widthFix"
+          lazy-load
+        />
+      </view>
+    </block>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">📷</text>
+      <text class="empty-text">暂无详情图片</text>
     </view>
   </view>
 
   <!-- 功能按钮区域 -->
   <view class="action-buttons">
     <view class="action-button" bindtap="onSaveImage">
-      <image class="action-icon" src="/images/icon-save.png" mode="aspectFit" />
+      <text class="action-icon">💾</text>
       <text class="action-text">保存图片</text>
     </view>
     <view class="action-button" bindtap="onCollect">
-      <image class="action-icon" src="/images/icon-collect.png" mode="aspectFit" />
-      <text class="action-text">收藏</text>
+      <text class="action-icon">{{isCollected ? '⭐' : '☆'}}</text>
+      <text class="action-text">{{isCollected ? '已收藏' : '收藏'}}</text>
     </view>
     <view class="action-button" bindtap="onSharePoster">
-      <image class="action-icon" src="/images/icon-share.png" mode="aspectFit" />
+      <text class="action-icon">📤</text>
       <text class="action-text">海报分享</text>
     </view>
   </view>

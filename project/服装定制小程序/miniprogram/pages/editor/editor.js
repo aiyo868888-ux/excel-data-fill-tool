@@ -6,12 +6,6 @@ Page({
     productId: '',
     productName: '',
     productImage: '',
-    productPrice: 0,
-    productSales: 0,
-    productType: '',
-    productMaterial: '',
-    productStyle: '',
-    detailImages: [],
     elements: [],
     selectedId: null
   },
@@ -26,13 +20,7 @@ Page({
         this.setData({
           productId: product._id,
           productName: product.name,
-          productImage: product.images[0],
-          productPrice: product.price,
-          productSales: product.sales,
-          productType: product.type,
-          productMaterial: product.material,
-          productStyle: product.style,
-          detailImages: product.detailImages || product.images || []
+          productImage: product.images[0]
         });
       }
     }

@@ -2,7 +2,7 @@
 <view class="container">
   <!-- 搜索框 -->
   <view class="search-bar" bindtap="onSearch">
-    <image class="search-icon" src="/images/icon-search.png" mode="aspectFit" />
+    <text class="search-icon">🔍</text>
     <text class="search-placeholder">搜索你想要的商品</text>
   </view>
 
@@ -77,22 +77,22 @@
   <!-- 服务优势 -->
   <view class="services-section">
     <view class="service-item">
-      <image class="service-icon" src="/images/icon-quality.png" mode="aspectFit" />
+      <text class="service-icon">✅</text>
       <text class="service-title">品质保证</text>
       <text class="service-desc">100%正品保证</text>
     </view>
     <view class="service-item">
-      <image class="service-icon" src="/images/icon-shipping.png" mode="aspectFit" />
+      <text class="service-icon">🚚</text>
       <text class="service-title">极速发货</text>
       <text class="service-desc">24小时内发货</text>
     </view>
     <view class="service-item">
-      <image class="service-icon" src="/images/icon-return.png" mode="aspectFit" />
+      <text class="service-icon">🔄</text>
       <text class="service-title">七天退换</text>
       <text class="service-desc">无理由退换货</text>
     </view>
     <view class="service-item">
-      <image class="service-icon" src="/images/icon-service.png" mode="aspectFit" />
+      <text class="service-icon">💬</text>
       <text class="service-title">售后无忧</text>
       <text class="service-desc">贴心售后服务</text>
     </view>
