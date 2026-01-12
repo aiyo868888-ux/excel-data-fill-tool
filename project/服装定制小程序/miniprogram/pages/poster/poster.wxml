@@ -1,0 +1,51 @@
+<!-- pages/poster/poster.wxml - 海报生成与预览页 -->
+<view class="page-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-navbar" style="padding-top: {{statusBarHeight}}px; height: {{totalNavbarHeight}}px;">
+    <view class="navbar-back" bindtap="onBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <view class="navbar-title">商品海报分享</view>
+    <view class="navbar-placeholder"></view>
+  </view>
+
+  <!-- 导航栏占位符 -->
+  <view class="navbar-placeholder-view" style="height: {{totalNavbarHeight}}px;"></view>
+
+  <!-- 海报预览区域 -->
+  <view class="poster-container">
+    <!-- 隐藏的canvas用于绘制 -->
+    <canvas
+      type="2d"
+      id="posterCanvas"
+      class="poster-canvas"
+      style="width: 750rpx; height: 1200rpx; position: fixed; left: -9999rpx; top: -9999rpx;"
+    ></canvas>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <text class="loading-text">海报生成中...</text>
+    </view>
+
+    <!-- 海报预览图 -->
+    <image
+      wx:if="{{!loading && posterImage}}"
+      class="poster-image"
+      src="{{posterImage}}"
+      mode="widthFix"
+      show-menu-by-longpress
+    />
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions">
+    <view class="action-btn secondary" bindtap="onSaveToAlbum">
+      <text class="btn-icon">💾</text>
+      <text class="btn-text">保存图片到相册</text>
+    </view>
+    <view class="action-btn primary" bindtap="onShareFriend">
+      <text class="btn-icon">📤</text>
+      <text class="btn-text">分享给好友</text>
+    </view>
+  </view>
+</view>

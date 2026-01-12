@@ -1,0 +1,116 @@
+/* pages/poster/poster.wxss - 海报预览页样式 */
+
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 自定义导航栏 */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx;
+  z-index: 1000;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.navbar-back {
+  width: 60rpx;
+  display: flex;
+  align-items: center;
+}
+
+.back-icon {
+  color: #000000;
+  font-size: 48rpx;
+  font-weight: 300;
+}
+
+.navbar-title {
+  flex: 1;
+  text-align: center;
+  color: #000000;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.navbar-placeholder {
+  width: 60rpx;
+}
+
+.navbar-placeholder-view {
+  width: 100%;
+}
+
+/* 海报容器 */
+.poster-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.loading-text {
+  color: #666666;
+  font-size: 28rpx;
+}
+
+.poster-image {
+  width: 100%;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 底部操作栏 */
+.bottom-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx;
+  background-color: #FFFFFF;
+  border-top: 1rpx solid #EEEEEE;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+}
+
+.action-btn.secondary {
+  background-color: #F5F5F5;
+  color: #333333;
+}
+
+.action-btn.primary {
+  background-color: #FF6600;
+  color: #FFFFFF;
+}
+
+.btn-icon {
+  font-size: 36rpx;
+}
+
+.btn-text {
+  font-size: 28rpx;
+}

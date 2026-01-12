@@ -205,31 +205,18 @@ Page({
   },
 
   /**
-   * 海报分享
+   * 生成海报
    */
   onCreatePoster() {
     wx.showLoading({ title: '生成中...', mask: true });
 
-    // TODO: 这里需要生成海报图片
-    // 暂时先提示功能开发中
+    // 跳转到海报生成页面
     setTimeout(() => {
       wx.hideLoading();
-
-      wx.showModal({
-        title: '分享海报',
-        content: '是否保存海报到相册？',
-        confirmText: '保存',
-        success: (res) => {
-          if (res.confirm) {
-            wx.showToast({
-              title: '海报生成功能开发中',
-              icon: 'none',
-              duration: 2000
-            });
-          }
-        }
+      wx.navigateTo({
+        url: `/pages/poster/poster?productId=${this.data.productId}`
       });
-    }, 1000);
+    }, 500);
   },
 
   /**
