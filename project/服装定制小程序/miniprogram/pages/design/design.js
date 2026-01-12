@@ -143,13 +143,35 @@ Page({
    * 开始自助设计
    */
   onStartDesign() {
+    console.log('=== onStartDesign 被调用 ===');
+    console.log('当前商品ID:', this.data.productId);
+
+    if (!this.data.productId) {
+      wx.showToast({
+        title: '商品信息错误',
+        icon: 'none'
+      });
+      return;
+    }
+
     // 保存当前商品ID到 globalData
     const app = getApp();
     app.globalData.selectedProductId = this.data.productId;
+    console.log('已保存商品ID到 globalData:', app.globalData.selectedProductId);
 
-    // 跳转到设计编辑页
-    wx.navigateTo({
-      url: `/pages/editor/editor?productId=${this.data.productId}`
+    // 跳转到设计编辑页（editor在TabBar中，应该使用switchTab）
+    wx.switchTab({
+      url: '/pages/editor/editor',
+      success: () => {
+        console.log('跳转到设计编辑页成功');
+      },
+      fail: (err) => {
+        console.error('跳转失败:', err);
+        wx.showToast({
+          title: '跳转失败',
+          icon: 'none'
+        });
+      }
     });
   },
 
