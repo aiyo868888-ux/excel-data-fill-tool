@@ -25,7 +25,7 @@ Page({
     isCollected: false     // 是否已收藏
   },
 
-  onLoad(options) {
+  async onLoad(options) {
     console.log('商品详情页加载', options);
 
     // 获取系统信息，计算导航栏高度
@@ -49,35 +49,37 @@ Page({
 
     console.log('从 Store 获取的 productId:', productId);
 
+    wx.showLoading({ title: '加载中...', mask: true });
+
     if (productId) {
-      if (this.loadProductData(productId)) {
-        // 清除 Store 中的选择
-        store.clearNavigation();
-      }
+      await this.loadProductData(productId);
+      // 清除 Store 中的选择
+      store.clearNavigation();
     } else {
       console.log('没有 productId，使用默认商品');
       const defaultProduct = mockData.products[0];
       if (defaultProduct) {
-        this.loadProductData(defaultProduct._id);
+        await this.loadProductData(defaultProduct._id);
       }
     }
+
+    wx.hideLoading();
   },
 
-  onShow() {
+  async onShow() {
     console.log('商品详情页 onShow');
     // 每次显示时检查是否有新的商品选择
     if (store.selectedProductId && store.isNavigationValid()) {
       const productId = store.selectedProductId;
       console.log('onShow: 检测到新的商品选择:', productId);
 
-      if (this.loadProductData(productId)) {
-        // 清除 Store
-        store.clearNavigation();
-        // 获取商品名称用于提示
-        const product = mockData.products.find(p => p._id === productId);
-        if (product) {
-          wx.showToast({ title: `已选择: ${product.name}`, icon: 'success' });
-        }
+      await this.loadProductData(productId);
+      // 清除 Store
+      store.clearNavigation();
+      // 获取商品名称用于提示
+      const product = mockData.products.find(p => p._id === productId);
+      if (product) {
+        wx.showToast({ title: `已选择: ${product.name}`, icon: 'success' });
       }
     }
   },

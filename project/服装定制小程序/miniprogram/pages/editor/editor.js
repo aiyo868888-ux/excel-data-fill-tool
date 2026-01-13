@@ -57,7 +57,7 @@ Page({
     _cachedElementIndex: -1
   },
 
-  onLoad(options) {
+  async onLoad(options) {
     console.log('设计编辑页加载', options);
 
     // 获取系统信息，计算导航栏高度
@@ -76,10 +76,13 @@ Page({
       navigationBarTitle
     });
 
+    wx.showLoading({ title: '加载中...', mask: true });
+
     // 检查是否是加载已存的设计（使用 Store）
     if (store.selectedDesignId && store.isNavigationValid()) {
-      this.loadDesign(store.selectedDesignId);
+      await this.loadDesign(store.selectedDesignId);
       store.clearNavigation();
+      wx.hideLoading();
       return;
     }
 
@@ -88,11 +91,12 @@ Page({
     console.log('接收到的productId:', productId);
 
     if (productId) {
-      this.loadProduct(productId);
+      await this.loadProduct(productId);
       // 清除 Store 中的导航状态
       store.clearNavigation();
     } else {
       console.warn('未获取到商品ID，请从商品详情页进入');
+      wx.hideLoading();
       wx.showModal({
         title: '提示',
         content: '请从商品详情页进入设计页',
@@ -104,6 +108,8 @@ Page({
         }
       });
     }
+
+    wx.hideLoading();
   },
 
   /**

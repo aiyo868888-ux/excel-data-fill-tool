@@ -13,7 +13,7 @@ Page({
     loading: false
   },
 
-  onLoad(options) {
+  async onLoad(options) {
     console.log('分类页加载（本地模式）', options);
 
     const { id, name } = options;
@@ -26,7 +26,9 @@ Page({
       categories: mockData.categories
     });
 
-    this.loadProducts();
+    wx.showLoading({ title: '加载中...', mask: true });
+    await this.loadProducts();
+    wx.hideLoading();
   },
 
   onShow() {

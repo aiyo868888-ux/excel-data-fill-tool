@@ -12,9 +12,9 @@ Page({
     loading: false
   },
 
-  onLoad() {
+  async onLoad() {
     console.log('首页加载（本地模式）');
-    this.loadData();
+    await this.loadData();
   },
 
   /**
