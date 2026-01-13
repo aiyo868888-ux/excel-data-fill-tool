@@ -1,9 +1,14 @@
 /**
  * 云存储图片工具
  * 用于将云存储 fileID 转换为临时可访问链接
+ * 支持缓存机制，避免重复转换
  */
 
 class CloudImageUtil {
+  // 缓存临时链接（避免重复转换）
+  static cache = new Map();
+  static cacheExpireTime = 2 * 60 * 60 * 1000; // 2小时缓存
+
   /**
    * 批量转换云存储地址为临时链接
    * @param {Array<string>} fileIds - 云存储 fileID 数组
@@ -29,7 +34,7 @@ class CloudImageUtil {
   }
 
   /**
-   * 转换单个云存储地址
+   * 转换单个云存储地址（带缓存）
    * @param {string} fileId - 云存储 fileID
    * @returns {Promise<string>} 临时链接
    */
@@ -41,13 +46,29 @@ class CloudImageUtil {
       return fileId;
     }
 
+    // 检查缓存
+    const now = Date.now();
+    const cached = this.cache.get(fileId);
+    if (cached && cached.expireTime > now) {
+      console.log('[CloudImageUtil] 使用缓存的临时链接');
+      return cached.tempURL;
+    }
+
     try {
       const result = await wx.cloud.getTempFileURL({
         fileList: [{ fileID: fileId }]
       });
 
       if (result.fileList && result.fileList.length > 0 && result.fileList[0].status === 0) {
-        return result.fileList[0].tempFileURL;
+        const tempURL = result.fileList[0].tempFileURL;
+
+        // 缓存临时链接
+        this.cache.set(fileId, {
+          tempURL,
+          expireTime: now + this.cacheExpireTime
+        });
+
+        return tempURL;
       }
 
       return fileId;
@@ -58,7 +79,7 @@ class CloudImageUtil {
   }
 
   /**
-   * 预加载所有云存储图片
+   * 预加载所有云存储图片（带缓存）
    * @param {Object} data - 包含云存储图片的数据对象
    * @param {Array<string>} fields - 需要转换的字段路径
    * @returns {Promise<Object>} 转换后的数据对象
@@ -123,7 +144,25 @@ class CloudImageUtil {
 
     return result;
   }
+
+  /**
+   * 清除过期缓存
+   */
+  static clearExpiredCache() {
+    const now = Date.now();
+    for (const [key, value] of this.cache.entries()) {
+      if (value.expireTime <= now) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
+  /**
+   * 清除所有缓存
+   */
+  static clearAllCache() {
+    this.cache.clear();
+  }
 }
 
 module.exports = CloudImageUtil;
-```
