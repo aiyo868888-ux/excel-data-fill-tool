@@ -105,8 +105,14 @@ Page({
 
     console.log('找到商品:', product);
 
-    // 转换云存储图片为临时链接
-    const productWithImages = await CloudImageUtil.preloadImages(product);
+    // 转换云存储图片为临时链接（设置3秒超时）
+    const productWithImages = await this.withTimeout(
+      CloudImageUtil.preloadImages(product),
+      3000
+    ).catch((err) => {
+      console.warn('[design] 商品图片转换失败，使用原始数据:', err);
+      return product;
+    });
 
     // 构建商品图片数组（可以多张）
     const productImages = productWithImages.images || [];
@@ -141,6 +147,18 @@ Page({
     });
 
     return true;
+  },
+
+  /**
+   * 超时包装器
+   */
+  withTimeout(promise, timeout) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
+      )
+    ]);
   },
 
   /**

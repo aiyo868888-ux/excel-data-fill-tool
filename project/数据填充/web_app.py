@@ -681,12 +681,14 @@ def clear_fill_history():
         return jsonify({'success': False, 'error': f'操作失败: {str(e)}'}), 500
 
 
-@app.route('/api/download/<filename>')
-@app.route('/api/download', defaults={'filename': None})
-def download_file(filename):
+@app.route('/api/download')
+@app.route('/api/download/<path:filename>')
+def download_file(filename=None):
     """下载文件（如果不指定文件名，则下载最新的文件）"""
     try:
         output_folder = app.config['OUTPUT_FOLDER']
+
+        print(f"[DEBUG] 下载请求: filename={filename}")
 
         # 如果没有指定文件名，获取最新的文件
         if filename is None:
@@ -708,7 +710,7 @@ def download_file(filename):
 
         filepath = os.path.join(output_folder, filename)
 
-        print(f"[DEBUG] 下载请求:")
+        print(f"[DEBUG] 下载文件:")
         print(f"  文件名: {filename}")
         print(f"  OUTPUT_FOLDER: {output_folder}")
         print(f"  完整路径: {filepath}")

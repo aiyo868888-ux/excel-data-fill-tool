@@ -21,9 +21,10 @@ Page({
    * 加载页面数据（本地模式）
    */
   async loadData() {
+    wx.showLoading({ title: '加载中...', mask: true });
+
     try {
       console.log('[index] 开始加载数据');
-      wx.showLoading({ title: '加载中...', mask: true });
 
       // 所有商品
       const allProducts = mockData.products || [];
@@ -40,13 +41,40 @@ Page({
       // 新品（取后4个）
       const newProducts = allProducts.slice(-4);
 
-      // 转换云存储图片为临时链接（失败时使用原数据）
-      const banners = await CloudImageUtil.preloadImages(mockData.banners || []);
-      const categories = await CloudImageUtil.preloadImages(
-        (mockData.categories || []).filter(c => !c.parentId)
-      );
-      const hotProductsWithImages = await CloudImageUtil.preloadImages(hotProducts);
-      const newProductsWithImages = await CloudImageUtil.preloadImages(newProducts);
+      // 转换云存储图片为临时链接（设置3秒超时）
+      const banners = await this.withTimeout(
+        CloudImageUtil.preloadImages(mockData.banners || []),
+        3000
+      ).catch((err) => {
+        console.warn('[index] banners图片转换失败，使用原始数据:', err);
+        return mockData.banners || [];
+      });
+
+      const categories = await this.withTimeout(
+        CloudImageUtil.preloadImages(
+          (mockData.categories || []).filter(c => !c.parentId)
+        ),
+        3000
+      ).catch((err) => {
+        console.warn('[index] categories图片转换失败，使用原始数据:', err);
+        return (mockData.categories || []).filter(c => !c.parentId);
+      });
+
+      const hotProductsWithImages = await this.withTimeout(
+        CloudImageUtil.preloadImages(hotProducts),
+        3000
+      ).catch((err) => {
+        console.warn('[index] hotProducts图片转换失败，使用原始数据:', err);
+        return hotProducts;
+      });
+
+      const newProductsWithImages = await this.withTimeout(
+        CloudImageUtil.preloadImages(newProducts),
+        3000
+      ).catch((err) => {
+        console.warn('[index] newProducts图片转换失败，使用原始数据:', err);
+        return newProducts;
+      });
 
       this.setData({
         banners,
@@ -59,7 +87,6 @@ Page({
       console.log('[index] 数据加载成功');
     } catch (err) {
       console.error('[index] 数据加载失败', err);
-      wx.hideLoading();
 
       // 降级：直接使用原始数据（不转换图片）
       const allProducts = mockData.products || [];
@@ -71,8 +98,25 @@ Page({
         loading: false
       });
 
-      wx.showToast({ title: '图片加载异常', icon: 'none' });
+      wx.showToast({ title: '部分图片加载失败', icon: 'none' });
+    } finally {
+      wx.hideLoading();
     }
+  },
+
+  /**
+   * 超时包装器 - 防止图片转换卡住
+   * @param {Promise} promise - 要执行的Promise
+   * @param {number} timeout - 超时时间（毫秒）
+   * @returns {Promise} 带超时的Promise
+   */
+  withTimeout(promise, timeout) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
+      )
+    ]);
   },
 
   /**

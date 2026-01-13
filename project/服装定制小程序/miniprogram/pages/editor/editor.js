@@ -120,8 +120,15 @@ Page({
     console.log('找到的商品:', product);
 
     if (product) {
-      // 转换云存储图片为临时链接
-      const productWithImages = await CloudImageUtil.preloadImages(product);
+      // 转换云存储图片为临时链接（设置3秒超时）
+      const productWithImages = await this.withTimeout(
+        CloudImageUtil.preloadImages(product),
+        3000
+      ).catch((err) => {
+        console.warn('[editor] 商品图片转换失败，使用原始数据:', err);
+        return product;
+      });
+
       const imageUrl = productWithImages.images[0];
 
       console.log('商品图片URL:', imageUrl);
@@ -171,8 +178,14 @@ Page({
         // 先加载商品信息
         const product = mockData.products.find(p => p._id === design.productId);
         if (product) {
-          // 转换云存储图片为临时链接
-          const productWithImages = await CloudImageUtil.preloadImages(product);
+          // 转换云存储图片为临时链接（设置3秒超时）
+          const productWithImages = await this.withTimeout(
+            CloudImageUtil.preloadImages(product),
+            3000
+          ).catch((err) => {
+            console.warn('[editor] 设计图片转换失败，使用原始数据:', err);
+            return product;
+          });
 
           this.setData({
             productId: productWithImages._id,
@@ -201,6 +214,18 @@ Page({
         icon: 'none'
       });
     }
+  },
+
+  /**
+   * 超时包装器
+   */
+  withTimeout(promise, timeout) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
+      )
+    ]);
   },
 
   onShow() {
