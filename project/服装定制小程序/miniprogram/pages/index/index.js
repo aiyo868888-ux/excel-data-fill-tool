@@ -1,5 +1,7 @@
 // pages/index/index.js
 const mockData = require('../../mock/data.js');
+const store = require('../../store/index.js');
+const CloudImageUtil = require('../../utils/cloud-image.js');
 
 Page({
   data: {
@@ -18,8 +20,10 @@ Page({
   /**
    * 加载页面数据（本地模式）
    */
-  loadData() {
+  async loadData() {
     try {
+      wx.showLoading({ title: '加载中...', mask: true });
+
       // 所有商品
       const allProducts = mockData.products;
 
@@ -31,18 +35,27 @@ Page({
       // 新品（取后4个）
       const newProducts = allProducts.slice(-4);
 
+      // 转换云存储图片为临时链接（解决体验版看不到图片问题）
+      const banners = await CloudImageUtil.preloadImages(mockData.banners);
+      const categories = await CloudImageUtil.preloadImages(
+        mockData.categories.filter(c => !c.parentId)
+      );
+      const hotProductsWithImages = await CloudImageUtil.preloadImages(hotProducts);
+      const newProductsWithImages = await CloudImageUtil.preloadImages(newProducts);
+
       this.setData({
-        loading: true,
-        banners: mockData.banners,
-        categories: mockData.categories.filter(c => !c.parentId), // 只显示一级分类
-        hotProducts,
-        newProducts
+        banners,
+        categories,
+        hotProducts: hotProductsWithImages,
+        newProducts: newProductsWithImages
       });
+
       console.log('本地数据加载成功');
     } catch (err) {
       console.error('数据加载失败', err);
       wx.showToast({ title: '数据加载失败', icon: 'none' });
     } finally {
+      wx.hideLoading();
       this.setData({ loading: false });
     }
   },
@@ -61,10 +74,9 @@ Page({
     const { id, name } = e.currentTarget.dataset;
     console.log('点击分类:', id, name);
 
-    // 保存选中的分类ID到全局数据
-    const app = getApp();
-    app.globalData.selectedCategoryId = id;
-    console.log('已保存分类ID到 globalData:', app.globalData.selectedCategoryId);
+    // 保存选中的分类ID到 Store
+    store.selectCategory(id);
+    console.log('已保存分类ID到 Store:', store.selectedCategoryId);
 
     // 跳转到分类页（使用 switchTab 因为分类页在 tabBar 中）
     wx.switchTab({
@@ -96,10 +108,9 @@ Page({
       return;
     }
 
-    // 保存选中的商品ID到全局数据
-    const app = getApp();
-    app.globalData.selectedProductId = id;
-    console.log('已保存到 globalData:', app.globalData.selectedProductId);
+    // 保存选中的商品ID到 Store
+    store.selectProduct(id);
+    console.log('已保存到 Store:', store.selectedProductId);
 
     // 跳转到商品详情页（使用 navigateTo 因为详情页在分包中）
     wx.navigateTo({

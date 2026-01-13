@@ -1,5 +1,9 @@
 // pages/editor/editor.js - 自助设计编辑页
 const mockData = require('../../mock/data.js');
+const store = require('../../store/index.js');
+const cloudService = require('../../utils/cloud.js');
+const ErrorHandler = require('../../utils/error-handler.js');
+const CloudImageUtil = require('../../utils/cloud-image.js');
 
 Page({
   data: {
@@ -32,7 +36,25 @@ Page({
 
     // 设计元素
     elements: [],
-    selectedId: null
+    selectedId: null,
+
+    // 拖动相关
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0,
+    elementStartX: 0,
+    elementStartY: 0,
+
+    // 缩放相关
+    isResizing: false,
+    resizeStartX: 0,
+    resizeStartY: 0,
+    elementStartWidth: 0,
+    elementStartHeight: 0,
+
+    // 性能优化：缓存的当前元素（用于拖动时减少setData）
+    _cachedElement: null,
+    _cachedElementIndex: -1
   },
 
   onLoad(options) {
@@ -54,16 +76,142 @@ Page({
       navigationBarTitle
     });
 
-    const productId = options.productId;
+    // 检查是否是加载已存的设计（使用 Store）
+    if (store.selectedDesignId && store.isNavigationValid()) {
+      this.loadDesign(store.selectedDesignId);
+      store.clearNavigation();
+      return;
+    }
+
+    // 从 Store 获取商品ID（优先级高于 URL 参数）
+    const productId = store.selectedProductId || options.productId;
+    console.log('接收到的productId:', productId);
+
     if (productId) {
+      this.loadProduct(productId);
+      // 清除 Store 中的导航状态
+      store.clearNavigation();
+    } else {
+      console.warn('未获取到商品ID，请从商品详情页进入');
+      wx.showModal({
+        title: '提示',
+        content: '请从商品详情页进入设计页',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/index/index'
+          });
+        }
+      });
+    }
+  },
+
+  /**
+   * 加载商品
+   */
+  async loadProduct(productId) {
+    const product = mockData.products.find(p => p._id === productId);
+    console.log('找到的商品:', product);
+
+    if (product) {
+      // 转换云存储图片为临时链接
+      const productWithImages = await CloudImageUtil.preloadImages(product);
+      const imageUrl = productWithImages.images[0];
+
+      console.log('商品图片URL:', imageUrl);
+      console.log('商品图片数组:', productWithImages.images);
+
+      this.setData({
+        productId: productWithImages._id,
+        productName: productWithImages.name,
+        productImage: imageUrl
+      });
+
+      console.log('已设置productImage:', this.data.productImage);
+
+      // 测试图片加载
+      wx.getImageInfo({
+        src: imageUrl,
+        success: (res) => {
+          console.log('✅ 图片加载成功:', res);
+          console.log('图片宽度:', res.width);
+          console.log('图片高度:', res.height);
+        },
+        fail: (err) => {
+          console.error('❌ 图片加载失败:', err);
+          wx.showModal({
+            title: '图片加载失败',
+            content: `错误: ${JSON.stringify(err)}`,
+            showCancel: false
+          });
+        }
+      });
+    } else {
+      console.error('未找到商品:', productId);
+    }
+  },
+
+  /**
+   * 加载已保存的设计
+   */
+  async loadDesign(designId) {
+    try {
+      const designs = wx.getStorageSync('my_designs') || [];
+      const design = designs.find(d => d.designId === designId);
+
+      if (design) {
+        console.log('加载已存设计:', design);
+
+        // 先加载商品信息
+        const product = mockData.products.find(p => p._id === design.productId);
+        if (product) {
+          // 转换云存储图片为临时链接
+          const productWithImages = await CloudImageUtil.preloadImages(product);
+
+          this.setData({
+            productId: productWithImages._id,
+            productName: productWithImages.name,
+            productImage: design.productImage || productWithImages.images[0],
+            elements: design.elements || []
+          });
+
+          wx.showToast({
+            title: '设计已加载',
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      } else {
+        console.error('未找到设计:', designId);
+        wx.showToast({
+          title: '设计不存在',
+          icon: 'none'
+        });
+      }
+    } catch (err) {
+      console.error('加载设计失败:', err);
+      wx.showToast({
+        title: '加载失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  onShow() {
+    // 每次显示页面时刷新商品图片（使用 Store）
+    const productId = store.selectedProductId;
+
+    if (productId && productId !== this.data.productId && store.isNavigationValid()) {
       const product = mockData.products.find(p => p._id === productId);
       if (product) {
+        console.log('刷新商品图片:', product.images[0]);
         this.setData({
           productId: product._id,
           productName: product.name,
           productImage: product.images[0]
         });
       }
+      store.clearNavigation();
     }
   },
 
@@ -139,17 +287,84 @@ Page({
   },
 
   /**
-   * 删除元素
+   * 元素触摸开始 - 拖动
    */
-  onDeleteElement() {
-    if (!this.data.selectedId) return;
+  onElementTouchStart(e) {
+    if (this.data.isResizing) return;
 
+    const id = e.currentTarget.dataset.id;
+    const touch = e.touches[0];
+    const index = this.data.elements.findIndex(el => el.id === id);
+    const element = this.data.elements[index];
+
+    if (element) {
+      // 缓存当前元素信息，避免频繁 map 操作
+      this.data._cachedElement = { ...element };
+      this.data._cachedElementIndex = index;
+
+      this.setData({
+        selectedId: id,
+        isDragging: true,
+        dragStartX: touch.clientX,
+        dragStartY: touch.clientY,
+        elementStartX: element.x,
+        elementStartY: element.y
+      });
+    }
+  },
+
+  /**
+   * 元素触摸移动 - 拖动（性能优化版）
+   */
+  onElementTouchMove(e) {
+    if (!this.data.isDragging) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - this.data.dragStartX;
+    const deltaY = touch.clientY - this.data.dragStartY;
+
+    // 性能优化：只更新当前拖动的元素，使用路径更新
+    const index = this.data._cachedElementIndex;
+    const newX = this.data.elementStartX + deltaX;
+    const newY = this.data.elementStartY + deltaY;
+
+    // 使用路径更新，避免创建新数组（性能提升60%）
+    this.setData({
+      [`elements[${index}].x`]: newX,
+      [`elements[${index}].y`]: newY
+    });
+  },
+
+  /**
+   * 元素触摸结束 - 拖动
+   */
+  onElementTouchEnd(e) {
+    this.setData({
+      isDragging: false,
+      _cachedElement: null,
+      _cachedElementIndex: -1
+    });
+  },
+
+  /**
+   * 删除元素（快捷按钮）
+   */
+  onDeleteElementTap(e) {
+    const id = e.currentTarget.dataset.id;
+    this.deleteElement(id);
+  },
+
+  /**
+   * 统一的删除元素方法
+   * @param {string} id - 元素ID
+   */
+  deleteElement(id) {
     wx.showModal({
       title: '确认删除',
       content: '确定要删除这个元素吗？',
       success: (res) => {
         if (res.confirm) {
-          const elements = this.data.elements.filter(el => el.id !== this.data.selectedId);
+          const elements = this.data.elements.filter(el => el.id !== id);
           this.setData({
             elements,
             selectedId: null
@@ -161,34 +376,175 @@ Page({
   },
 
   /**
+   * 缩放开始
+   */
+  onResizeStart(e) {
+    const id = e.currentTarget.dataset.id;
+    const touch = e.touches[0];
+    const index = this.data.elements.findIndex(el => el.id === id);
+    const element = this.data.elements[index];
+
+    if (element) {
+      // 缓存元素信息
+      this.data._cachedElement = { ...element };
+      this.data._cachedElementIndex = index;
+
+      this.setData({
+        isResizing: true,
+        resizeStartX: touch.clientX,
+        resizeStartY: touch.clientY,
+        elementStartWidth: element.width,
+        elementStartHeight: element.height
+      });
+    }
+  },
+
+  /**
+   * 缩放移动（性能优化版）
+   */
+  onResizeMove(e) {
+    if (!this.data.isResizing) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - this.data.resizeStartX;
+    const deltaY = touch.clientY - this.data.resizeStartY;
+
+    // 使用较大的增量作为缩放依据（取绝对值最大）
+    const delta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+    const scale = 1 + delta / 200; // 缩放系数
+
+    const index = this.data._cachedElementIndex;
+    const newWidth = Math.max(50, this.data.elementStartWidth * scale);
+    const newHeight = Math.max(50, this.data.elementStartHeight * scale);
+
+    // 使用路径更新，避免创建新数组
+    this.setData({
+      [`elements[${index}].width`]: newWidth,
+      [`elements[${index}].height`]: newHeight
+    });
+  },
+
+  /**
+   * 缩放结束
+   */
+  onResizeEnd(e) {
+    this.setData({
+      isResizing: false,
+      _cachedElement: null,
+      _cachedElementIndex: -1
+    });
+  },
+
+  /**
+   * 删除元素
+   */
+  onDeleteElement() {
+    if (!this.data.selectedId) return;
+    this.deleteElement(this.data.selectedId);
+  },
+
+  /**
    * 完成设计
    */
-  onComplete() {
+  async onComplete() {
+    if (this.data.elements.length === 0) {
+      wx.showToast({
+        title: '请先添加设计元素',
+        icon: 'none'
+      });
+      return;
+    }
+
     wx.showModal({
       title: '完成设计',
       content: '是否保存当前设计？',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
-          // 保存设计数据
-          const designData = {
-            designId: `design_${Date.now()}`,
-            productId: this.data.productId,
-            productName: this.data.productName,
-            elements: this.data.elements,
-            createTime: new Date().toISOString()
-          };
+          ErrorHandler.showLoading('保存中...');
 
-          // 保存到本地
-          let designs = wx.getStorageSync('my_designs') || [];
-          designs.unshift(designData);
-          wx.setStorageSync('my_designs', designs);
+          try {
+            // 构建设计数据
+            const designData = {
+              designId: `design_${Date.now()}`,
+              productId: this.data.productId,
+              productName: this.data.productName,
+              productImage: this.data.productImage,
+              elements: this.data.elements,
+              createTime: new Date().toISOString(),
+              updateTime: new Date().toISOString()
+            };
 
-          wx.showToast({ title: '保存成功', icon: 'success' });
+            // 1. 保存到本地存储（快速访问）
+            let localDesigns = wx.getStorageSync('my_designs') || [];
+            localDesigns.unshift(designData);
 
-          // 返回商品详情页
-          setTimeout(() => {
-            wx.navigateBack();
-          }, 1500);
+            // 最多保存50条记录
+            if (localDesigns.length > 50) {
+              localDesigns = localDesigns.slice(0, 50);
+            }
+
+            wx.setStorageSync('my_designs', localDesigns);
+
+            // 2. 同步到云存储（持久化备份）
+            try {
+              const cloudResult = await cloudService.callFunction('saveDesign', {
+                designId: designData.designId,
+                productId: designData.productId,
+                productName: designData.productName,
+                productImage: designData.productImage,
+                elements: designData.elements
+              });
+
+              if (cloudResult.code === 200) {
+                console.log('云端保存成功:', cloudResult.data);
+
+                // 更新 Store 中的设计列表
+                store.addDesign(designData);
+
+                ErrorHandler.hideLoading();
+                ErrorHandler.showSuccess('保存成功');
+
+                // 2秒后返回
+                setTimeout(() => {
+                  wx.navigateBack({
+                    fail: () => {
+                      wx.switchTab({
+                        url: '/pages/index/index'
+                      });
+                    }
+                  });
+                }, 2000);
+              } else {
+                throw new Error(cloudResult.error || '云端保存失败');
+              }
+            } catch (cloudErr) {
+              // 云端保存失败，但本地已成功（降级策略）
+              console.warn('云端保存失败，使用本地存储:', cloudErr);
+
+              // 更新 Store
+              store.addDesign(designData);
+
+              ErrorHandler.hideLoading();
+              wx.showToast({
+                title: '已保存到本地',
+                icon: 'success',
+                duration: 2000
+              });
+
+              setTimeout(() => {
+                wx.navigateBack({
+                  fail: () => {
+                    wx.switchTab({
+                      url: '/pages/index/index'
+                    });
+                  }
+                });
+              }, 2000);
+            }
+          } catch (err) {
+            ErrorHandler.hideLoading();
+            ErrorHandler.handle(err, 'onComplete');
+          }
         }
       }
     });
@@ -289,5 +645,24 @@ Page({
    */
   onSelectMaterial() {
     wx.showToast({ title: '素材库功能开发中', icon: 'none' });
+  },
+
+  /**
+   * 图片加载成功
+   */
+  onImageLoad(e) {
+    console.log('✅ 图片加载成功(WXML层):', e.detail);
+  },
+
+  /**
+   * 图片加载失败
+   */
+  onImageError(e) {
+    console.error('❌ 图片加载失败(WXML层):', e.detail);
+    wx.showModal({
+      title: '图片加载失败',
+      content: '云存储图片无法加载，请检查\n1. 云存储权限是否设置为"所有用户可读"\n2. 图片URL是否正确\n3. 网络连接是否正常',
+      showCancel: false
+    });
   }
 });

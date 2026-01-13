@@ -1,0 +1,156 @@
+/* pages/my-designs/my-designs.wxss - 我的设计列表页样式 */
+
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  padding: 20rpx;
+}
+
+/* 设计列表 */
+.design-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.design-item {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 设计预览 */
+.design-preview {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.design-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  background-color: #F5F5F5;
+}
+
+.design-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8rpx 0;
+}
+
+.design-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.design-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.design-count {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.design-time {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 操作按钮 */
+.design-actions {
+  display: flex;
+  gap: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.edit-btn {
+  background-color: #FF6600;
+  color: #FFFFFF;
+}
+
+.delete-btn {
+  background-color: #F5F5F5;
+  color: #666666;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}
+
+.btn-text {
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+}
+
+.empty-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 28rpx;
+  color: #999999;
+  margin-bottom: 48rpx;
+}
+
+.empty-btn {
+  padding: 24rpx 64rpx;
+  background-color: #FF6600;
+  border-radius: 48rpx;
+}
+
+.empty-btn-text {
+  font-size: 32rpx;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+  font-size: 28rpx;
+  color: #999999;
+}

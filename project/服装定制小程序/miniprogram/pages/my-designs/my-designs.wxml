@@ -1,0 +1,58 @@
+<!-- pages/my-designs/my-designs.wxml - 我的设计列表页 -->
+<view class="page-container">
+  <!-- 设计列表 -->
+  <view class="design-list" wx:if="{{designs.length > 0}}">
+    <view
+      class="design-item"
+      wx:for="{{designs}}"
+      wx:key="designId"
+    >
+      <!-- 商品图片和信息 -->
+      <view class="design-preview" bindtap="onViewDesign" data-design="{{item}}">
+        <image class="design-image" src="{{item.productImage}}" mode="aspectFill" />
+        <view class="design-info">
+          <text class="design-name">{{item.productName}}</text>
+          <view class="design-meta">
+            <text class="design-count">{{item.elements.length}} 个元素</text>
+            <text class="design-time">{{formatTime(item.updateTime)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="design-actions">
+        <view
+          class="action-btn edit-btn"
+          bindtap="onEditDesign"
+          data-design="{{item}}"
+        >
+          <text class="btn-icon">✎</text>
+          <text class="btn-text">编辑</text>
+        </view>
+        <view
+          class="action-btn delete-btn"
+          bindtap="onDeleteDesign"
+          data-id="{{item.designId}}"
+        >
+          <text class="btn-icon">🗑</text>
+          <text class="btn-text">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{designs.length === 0 && !loading}}">
+    <text class="empty-icon">🎨</text>
+    <text class="empty-title">还没有设计作品</text>
+    <text class="empty-desc">快去设计你的第一个作品吧</text>
+    <view class="empty-btn" bindtap="onGoToDesign">
+      <text class="empty-btn-text">开始设计</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

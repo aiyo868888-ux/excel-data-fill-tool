@@ -1,5 +1,6 @@
 // pages/category/category.js
 const mockData = require('../../mock/data.js');
+const CloudImageUtil = require('../../utils/cloud-image.js');
 
 Page({
   data: {
@@ -59,7 +60,7 @@ Page({
   /**
    * 加载商品列表（本地模式）
    */
-  loadProducts() {
+  async loadProducts() {
     try {
       this.setData({ loading: true });
 
@@ -78,8 +79,11 @@ Page({
         products.sort((a, b) => b.sales - a.sales);
       }
 
-      this.setData({ products });
-      console.log('商品加载成功:', products.length);
+      // 转换云存储图片为临时链接
+      const productsWithImages = await CloudImageUtil.preloadImages(products);
+
+      this.setData({ products: productsWithImages });
+      console.log('商品加载成功:', productsWithImages.length);
     } catch (err) {
       console.error('商品加载失败', err);
       wx.showToast({ title: '商品加载失败', icon: 'none' });

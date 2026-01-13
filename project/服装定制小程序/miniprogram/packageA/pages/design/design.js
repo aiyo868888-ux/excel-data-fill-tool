@@ -1,5 +1,7 @@
 // pages/design/design.js - 商品详情页
 const mockData = require('../../../mock/data.js');
+const store = require('../../../store/index.js');
+const CloudImageUtil = require('../../../utils/cloud-image.js');
 
 Page({
   data: {
@@ -13,8 +15,6 @@ Page({
     productName: '',
     productImages: [],    // 商品图片数组
     currentImageIndex: 0, // 当前显示的图片索引
-    productPrice: 0,      // 商品价格
-    productSales: 0,      // 商品销量
     productType: '',      // 商品类型
     productMaterial: '',  // 商品材质
     productStyle: '',     // 商品版型
@@ -44,15 +44,15 @@ Page({
       navigationBarTitle
     });
 
-    // 从 globalData 获取商品ID
-    const productId = app.globalData.selectedProductId || options.productId;
+    // 从 Store 获取商品ID
+    const productId = store.selectedProductId || options.productId;
 
-    console.log('从 globalData 获取的 productId:', productId);
+    console.log('从 Store 获取的 productId:', productId);
 
     if (productId) {
       if (this.loadProductData(productId)) {
-        // 清除 globalData 中的选择
-        app.globalData.selectedProductId = null;
+        // 清除 Store 中的选择
+        store.clearNavigation();
       }
     } else {
       console.log('没有 productId，使用默认商品');
@@ -66,14 +66,13 @@ Page({
   onShow() {
     console.log('商品详情页 onShow');
     // 每次显示时检查是否有新的商品选择
-    const app = getApp();
-    if (app.globalData.selectedProductId) {
-      const productId = app.globalData.selectedProductId;
+    if (store.selectedProductId && store.isNavigationValid()) {
+      const productId = store.selectedProductId;
       console.log('onShow: 检测到新的商品选择:', productId);
 
       if (this.loadProductData(productId)) {
-        // 清除 globalData
-        app.globalData.selectedProductId = null;
+        // 清除 Store
+        store.clearNavigation();
         // 获取商品名称用于提示
         const product = mockData.products.find(p => p._id === productId);
         if (product) {
@@ -86,9 +85,9 @@ Page({
   /**
    * 加载商品数据到页面
    * @param {string} productId - 商品ID
-   * @returns {boolean} 是否加载成功
+   * @returns {Promise<boolean>} 是否加载成功
    */
-  loadProductData(productId) {
+  async loadProductData(productId) {
     if (!mockData.products || mockData.products.length === 0) {
       console.error('商品数据为空');
       wx.showToast({ title: '商品数据加载失败', icon: 'none' });
@@ -104,11 +103,15 @@ Page({
 
     console.log('找到商品:', product);
 
+    // 转换云存储图片为临时链接
+    const productWithImages = await CloudImageUtil.preloadImages(product);
+
     // 构建商品图片数组（可以多张）
-    const productImages = product.images || [];
+    const productImages = productWithImages.images || [];
+    const productImage = productImages[0] || '';
 
     // 构建详情图片数组
-    const detailImages = product.detailImages || [];
+    const detailImages = productWithImages.detailImages || [];
     const hasDetailImages = detailImages.length > 0;
 
     // 如果没有详情图片，记录日志
@@ -121,16 +124,15 @@ Page({
     const isCollected = collections.some(item => item.productId === productId);
 
     this.setData({
-      productId: product._id,
-      productName: product.name,
+      productId: productWithImages._id,
+      productName: productWithImages.name,
       productImages: productImages,
-      productPrice: product.price,
-      productSales: product.sales,
-      productType: product.type,
-      productMaterial: product.material,
-      productStyle: product.style,
-      productPattern: product.pattern || '', // 添加款式字段
-      productDescription: product.description,
+      productImage: productImage,
+      productType: productWithImages.type,
+      productMaterial: productWithImages.material,
+      productStyle: productWithImages.style,
+      productPattern: productWithImages.pattern || '',
+      productDescription: productWithImages.description,
       detailImages: detailImages,
       hasDetailImages: hasDetailImages,
       isCollected: isCollected
@@ -154,10 +156,9 @@ Page({
       return;
     }
 
-    // 保存当前商品ID到 globalData
-    const app = getApp();
-    app.globalData.selectedProductId = this.data.productId;
-    console.log('已保存商品ID到 globalData:', app.globalData.selectedProductId);
+    // 保存当前商品ID到 Store
+    store.selectProduct(this.data.productId);
+    console.log('已保存商品ID到 Store:', store.selectedProductId);
 
     // 跳转到设计编辑页（editor在TabBar中，应该使用switchTab）
     wx.switchTab({

@@ -54,13 +54,40 @@ Page({
         cloudService.showLoading('上传中...');
 
         try {
-          // 上传到云存储
-          const cloudPath = `avatars/${Date.now()}_${Math.random().toString(36).substr(2)}.png`;
+          // 1. 验证文件大小（限制2MB）
+          const fileInfo = await wx.getFileInfo({
+            filePath
+          });
+
+          if (fileInfo.size > 2 * 1024 * 1024) {
+            cloudService.hideLoading();
+            wx.showToast({
+              title: '图片不能超过2MB',
+              icon: 'none'
+            });
+            return;
+          }
+
+          // 2. 生成安全的云存储路径
+          // 使用用户ID（openid）作为路径前缀，避免冲突
+          const userInfo = wx.getStorageSync('userInfo') || {};
+          const userId = userInfo.openid || 'anonymous';
+          const timestamp = Date.now();
+          const randomStr = Math.random().toString(36).substring(2, 11); // 使用 substring 替代 substr
+          const cloudPath = `avatars/${userId}_${timestamp}_${randomStr}.png`;
+
+          // 3. 上传到云存储
           const fileID = await cloudService.uploadFile(cloudPath, filePath);
 
-          // 更新用户信息
+          // 4. 更新用户信息
           this.setData({
             'userInfo.avatarUrl': fileID
+          });
+
+          // 5. 保存到本地存储
+          wx.setStorageSync('userInfo', {
+            ...this.data.userInfo,
+            avatarUrl: fileID
           });
 
           cloudService.showSuccess('更新成功');
