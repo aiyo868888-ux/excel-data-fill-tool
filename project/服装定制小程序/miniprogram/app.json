@@ -3,7 +3,9 @@
     "pages/index/index",
     "pages/category/category",
     "pages/editor/editor",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/my-designs/my-designs",
+    "pages/test/test"
   ],
   "subpackages": [
     {

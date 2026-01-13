@@ -1,0 +1,26 @@
+<!--pages/test/test.wxml-->
+<view class="container">
+  <view class="title">云存储图片测试</view>
+
+  <view class="section">
+    <text class="section-title">原始链接（cloud://）</text>
+    <image
+      src="cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/banners/ScreenShot_2026-01-12_102502_938.png"
+      mode="aspectFill"
+      class="test-image"
+    />
+    <text class="result">开发者能看，体验用户看不到</text>
+  </view>
+
+  <view class="section">
+    <text class="section-title">临时链接（https://）</text>
+    <image
+      src="{{tempURL}}"
+      mode="aspectFill"
+      class="test-image"
+    />
+    <text class="result">所有人都能看（包括体验用户）</text>
+  </view>
+
+  <button class="btn" bindtap="onTestConversion">测试转换</button>
+</view>
