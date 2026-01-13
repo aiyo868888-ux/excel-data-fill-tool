@@ -22,10 +22,15 @@ Page({
    */
   async loadData() {
     try {
+      console.log('[index] 开始加载数据');
       wx.showLoading({ title: '加载中...', mask: true });
 
       // 所有商品
-      const allProducts = mockData.products;
+      const allProducts = mockData.products || [];
+
+      if (allProducts.length === 0) {
+        console.warn('[index] 商品数据为空');
+      }
 
       // 热门商品（销量前4）
       const hotProducts = [...allProducts]
@@ -35,10 +40,10 @@ Page({
       // 新品（取后4个）
       const newProducts = allProducts.slice(-4);
 
-      // 转换云存储图片为临时链接（解决体验版看不到图片问题）
-      const banners = await CloudImageUtil.preloadImages(mockData.banners);
+      // 转换云存储图片为临时链接（失败时使用原数据）
+      const banners = await CloudImageUtil.preloadImages(mockData.banners || []);
       const categories = await CloudImageUtil.preloadImages(
-        mockData.categories.filter(c => !c.parentId)
+        (mockData.categories || []).filter(c => !c.parentId)
       );
       const hotProductsWithImages = await CloudImageUtil.preloadImages(hotProducts);
       const newProductsWithImages = await CloudImageUtil.preloadImages(newProducts);
@@ -47,16 +52,26 @@ Page({
         banners,
         categories,
         hotProducts: hotProductsWithImages,
-        newProducts: newProductsWithImages
+        newProducts: newProductsWithImages,
+        loading: false
       });
 
-      console.log('本地数据加载成功');
+      console.log('[index] 数据加载成功');
     } catch (err) {
-      console.error('数据加载失败', err);
-      wx.showToast({ title: '数据加载失败', icon: 'none' });
-    } finally {
+      console.error('[index] 数据加载失败', err);
       wx.hideLoading();
-      this.setData({ loading: false });
+
+      // 降级：直接使用原始数据（不转换图片）
+      const allProducts = mockData.products || [];
+      this.setData({
+        banners: mockData.banners || [],
+        categories: (mockData.categories || []).filter(c => !c.parentId),
+        hotProducts: allProducts.slice(0, 4),
+        newProducts: allProducts.slice(-4),
+        loading: false
+      });
+
+      wx.showToast({ title: '图片加载异常', icon: 'none' });
     }
   },
 

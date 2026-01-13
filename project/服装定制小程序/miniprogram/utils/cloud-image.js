@@ -85,64 +85,87 @@ class CloudImageUtil {
    * @returns {Promise<Object>} 转换后的数据对象
    */
   static async preloadImages(data, fields = ['image', 'images', 'icon', 'avatarUrl']) {
-    const fileIds = [];
-    const fieldMap = [];
+    try {
+      const fileIds = [];
+      const fieldMap = [];
 
-    // 收集所有云存储 fileID
-    const collectFileIds = (obj, prefix = '') => {
-      if (Array.isArray(obj)) {
-        obj.forEach((item, index) => {
-          collectFileIds(item, `${prefix}[${index}]`);
-        });
-      } else if (obj && typeof obj === 'object') {
-        Object.keys(obj).forEach(key => {
-          const fieldPath = prefix ? `${prefix}.${key}` : key;
+      // 收集所有云存储 fileID
+      const collectFileIds = (obj, prefix = '') => {
+        if (Array.isArray(obj)) {
+          obj.forEach((item, index) => {
+            collectFileIds(item, `${prefix}[${index}]`);
+          });
+        } else if (obj && typeof obj === 'object') {
+          Object.keys(obj).forEach(key => {
+            const fieldPath = prefix ? `${prefix}.${key}` : key;
 
-          // 检查是否是目标字段
-          if (fields.includes(key)) {
-            const value = obj[key];
-            if (typeof value === 'string' && value.startsWith('cloud://')) {
-              fileIds.push(value);
-              fieldMap.push({ path: fieldPath, fileId: value });
-            }
-          } else if (Array.isArray(value)) {
-            // 处理数组中的图片
-            value.forEach((item, index) => {
-              if (typeof item === 'string' && item.startsWith('cloud://')) {
-                fileIds.push(item);
-                fieldMap.push({ path: `${fieldPath}[${index}]`, fileId: item });
+            // 检查是否是目标字段
+            if (fields.includes(key)) {
+              const value = obj[key];
+              if (typeof value === 'string' && value.startsWith('cloud://')) {
+                fileIds.push(value);
+                fieldMap.push({ path: fieldPath, fileId: value });
               }
-            });
-          } else if (typeof value === 'object') {
-            collectFileIds(value, fieldPath);
-          }
-        });
-      }
-    };
-
-    collectFileIds(data);
-
-    // 批量获取临时链接
-    const tempURLs = await this.getTempFileURLs(fileIds);
-
-    // 替换原始数据
-    const result = JSON.parse(JSON.stringify(data));
-    fieldMap.forEach(({ path, fileId }, index) => {
-      const tempURL = tempURLs[index];
-      if (tempURL) {
-        // 使用路径设置值
-        const keys = path.split('.');
-        let obj = result;
-        for (let i = 0; i < keys.length - 1; i++) {
-          // 处理数组索引
-          const key = keys[i].replace(/\[(\d+)\]/, '.$1');
-          obj = obj[key];
+            } else if (Array.isArray(value)) {
+              // 处理数组中的图片
+              value.forEach((item, index) => {
+                if (typeof item === 'string' && item.startsWith('cloud://')) {
+                  fileIds.push(item);
+                  fieldMap.push({ path: `${fieldPath}[${index}]`, fileId: item });
+                }
+              });
+            } else if (typeof value === 'object') {
+              collectFileIds(value, fieldPath);
+            }
+          });
         }
-        obj[keys[keys.length - 1]] = tempURL;
-      }
-    });
+      };
 
-    return result;
+      collectFileIds(data);
+
+      // 如果没有云存储图片，直接返回原数据
+      if (fileIds.length === 0) {
+        console.log('[CloudImageUtil] 没有云存储图片，直接返回原数据');
+        return data;
+      }
+
+      console.log('[CloudImageUtil] 开始转换', fileIds.length, '张图片');
+
+      // 批量获取临时链接
+      const tempURLs = await this.getTempFileURLs(fileIds);
+
+      console.log('[CloudImageUtil] 转换成功', tempURLs.length, '张');
+
+      // 替换原始数据
+      const result = JSON.parse(JSON.stringify(data));
+      fieldMap.forEach(({ path, fileId }, index) => {
+        const tempURL = tempURLs[index];
+        if (tempURL && tempURL !== fileId) {
+          // 使用路径设置值
+          const keys = path.split('.');
+          let obj = result;
+          for (let i = 0; i < keys.length - 1; i++) {
+            // 处理数组索引
+            const key = keys[i].replace(/\[(\d+)\]/, '.$1');
+            if (obj && obj[key] !== undefined) {
+              obj = obj[key];
+            } else {
+              console.warn('[CloudImageUtil] 路径不存在:', path);
+              return;
+            }
+          }
+          if (obj) {
+            obj[keys[keys.length - 1]] = tempURL;
+          }
+        }
+      });
+
+      return result;
+    } catch (err) {
+      console.error('[CloudImageUtil] preloadImages 出错:', err);
+      // 出错时返回原数据，确保页面能正常显示
+      return data;
+    }
   }
 
   /**
