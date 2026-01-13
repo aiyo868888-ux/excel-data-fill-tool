@@ -206,6 +206,15 @@ Page({
       selectedColorValue: color
     });
 
+    // 切换商品背景图片
+    const product = mockData.products.find(p => p._id === this.data.productId);
+    if (product && product.colorImages && product.colorImages[name]) {
+      this.setData({
+        productImage: product.colorImages[name]
+      });
+      console.log(`切换到${name}图片:`, product.colorImages[name]);
+    }
+
     // 如果有选中的文字元素，改变其颜色
     if (this.data.selectedId) {
       const elements = this.data.elements.map(el => {

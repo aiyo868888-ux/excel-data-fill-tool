@@ -101,7 +101,21 @@ module.exports = {
       pattern: '常规款',
       pattern: '防风防水',
       status: 1,
-      description: '专业户外三合一冲锋衣，防风防水透气'
+      description: '专业户外三合一冲锋衣，防风防水透气',
+      // 颜色图片映射（点击颜色框时切换）
+      colorImages: {
+        '红色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '黑色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '白色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '蓝色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '黄色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '绿色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '紫色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '灰色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '粉色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg',
+        '橙色': 'cloud://cloud1-2g7e3gch6d0592e5.636c-cloud1-2g7e3gch6d0592e5-1395469184/products/6510047d2a6afa723ecad5d310b8729b.jpg'
+      },
+      defaultColor: '红色'
     },
     {
       _id: 'product_002',
