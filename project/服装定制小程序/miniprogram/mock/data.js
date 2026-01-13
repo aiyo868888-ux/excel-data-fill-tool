@@ -100,8 +100,6 @@ module.exports = {
       style: '通款',
       pattern: '常规款',
       pattern: '防风防水',
-      price: 299,
-      sales: 100,
       status: 1,
       description: '专业户外三合一冲锋衣，防风防水透气'
     },
@@ -115,8 +113,6 @@ module.exports = {
       style: '通款',
       pattern: '常规款',
       pattern: '简约百搭',
-      price: 89,
-      sales: 230,
       status: 1,
       description: '纯棉材质，舒适透气'
     },
@@ -130,8 +126,6 @@ module.exports = {
       style: '运动款',
       pattern: '常规款',
       pattern: '反光条设计',
-      price: 159,
-      sales: 178,
       status: 1,
       description: '夜间骑行安全，反光条设计'
     },
@@ -145,8 +139,6 @@ module.exports = {
       style: '运动款',
       pattern: '常规款',
       pattern: '透气网眼',
-      price: 129,
-      sales: 342,
       status: 1,
       description: '快速排汗，保持干爽'
     },
@@ -159,8 +151,6 @@ module.exports = {
       material: '棉混纺',
       style: '商务款',
       pattern: '常规款',
-      price: 199,
-      sales: 89,
       status: 1,
       description: '商务休闲两相宜'
     },
@@ -173,8 +163,6 @@ module.exports = {
       material: '加绒棉',
       style: '宽松款',
       pattern: '常规款',
-      price: 179,
-      sales: 156,
       status: 1,
       description: '秋冬保暖，舒适百搭'
     },
@@ -187,8 +175,6 @@ module.exports = {
       material: '100%棉',
       style: '修身款',
       pattern: '常规款',
-      price: 99,
-      sales: 267,
       status: 1,
       description: '时尚印花，青春活力'
     },
@@ -201,8 +187,6 @@ module.exports = {
       material: '莫代尔棉',
       style: '贴身款',
       pattern: '常规款',
-      price: 149,
-      sales: 423,
       status: 1,
       description: '保暖透气，亲肤舒适'
     },
@@ -215,8 +199,6 @@ module.exports = {
       material: '棉',
       style: '宽松款',
       pattern: '常规款',
-      price: 399,
-      sales: 56,
       status: 1,
       description: '加厚保暖，适合秋冬'
     },
@@ -229,8 +211,6 @@ module.exports = {
       material: '羽绒',
       style: '轻薄款',
       pattern: '常规款',
-      price: 259,
-      sales: 89,
       status: 1,
       description: '轻便保暖，时尚百搭'
     },
@@ -243,8 +223,6 @@ module.exports = {
       material: '聚酯纤维',
       style: '运动款',
       pattern: '常规款',
-      price: 459,
-      sales: 134,
       status: 1,
       description: '防风防水，户外必备'
     }
