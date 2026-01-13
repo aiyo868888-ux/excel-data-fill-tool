@@ -18,18 +18,35 @@ class CloudImageUtil {
     if (!fileIds || fileIds.length === 0) return [];
 
     try {
+      console.log('[CloudImageUtil] 开始批量转换', fileIds.length, '张图片');
+
       const result = await wx.cloud.getTempFileURL({
         fileList: fileIds.map(id => ({ fileID: id }))
       });
 
+      console.log('[CloudImageUtil] 批量转换响应:', result);
+
       if (result.fileList && result.fileList.length > 0) {
-        return result.fileList.map(file => file.tempFileURL);
+        const urls = result.fileList.map((file, index) => {
+          if (file.status === 0) {
+            console.log(`[CloudImageUtil] 图片 ${index} 转换成功:`, file.tempFileURL);
+            return file.tempFileURL;
+          } else {
+            console.error(`[CloudImageUtil] 图片 ${index} 转换失败:`, file.errMsg);
+            return fileIds[index]; // 失败时返回原地址
+          }
+        });
+        return urls;
       }
 
-      return [];
+      return fileIds; // 全部失败时返回原地址
     } catch (err) {
-      console.error('获取临时链接失败:', err);
-      return fileIds; // 失败时返回原地址
+      console.error('[CloudImageUtil] 批量转换失败:', err);
+      console.error('错误码:', err.errCode);
+      console.error('错误信息:', err.errMsg);
+
+      // 降级：返回原地址
+      return fileIds;
     }
   }
 
