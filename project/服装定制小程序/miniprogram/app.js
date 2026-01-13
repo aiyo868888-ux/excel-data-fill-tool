@@ -8,10 +8,10 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
-        env: 'clothing-dev-7g7fjfyt4ff2ed7f', // 云开发环境ID
+        env: 'cloud1-2g7e3gch6d0592e5', // 云开发环境ID
         traceUser: true
       });
-      console.log('云开发初始化成功');
+      console.log('云开发初始化成功，环境ID: cloud1-2g7e3gch6d0592e5');
     }
   },
 
