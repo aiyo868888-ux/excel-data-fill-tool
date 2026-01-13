@@ -3,9 +3,14 @@
 支持多供应商管理、进度追踪、会话管理
 """
 
-from flask import Flask, render_template, request, send_file, jsonify
-import os
+# 必须在最前面，修复 numpy 源代码目录检查问题
 import sys
+import os
+# 移除当前目录，避免 numpy 误判
+if '' in sys.path:
+    sys.path.remove('')
+
+from flask import Flask, render_template, request, send_file, jsonify
 import traceback
 from datetime import datetime
 import pandas as pd
@@ -15,41 +20,67 @@ import json
 import threading
 import time
 
+# ==================== 获取资源路径 ====================
+def get_resource_path():
+    """
+    获取资源文件路径（支持 PyInstaller 打包）
+    Returns:
+        资源文件所在目录的绝对路径
+    """
+    # 优先从环境变量读取（由 exe 启动器设置）
+    if 'FLASK_RESOURCE_DIR' in os.environ:
+        return os.environ['FLASK_RESOURCE_DIR']
+
+    # PyInstaller 打包后的临时目录
+    if hasattr(sys, '_MEIPASS'):
+        return sys._MEIPASS
+
+    # 开发环境：使用当前文件所在目录
+    return os.path.abspath(os.path.dirname(__file__))
+
+# 获取资源目录
+RESOURCE_DIR = get_resource_path()
+
 # 导入核心数据填充类
 import importlib.util
-# 使用绝对路径避免编码问题（绿色版：数据填充工具.py 在根目录）
-module_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '数据填充工具.py'))
+# 使用资源目录查找数据填充工具模块
+module_path = os.path.join(RESOURCE_DIR, '数据填充工具.py')
 spec = importlib.util.spec_from_file_location("data_filler", module_path)
 DataFillerModule = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(DataFillerModule)
 DataFiller = DataFillerModule.DataFiller
 
-app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB最大文件上传
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['OUTPUT_FOLDER'] = 'temp'
-app.config['SESSION_FOLDER'] = 'sessions'
+# 初始化 Flask 应用，指定 templates 和 static 路径
+app = Flask(__name__,
+            template_folder=os.path.join(RESOURCE_DIR, 'templates'),
+            static_folder=os.path.join(RESOURCE_DIR, 'static'))
 
-# 确保目录存在
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB最大文件上传
+
+# 使用绝对路径
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
+app.config['OUTPUT_FOLDER'] = os.path.join(BASE_DIR, 'temp')
+app.config['SESSION_FOLDER'] = os.path.join(BASE_DIR, 'sessions')
+
+# 确保目录存在（在项目目录下）
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 os.makedirs(app.config['SESSION_FOLDER'], exist_ok=True)
 
-# Whisper 相关目录
-WHISPER_DIRS = [
-    'uploads/whisper/audio',
-    'uploads/whisper/converted',
-    'temp/whisper/text',
-    'temp/whisper/srt',
-    'temp/whisper/vtt',
-    'static'
-]
-for dir_path in WHISPER_DIRS:
-    os.makedirs(dir_path, exist_ok=True)
+# 打印路径信息（便于调试）
+print(f"Flask 应用初始化完成:")
+print(f"  资源目录: {RESOURCE_DIR}")
+print(f"  Templates: {app.template_folder}")
+print(f"  Static: {app.static_folder}")
+print(f"  项目目录: {BASE_DIR}")
+print(f"  Upload: {app.config['UPLOAD_FOLDER']}")
+print(f"  Output: {app.config['OUTPUT_FOLDER']}")
 
 # ==================== 配置管理 ====================
 
-CONFIG_FILE = 'suppliers_config.json'
+# 配置文件路径
+CONFIG_FILE = os.path.join(BASE_DIR, 'suppliers_config.json')
 
 # 全局配置变量
 GLOBAL_SUPPLIERS_CONFIG = {
@@ -69,18 +100,19 @@ def load_suppliers_config():
                 GLOBAL_SUPPLIERS_CONFIG = json.load(f)
             print(f"✅ 配置文件已加载: {CONFIG_FILE}")
         except Exception as e:
-            print(f"⚠️  加载配置失败: {e}，使用默认配置")
+            print(f"⚠️  加载配置失败: {e}")
     else:
-        print(f"⚠️  配置文件不存在，创建默认配置: {CONFIG_FILE}")
-        save_suppliers_config_to_file()
+        print(f"⚠️  配置文件不存在，使用默认配置")
 
 def save_suppliers_config_to_file():
-    """保存送货商配置到文件"""
+    """保存送货商配置到文件（保存到工作目录）"""
     global GLOBAL_SUPPLIERS_CONFIG
+    # 保存到工作目录
+    config_file = CONFIG_FILE_WORKING
     try:
-        with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+        with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(GLOBAL_SUPPLIERS_CONFIG, f, ensure_ascii=False, indent=2)
-        print(f"✅ 配置已保存: {CONFIG_FILE}")
+        print(f"✅ 配置已保存: {config_file}")
         return True
     except Exception as e:
         print(f"❌ 保存配置失败: {e}")
@@ -231,7 +263,11 @@ def upload_suppliers():
     """上传送货商文件"""
     try:
         session_id = request.headers.get('X-Session-ID')
+        print(f"[DEBUG] upload-suppliers called, session_id: {session_id}")
+        print(f"[DEBUG] sessions keys: {list(sessions.keys())[:5]}")
+
         if not session_id or session_id not in sessions:
+            print(f"[DEBUG] Session validation failed")
             return jsonify({'success': False, 'error': '无效的会话'}), 400
 
         session = get_session(session_id)
@@ -638,11 +674,25 @@ def clear_fill_history():
 def download_file(filename):
     """下载文件"""
     try:
-        filepath = os.path.join(app.config['OUTPUT_FOLDER'], filename)
+        output_folder = app.config['OUTPUT_FOLDER']
+        filepath = os.path.join(output_folder, filename)
+
+        print(f"[DEBUG] 下载请求:")
+        print(f"  文件名: {filename}")
+        print(f"  OUTPUT_FOLDER: {output_folder}")
+        print(f"  完整路径: {filepath}")
+        print(f"  文件存在: {os.path.exists(filepath)}")
+
         if os.path.exists(filepath):
             return send_file(filepath, as_attachment=True, download_name=filename)
         else:
-            return jsonify({'success': False, 'error': '文件不存在'}), 404
+            # 列出目录中的文件，帮助调试
+            try:
+                files = os.listdir(output_folder)
+                print(f"  目录中的文件: {files[:10]}")
+            except:
+                pass
+            return jsonify({'success': False, 'error': f'文件不存在: {filename}'}), 404
     except Exception as e:
         traceback.print_exc()
         return jsonify({'success': False, 'error': f'下载失败: {str(e)}'}), 500
@@ -697,210 +747,6 @@ def save_suppliers_config_api():
     except Exception as e:
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
-
-
-# ==================== Whisper 语音识别功能 ====================
-
-# Whisper 任务状态管理
-whisper_tasks = {}
-
-# Whisper 配置
-app.config['WHISPER_MAX_FILE_SIZE'] = 500 * 1024 * 1024  # 500MB
-app.config['WHISPER_ALLOWED_EXTENSIONS'] = {
-    'mp3', 'wav', 'm4a', 'mp4', 'ogg', 'flac', 'aac', 'wma'
-}
-app.config['WHISPER_DEFAULT_MODEL'] = 'base'
-app.config['WHISPER_MAX_CONCURRENT_TASKS'] = 3
-
-
-def run_whisper_task(task_id, audio_path, model_size, output_formats):
-    """
-    后台执行 Whisper 转录任务
-    在独立线程中运行，避免阻塞主线程
-    """
-    try:
-        from whisper_service import WhisperTranscriber
-
-        # 更新状态：处理中
-        whisper_tasks[task_id].update({
-            'status': 'processing',
-            'progress': 0,
-            'message': '任务初始化...'
-        })
-
-        # 创建转录器
-        transcriber = WhisperTranscriber(model_size)
-
-        # 定义进度回调
-        def progress_callback(progress, message):
-            whisper_tasks[task_id].update({
-                'progress': progress,
-                'message': message
-            })
-
-        # 执行转录
-        result = transcriber.transcribe(
-            audio_path,
-            output_formats=output_formats,
-            progress_callback=progress_callback
-        )
-
-        # 更新状态：完成
-        whisper_tasks[task_id].update({
-            'status': 'completed',
-            'progress': 100,
-            'message': '转换完成！',
-            'result': result
-        })
-
-    except Exception as e:
-        # 更新状态：失败
-        whisper_tasks[task_id].update({
-            'status': 'failed',
-            'message': f'转换失败：{str(e)}',
-            'error': str(e)
-        })
-        traceback.print_exc()
-
-
-@app.route('/whisper')
-def whisper_page():
-    """Whisper 语音识别页面"""
-    return render_template('whisper.html')
-
-
-@app.route('/api/whisper/upload', methods=['POST'])
-def upload_audio():
-    """上传音频文件并启动转录任务"""
-    try:
-        # 检查文件
-        if 'audio' not in request.files:
-            return jsonify({'success': False, 'error': '未上传文件'}), 400
-
-        file = request.files['audio']
-        if file.filename == '':
-            return jsonify({'success': False, 'error': '未选择文件'}), 400
-
-        # 获取参数
-        model_size = request.form.get('model_size', app.config['WHISPER_DEFAULT_MODEL'])
-        output_formats = json.loads(request.form.get('output_formats', '["txt", "srt"]'))
-
-        # 验证文件格式
-        file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-        if file_ext not in app.config['WHISPER_ALLOWED_EXTENSIONS']:
-            return jsonify({
-                'success': False,
-                'error': f'不支持的文件格式。支持格式：{", ".join(app.config["WHISPER_ALLOWED_EXTENSIONS"])}'
-            }), 400
-
-        # 检查并发任务数
-        active_count = sum(1 for t in whisper_tasks.values() if t['status'] == 'processing')
-        if active_count >= app.config['WHISPER_MAX_CONCURRENT_TASKS']:
-            return jsonify({
-                'success': False,
-                'error': f'当前有 {active_count} 个任务正在处理，请稍后再试'
-            }), 503
-
-        # 保存文件
-        filename = f"{uuid.uuid4()}_{file.filename}"
-        audio_path = os.path.join('uploads/whisper/audio', filename)
-        file.save(audio_path)
-
-        # 创建任务
-        task_id = str(uuid.uuid4())
-
-        # 初始化任务状态
-        whisper_tasks[task_id] = {
-            'status': 'pending',
-            'progress': 0,
-            'message': '任务已创建，等待处理...',
-            'result': None,
-            'error': None,
-            'created_at': datetime.now().isoformat(),
-            'audio_file': filename
-        }
-
-        # 创建并启动线程
-        thread = threading.Thread(
-            target=run_whisper_task,
-            args=(task_id, audio_path, model_size, output_formats)
-        )
-        thread.daemon = True  # 守护线程，主程序退出时自动结束
-        thread.start()
-
-        return jsonify({
-            'success': True,
-            'task_id': task_id,
-            'message': '文件上传成功，正在处理...'
-        })
-
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': f'上传失败: {str(e)}'}), 500
-
-
-@app.route('/api/whisper/status/<task_id>')
-def get_task_status(task_id):
-    """查询转录任务状态"""
-    if task_id not in whisper_tasks:
-        return jsonify({'success': False, 'error': '任务不存在'}), 404
-
-    task = whisper_tasks[task_id]
-
-    return jsonify({
-        'success': True,
-        'status': task['status'],
-        'progress': task['progress'],
-        'message': task['message'],
-        'result': task.get('result'),
-        'error': task.get('error')
-    })
-
-
-@app.route('/api/whisper/download/<path:filename>')
-def download_whisper_result(filename):
-    """下载转录结果文件"""
-    try:
-        # 安全检查：确保文件路径在允许的目录内
-        if '..' in filename or filename.startswith('/'):
-            return jsonify({'success': False, 'error': '非法的文件路径'}), 400
-
-        # 检查文件是否在 whisper 输出目录中
-        allowed_dirs = ['temp/whisper/text', 'temp/whisper/srt', 'temp/whisper/vtt']
-        filepath = None
-        for dir_path in allowed_dirs:
-            potential_path = os.path.join(dir_path, filename)
-            if os.path.exists(potential_path):
-                filepath = potential_path
-                break
-
-        if not filepath or not os.path.exists(filepath):
-            return jsonify({'success': False, 'error': '文件不存在'}), 404
-
-        return send_file(filepath, as_attachment=True, download_name=filename)
-
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': f'下载失败: {str(e)}'}), 500
-
-
-def init_whisper():
-    """初始化 Whisper（后台预加载模型）"""
-    def load_models():
-        time.sleep(2)  # 等待应用启动
-        try:
-            from whisper_service import WhisperTranscriber
-            print("⏳ 后台预加载 Whisper 模型...")
-            WhisperTranscriber.preload_models(['base'])
-        except Exception as e:
-            print(f"⚠️  Whisper 模型预加载失败：{e}")
-
-    thread = threading.Thread(target=load_models, daemon=True)
-    thread.start()
-
-
-# 启动时预加载 Whisper 模型
-init_whisper()
 
 
 if __name__ == '__main__':

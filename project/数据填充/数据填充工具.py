@@ -2472,12 +2472,22 @@ class DataFiller:
             base_name = os.path.splitext(self.report_path)[0]
             output_path = f"{base_name}_已填充.xlsx"
 
+        # 确保使用绝对路径（避免 openpyxl 路径解析问题）
+        output_path = os.path.abspath(output_path)
+
+        # 调试输出
+        print(f"[DEBUG] save_report 接收到的路径: {output_path}")
+        print(f"[DEBUG] 路径是否绝对: {os.path.isabs(output_path)}")
+        print(f"[DEBUG] 当前工作目录: {os.getcwd()}")
+
         try:
             self.wb.save(output_path)
             print(f"\n✅ 报表已保存到: {output_path}")
             return output_path
         except Exception as e:
             print(f"❌ 保存失败: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     def cleanup(self):

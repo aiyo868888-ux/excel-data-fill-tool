@@ -923,6 +923,16 @@
                     body: formData
                 });
 
+                // 检查响应类型
+                const contentType = uploadResponse.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await uploadResponse.text();
+                    console.error('服务器返回非JSON响应:', text.substring(0, 200));
+                    alert('服务器错误：返回了HTML而不是JSON。请检查API路由配置。');
+                    updateTableStatus(currentColumnRange, 'error');
+                    return;
+                }
+
                 const uploadResult = await uploadResponse.json();
 
                 if (!uploadResult.success) {
