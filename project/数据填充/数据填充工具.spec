@@ -39,11 +39,12 @@ a = Analysis(
     ],
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=['rthook_pyi_rth_numpy.py'],
+    runtime_hooks=[],  # 不使用runtime hook，避免导入顺序问题
     excludes=[
         'tkinter',
         'matplotlib',
         'numpy.tests',
+        'numpy.distutils',
         'scipy',
     ],
     win_no_prefer_redirects=False,

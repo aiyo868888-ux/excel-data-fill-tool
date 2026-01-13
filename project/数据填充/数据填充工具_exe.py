@@ -8,6 +8,22 @@
 import sys
 import os
 
+# ========== 关键：必须在任何导入之前修复 sys.path ==========
+# 这是解决 numpy 源代码目录检查错误的关键
+if hasattr(sys, '_MEIPASS'):
+    # PyInstaller 打包环境
+    # 只保留 _MEIPASS，完全重置 sys.path
+    # 这样 numpy 就不会检测到源代码目录
+    sys.path = [sys._MEIPASS]
+else:
+    # 开发环境：移除空字符串，避免误导 numpy
+    try:
+        if '' in sys.path:
+            sys.path.remove('')
+    except:
+        pass
+# ========== sys.path 修复结束 ==========
+
 # 必须在导入 pandas/numpy 之前设置这些环境变量
 # 禁用 numpy 的源代码目录检查
 os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
@@ -52,17 +68,7 @@ if __name__ == '__main__':
     # 设置环境变量，告诉 Flask 应用资源文件的位置
     os.environ['FLASK_RESOURCE_DIR'] = resource_dir
 
-    # 修复 numpy 源代码目录检查问题
-    # 清空 sys.path，只保留必要的路径，避免 numpy 检测到源代码目录
-    if hasattr(sys, '_MEIPASS'):
-        # PyInstaller 环境：完全重置 sys.path
-        # 这是避免 numpy 误判的关键
-        sys.path = [sys._MEIPASS]
-        # 只添加资源目录
-        sys.path.insert(0, resource_dir)
-    else:
-        # 开发环境
-        sys.path.insert(0, resource_dir)
+    # sys.path 已经在文件开头修复过了，这里不需要再次修改
 
     # 创建必要的目录（在项目目录下）
     for dir_name in ['uploads', 'temp', 'sessions', 'logs']:

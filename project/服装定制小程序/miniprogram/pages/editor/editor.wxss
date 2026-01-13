@@ -3,9 +3,11 @@
 /* 页面容器 */
 .page-container {
   min-height: 100vh;
+  height: 100vh;
   background-color: #F5F5F5;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* 自定义导航栏 */
@@ -81,13 +83,17 @@
   flex: 1;
   position: relative;
   display: flex;
-  background-color: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+  background-color: #F5F5F5;
   overflow: hidden;
+  min-height: 0;
 }
 
 .canvas-bg {
   width: 100%;
   height: 100%;
+  display: block;
 }
 
 /* 颜色选择器 - 左侧 */
@@ -173,6 +179,43 @@
   white-space: nowrap;
 }
 
+/* 元素控制按钮 */
+.element-controls {
+  position: absolute;
+  top: -40rpx;
+  right: -40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  z-index: 10;
+}
+
+.control-btn {
+  width: 50rpx;
+  height: 50rpx;
+  background-color: #FF6600;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+}
+
+.control-icon {
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.delete-btn {
+  background-color: #E60012;
+}
+
+.resize-btn {
+  background-color: #FF6600;
+}
+
 /* 底部工具栏 */
 .bottom-toolbar {
   display: flex;
@@ -204,4 +247,17 @@
 .toolbar-text {
   font-size: 24rpx;
   color: #FFFFFF;
+}
+
+/* 加载提示 */
+.loading-tip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #FFFFFF;
+  padding: 30rpx 50rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
 }

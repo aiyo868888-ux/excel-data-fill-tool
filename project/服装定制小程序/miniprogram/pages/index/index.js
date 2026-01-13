@@ -83,6 +83,15 @@ Page({
   },
 
   /**
+   * 跳转到测试页面
+   */
+  onGoTest() {
+    wx.navigateTo({
+      url: '/pages/test/test'
+    });
+  },
+
+  /**
    * 点击分类
    */
   onCategoryTap(e) {

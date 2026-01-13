@@ -3,12 +3,23 @@
 支持多供应商管理、进度追踪、会话管理
 """
 
-# 必须在最前面，修复 numpy 源代码目录检查问题
+# ========== 关键：必须在任何导入之前修复 sys.path ==========
 import sys
 import os
-# 移除当前目录，避免 numpy 误判
-if '' in sys.path:
-    sys.path.remove('')
+
+# 修复 numpy 源代码目录检查问题
+# 这是 PyInstaller 打包后 numpy 报错的根本原因
+if hasattr(sys, '_MEIPASS'):
+    # PyInstaller 打包环境：完全重置 sys.path
+    # 只保留 _MEIPASS，删除其他所有路径
+    sys.path = [sys._MEIPASS]
+else:
+    # 开发环境：移除空字符串和当前目录引用
+    if '' in sys.path:
+        sys.path.remove('')
+    if '.' in sys.path:
+        sys.path.remove('.')
+# ========== sys.path 修复完成 ==========
 
 from flask import Flask, render_template, request, send_file, jsonify
 import traceback
@@ -671,10 +682,30 @@ def clear_fill_history():
 
 
 @app.route('/api/download/<filename>')
+@app.route('/api/download', defaults={'filename': None})
 def download_file(filename):
-    """下载文件"""
+    """下载文件（如果不指定文件名，则下载最新的文件）"""
     try:
         output_folder = app.config['OUTPUT_FOLDER']
+
+        # 如果没有指定文件名，获取最新的文件
+        if filename is None:
+            try:
+                files = [f for f in os.listdir(output_folder) if f.endswith('.xlsx')]
+                if files:
+                    # 按修改时间排序，获取最新的文件
+                    files_with_time = [
+                        (f, os.path.getmtime(os.path.join(output_folder, f)))
+                        for f in files
+                    ]
+                    files_with_time.sort(key=lambda x: x[1], reverse=True)
+                    filename = files_with_time[0][0]
+                    print(f"[DEBUG] 自动选择最新文件: {filename}")
+                else:
+                    return jsonify({'success': False, 'error': '没有可下载的文件'}), 404
+            except Exception as e:
+                return jsonify({'success': False, 'error': f'获取文件列表失败: {str(e)}'}), 500
+
         filepath = os.path.join(output_folder, filename)
 
         print(f"[DEBUG] 下载请求:")

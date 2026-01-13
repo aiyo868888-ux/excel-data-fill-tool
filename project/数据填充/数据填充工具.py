@@ -1728,9 +1728,10 @@ class DataFiller:
         target_start_col: int,
         target_end_col: int,
         target_row: int,
+        recalculate_amount: bool = True,
     ) -> int:
         """
-        将供应商数据复制到Q-V列的指定行
+        将供应商数据复制到指定列的指定行
 
         Args:
             ws: 工作表对象
@@ -1739,10 +1740,20 @@ class DataFiller:
             target_start_col: 目标起始列号（1-based）
             target_end_col: 目标终止列号（1-based）
             target_row: 目标起始行号（1-based）
+            recalculate_amount: 是否重新计算金额列（默认True）
 
         Returns:
             复制的行数
         """
+        # 导入依赖
+        from openpyxl.styles import Font, Alignment
+        from openpyxl.utils import get_column_letter
+        from openpyxl.cell import MergedCell
+
+        # 统一样式常量（避免重复创建对象）
+        UNIFORM_FONT = Font(name='宋体', size=11, bold=False, color='000000')
+        UNIFORM_ALIGNMENT = Alignment(horizontal='center', vertical='center')
+
         # 获取源数据范围
         source_start_row, source_end_row = self.get_supplier_data_range(
             ws, source_start_col, source_end_col
@@ -1759,12 +1770,15 @@ class DataFiller:
         target_num_cols = target_end_col - target_start_col + 1
         num_cols = min(source_num_cols, target_num_cols)
 
-        from openpyxl.styles import Font, Border, Side, Alignment
-
         # 复制每一行数据
         for row_offset in range(num_rows):
             source_row = source_start_row + row_offset
             target_row_num = target_row + row_offset
+
+            # 识别行类型（基于实际数据结构）
+            is_header_row = (row_offset == 0)                    # 第1行（表头）
+            is_last_row = (row_offset == num_rows - 1)          # 最后一行（合计）
+            is_data_row = not (is_header_row or is_last_row)    # 中间所有数据行
 
             for col_offset in range(num_cols):
                 source_col = source_start_col + col_offset
@@ -1774,19 +1788,62 @@ class DataFiller:
                 target_cell = ws.cell(row=target_row_num, column=target_col)
 
                 # 复制值（跳过合并单元格，它们的value是只读的）
-                # 检查是否为合并单元格
-                from openpyxl.cell import MergedCell
                 if not isinstance(source_cell, MergedCell):
-                    target_cell.value = source_cell.value
+                    # 金额列特殊处理：重新计算公式（基于目标位置）
+                    if recalculate_amount and col_offset == 4:  # 第5列（金额列）
+                        if is_header_row:
+                            # 表头行：填"金额"
+                            target_cell.value = "金额"
+                        elif is_last_row:
+                            # 最后一行（合计）：重新生成求和公式 =SUM(金额列数据行范围)
+                            amount_col_letter = get_column_letter(target_col)
+                            sum_start_row = target_row + 1  # 从第2行（第1个数据行）开始
+                            sum_end_row = target_row_num - 1  # 到前一行（最后一个数据行）结束
 
-                # 复制格式
-                if source_cell.has_style:
-                    if source_cell.font:
-                        target_cell.font = source_cell.font.copy()
-                    if source_cell.border:
+                            # 边界检查：只有当有数据行时才生成SUM公式
+                            if sum_start_row <= sum_end_row:
+                                target_cell.value = f"=SUM({amount_col_letter}{sum_start_row}:{amount_col_letter}{sum_end_row})"
+                            else:
+                                # 无数据行（只有表头和合计），填0
+                                target_cell.value = 0
+                        elif is_data_row:
+                            # 数据行：重新生成乘法公式 =数量*单价（基于目标位置）
+                            qty_col_letter = get_column_letter(target_start_col + 2)   # 第3列（数量）
+                            price_col_letter = get_column_letter(target_start_col + 3) # 第4列（单价）
+                            target_cell.value = f"={qty_col_letter}{target_row_num}*{price_col_letter}{target_row_num}"
+                        else:
+                            # 不应该到这里
+                            target_cell.value = ""
+                    else:
+                        # 其他列：复制值，但将文本数字转换为数值类型
+                        source_value = source_cell.value
+
+                        # 尝试将文本数字转换为数值
+                        if isinstance(source_value, str):
+                            # 尝试转换为整数或浮点数
+                            try:
+                                if '.' in source_value:
+                                    target_cell.value = float(source_value)
+                                else:
+                                    target_cell.value = int(source_value)
+                            except (ValueError, TypeError):
+                                # 转换失败，保持原文本
+                                target_cell.value = source_value
+                        else:
+                            # 不是文本，直接复制
+                            target_cell.value = source_value
+
+                # 设置统一格式（只对有内容的单元格）
+                if target_cell.value is not None:
+                    # 统一字体：宋体，11号，不加粗，黑色
+                    target_cell.font = UNIFORM_FONT
+
+                    # 统一对齐：水平垂直居中
+                    target_cell.alignment = UNIFORM_ALIGNMENT
+
+                    # 复制边框（保留表格结构）
+                    if source_cell.has_style and source_cell.border:
                         target_cell.border = source_cell.border.copy()
-                    if source_cell.alignment:
-                        target_cell.alignment = source_cell.alignment.copy()
 
         return num_rows
 

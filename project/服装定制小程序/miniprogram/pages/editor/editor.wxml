@@ -37,7 +37,19 @@
   <!-- 画布区域 -->
   <view class="canvas-area">
     <!-- 产品图背景 -->
-    <image class="canvas-bg" src="{{productImage}}" mode="aspectFit" />
+    <image
+      class="canvas-bg"
+      src="{{productImage}}"
+      mode="aspectFill"
+      binderror="onImageError"
+      bindload="onImageLoad"
+      show-menu-by-longpress
+    />
+
+    <!-- 加载提示 -->
+    <view wx:if="{{!productImage}}" class="loading-tip">
+      <text>正在加载商品图片...</text>
+    </view>
 
     <!-- 左侧颜色选择器 -->
     <view class="color-picker">
@@ -66,10 +78,25 @@
         wx:key="id"
         style="left: {{item.x}}rpx; top: {{item.y}}rpx; width: {{item.width}}rpx; height: {{item.height}}rpx; transform: rotate({{item.rotation}}deg);"
         bindtap="onSelectElement"
+        bindtouchstart="onElementTouchStart"
+        bindtouchmove="onElementTouchMove"
+        bindtouchend="onElementTouchEnd"
         data-id="{{item.id}}"
       >
         <image wx:if="{{item.type === 'image'}}" class="element-image" src="{{item.url}}" mode="aspectFill" />
         <text wx:if="{{item.type === 'text'}}" class="element-text" style="font-size: {{item.fontSize}}rpx; color: {{item.color}};">{{item.content}}</text>
+
+        <!-- 选中时的控制按钮 -->
+        <view wx:if="{{selectedId === item.id}}" class="element-controls">
+          <!-- 删除按钮 -->
+          <view class="control-btn delete-btn" catchtap="onDeleteElementTap" data-id="{{item.id}}">
+            <text class="control-icon">×</text>
+          </view>
+          <!-- 缩放按钮 -->
+          <view class="control-btn resize-btn" catchtouchstart="onResizeStart" catchtouchmove="onResizeMove" catchtouchend="onResizeEnd" data-id="{{item.id}}">
+            <text class="control-icon">↔</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>

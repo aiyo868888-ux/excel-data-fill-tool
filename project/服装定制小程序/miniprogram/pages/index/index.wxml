@@ -1,5 +1,12 @@
 <!--pages/index/index.wxml-->
 <view class="container">
+  <!-- 开发测试按钮（仅开发版显示） -->
+  <view wx:if="{{__wxConfig.envVersion === 'develop'}}">
+    <button bindtap="onGoTest" style="margin: 10rpx; background: #07c160; color: #fff;">
+      🧪 图片测试页面
+    </button>
+  </view>
+
   <!-- 搜索框 -->
   <view class="search-bar" bindtap="onSearch">
     <text class="search-icon">🔍</text>
