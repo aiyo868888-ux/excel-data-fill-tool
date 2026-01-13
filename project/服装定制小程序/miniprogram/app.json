@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/category/category",
+    "pages/editor/editor",
     "pages/profile/profile"
   ],
   "subpackages": [
@@ -9,8 +10,7 @@
       "root": "packageA",
       "name": "design",
       "pages": [
-        "pages/design/design",
-        "pages/editor/editor"
+        "pages/design/design"
       ]
     },
     {
@@ -48,7 +48,7 @@
         "text": "分类"
       },
       {
-        "pagePath": "packageA/pages/editor/editor",
+        "pagePath": "pages/editor/editor",
         "text": "设计"
       },
       {

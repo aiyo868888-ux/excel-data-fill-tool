@@ -161,7 +161,7 @@ Page({
 
     // 跳转到设计编辑页（editor在TabBar中，应该使用switchTab）
     wx.switchTab({
-      url: '/packageA/pages/editor/editor',
+      url: '/pages/editor/editor',
       success: () => {
         console.log('跳转到设计编辑页成功');
       },
