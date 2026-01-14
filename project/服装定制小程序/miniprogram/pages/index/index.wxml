@@ -1,11 +1,11 @@
 <!--pages/index/index.wxml-->
 <view class="container">
-  <!-- 开发测试按钮（仅开发版显示） -->
-  <view wx:if="{{__wxConfig.envVersion === 'develop'}}">
-    <button bindtap="onGoTest" style="margin: 10rpx; background: #07c160; color: #fff;">
-      🧪 图片测试页面
+  <!-- 测试按钮（所有版本可见，用于诊断体验版） -->
+  <view>
+    <button bindtap="onGoTest" style="margin: 10rpx; background: #07c160; color: #fff; font-size: 24rpx; padding: 10rpx;">
+      🧪 图片测试
     </button>
-    <button bindtap="onGoTestImage" style="margin: 10rpx; background: #1890ff; color: #fff;">
+    <button bindtap="onGoTestImage" style="margin: 10rpx; background: #1890ff; color: #fff; font-size: 24rpx; padding: 10rpx;">
       ☁️ 云函数测试
     </button>
   </view>
