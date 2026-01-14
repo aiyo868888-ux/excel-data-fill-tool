@@ -5,47 +5,6 @@
 const CLOUD_FUNCTION_NAME = 'getImageURL';
 
 /**
- * 加载单个对象的单个图片字段
- * @param {Object} item - 包含图片字段的对象
- * @param {string} imageField - 图片字段名
- * @returns {Promise<Object>} 替换图片后的对象
- */
-async function loadItemImage(item, imageField = 'image') {
-  if (!item || !item[imageField]) {
-    return item;
-  }
-
-  const imageUrl = item[imageField];
-
-  // 如果是数组，跳过（由专门的方法处理）
-  if (Array.isArray(imageUrl)) {
-    return item;
-  }
-
-  if (!imageUrl.startsWith('cloud://')) {
-    return item; // 不是云存储图片，直接返回
-  }
-
-  try {
-    const result = await wx.cloud.callFunction({
-      name: CLOUD_FUNCTION_NAME,
-      data: { fileIds: [imageUrl] }
-    });
-
-    if (result.result && result.result.code === 200 && result.result.data[0]) {
-      const tempURL = result.result.data[0].tempFileURL;
-      if (tempURL) {
-        return { ...item, [imageField]: tempURL };
-      }
-    }
-  } catch (err) {
-    console.warn(`[SimpleImageLoader] 图片加载失败:`, err);
-  }
-
-  return item; // 失败时返回原对象
-}
-
-/**
  * 批量加载对象的图片（支持数组）
  * @param {Array|Object} items - 对象数组或单个对象
  * @param {string} imageField - 图片字段名
@@ -56,12 +15,26 @@ async function loadImages(items, imageField = 'image') {
 
   // 处理数组
   if (Array.isArray(items)) {
-    const promises = items.map(item => loadProductImages(item));
-    return await Promise.all(promises);
+    // 判断第一个元素是否有 images 数组（商品对象）
+    if (items.length > 0 && items[0].images && Array.isArray(items[0].images)) {
+      // 商品数组，使用 loadProductImages
+      const promises = items.map(item => loadProductImages(item));
+      return await Promise.all(promises);
+    } else {
+      // 普通对象数组（如 banners, categories），使用 loadSingleImageField
+      const promises = items.map(item => loadSingleImageField(item, imageField));
+      return await Promise.all(promises);
+    }
   }
 
-  // 处理单个对象（商品对象）
-  return await loadProductImages(items);
+  // 处理单个对象
+  if (items.images && Array.isArray(items.images)) {
+    // 商品对象
+    return await loadProductImages(items);
+  } else {
+    // 普通对象
+    return await loadSingleImageField(items, imageField);
+  }
 }
 
 /**
@@ -137,6 +110,48 @@ async function loadProductImages(product) {
   }
 
   return loadedProduct;
+}
+
+/**
+ * 加载单个图片字段（用于 banners, categories 等）
+ * @param {Object} item - 包含单个图片字段的对象
+ * @param {string} imageField - 图片字段名
+ * @returns {Promise<Object>} 替换图片后的对象
+ */
+async function loadSingleImageField(item, imageField) {
+  if (!item || !item[imageField]) {
+    return item;
+  }
+
+  const imageUrl = item[imageField];
+
+  // 如果是数组，跳过
+  if (Array.isArray(imageUrl)) {
+    return item;
+  }
+
+  // 如果不是云存储图片，直接返回
+  if (typeof imageUrl !== 'string' || !imageUrl.startsWith('cloud://')) {
+    return item;
+  }
+
+  try {
+    const result = await wx.cloud.callFunction({
+      name: CLOUD_FUNCTION_NAME,
+      data: { fileIds: [imageUrl] }
+    });
+
+    if (result.result && result.result.code === 200 && result.result.data[0]) {
+      const tempURL = result.result.data[0].tempFileURL;
+      if (tempURL) {
+        return { ...item, [imageField]: tempURL };
+      }
+    }
+  } catch (err) {
+    console.warn(`[SimpleImageLoader] ${imageField} 加载失败:`, err);
+  }
+
+  return item;
 }
 
 module.exports = {
