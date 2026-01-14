@@ -2,8 +2,8 @@
 <view class="container">
   <view class="header">
     <text class="title">云函数测试页面</text>
-    <text class="status {{data.status.includes('成功') ? 'success' : data.status.includes('失败') ? 'error' : ''}}">
-      {{data.status}}
+    <text class="status {{status.includes('成功') ? 'success' : status.includes('失败') ? 'error' : ''}}">
+      {{status}}
     </text>
   </view>
 
@@ -11,20 +11,20 @@
     <text class="section-title">测试图片</text>
     <view class="image-container">
       <image
-        src="{{data.testImage}}"
+        src="{{testImage}}"
         mode="aspectFill"
         bindload="onImageLoad"
         binderror="onImageError"
         class="test-image"
       />
-      <text class="image-hint">{{data.testImage ? '如果能看到图片，说明云函数工作正常 ✅' : '等待测试...'}}</text>
+      <text class="image-hint">{{testImage ? '如果能看到图片，说明云函数工作正常 ✅' : '等待测试...'}}</text>
     </view>
   </view>
 
   <view class="section">
     <text class="section-title">日志</text>
     <scroll-view class="logs" scroll-y>
-      <view class="log-item" wx:for="{{data.logs}}" wx:key="index">
+      <view class="log-item" wx:for="{{logs}}" wx:key="index">
         {{item}}
       </view>
     </scroll-view>
