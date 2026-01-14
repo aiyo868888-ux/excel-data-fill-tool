@@ -15,39 +15,54 @@ class CloudImageUtil {
    * @returns {Promise<Array<string>>} 临时链接数组
    */
   static async getTempFileURLs(fileIds) {
-    if (!fileIds || fileIds.length === 0) return [];
+    if (!fileIds || fileIds.length === 0) {
+      console.log('[CloudImageUtil] fileIds 为空，直接返回');
+      return [];
+    }
 
-    console.log('[CloudImageUtil] 开始批量转换', fileIds.length, '张图片');
+    console.log('[CloudImageUtil] ========== 开始批量转换 ==========');
+    console.log('[CloudImageUtil] 图片数量:', fileIds.length);
+    console.log('[CloudImageUtil] 第一张图片:', fileIds[0]);
     console.log('[CloudImageUtil] 使用云函数代理模式');
 
     try {
       // 优先使用云函数（绕过客户端权限限制）
+      console.log('[CloudImageUtil] 调用云函数 getImageURL...');
       const result = await wx.cloud.callFunction({
         name: 'getImageURL',
         data: { fileIds }
       });
 
-      console.log('[CloudImageUtil] 云函数响应:', result);
+      console.log('[CloudImageUtil] ✅ 云函数调用成功');
+      console.log('[CloudImageUtil] result.result:', result.result);
 
-      if (result.result.code === 200 && result.result.data) {
+      if (result.result && result.result.code === 200 && result.result.data) {
+        console.log('[CloudImageUtil] 云函数返回 code: 200');
         const urls = result.result.data.map((file, index) => {
+          console.log(`[CloudImageUtil] 图片 ${index}: status=${file.status}, tempFileURL=${file.tempFileURL}`);
           if (file.status === 0) {
-            console.log(`[CloudImageUtil] 图片 ${index} 转换成功:`, file.tempFileURL);
+            console.log(`[CloudImageUtil] ✅ 图片 ${index} 转换成功:`, file.tempFileURL);
             return file.tempFileURL;
           } else {
-            console.error(`[CloudImageUtil] 图片 ${index} 转换失败:`, file.errMsg);
+            console.error(`[CloudImageUtil] ❌ 图片 ${index} 转换失败:`, file.errMsg);
             return fileIds[index]; // 失败时返回原地址
           }
         });
+        console.log('[CloudImageUtil] ========== 转换完成 ==========');
         return urls;
       } else {
-        console.error('[CloudImageUtil] 云函数返回错误:', result.result);
+        console.error('[CloudImageUtil] ❌ 云函数返回错误:', result.result);
+        console.log('[CloudImageUtil] 降级：返回原始 fileIds');
         return fileIds;
       }
     } catch (err) {
-      console.error('[CloudImageUtil] 云函数调用失败，尝试客户端API:', err);
+      console.error('[CloudImageUtil] ❌ 云函数调用失败');
+      console.error('[CloudImageUtil] 错误信息:', err);
+      console.error('[CloudImageUtil] errCode:', err.errCode);
+      console.error('[CloudImageUtil] errMsg:', err.errMsg);
 
       // 降级：尝试客户端 API
+      console.log('[CloudImageUtil] 尝试降级到客户端 API...');
       try {
         const clientResult = await wx.cloud.getTempFileURL({
           fileList: fileIds.map(id => ({ fileID: id }))
@@ -71,6 +86,7 @@ class CloudImageUtil {
         return fileIds;
       } catch (clientErr) {
         console.error('[CloudImageUtil] 客户端API也失败:', clientErr);
+        console.log('[CloudImageUtil] 最终降级：返回原始 fileIds');
         return fileIds; // 最终降级：返回原地址
       }
     }

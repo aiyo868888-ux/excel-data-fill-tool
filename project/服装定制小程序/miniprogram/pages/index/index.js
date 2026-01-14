@@ -21,6 +21,7 @@ Page({
    * 加载页面数据（本地模式）
    */
   async loadData() {
+    console.log('[index] ========== loadData 开始 ==========');
     wx.showLoading({ title: '加载中...', mask: true });
 
     try {
@@ -28,6 +29,7 @@ Page({
 
       // 所有商品
       const allProducts = mockData.products || [];
+      console.log('[index] 商品总数:', allProducts.length);
 
       if (allProducts.length === 0) {
         console.warn('[index] 商品数据为空');
@@ -37,11 +39,17 @@ Page({
       const hotProducts = [...allProducts]
         .sort((a, b) => b.sales - a.sales)
         .slice(0, 4);
+      console.log('[index] 热门商品数量:', hotProducts.length);
 
       // 新品（取后4个）
       const newProducts = allProducts.slice(-4);
+      console.log('[index] 新品数量:', newProducts.length);
+
+      console.log('[index] 原始 banners 数量:', (mockData.banners || []).length);
+      console.log('[index] 第一个 banner image:', (mockData.banners || [])[0]?.image);
 
       // 转换云存储图片为临时链接（设置3秒超时）
+      console.log('[index] 开始转换 banners 图片...');
       const banners = await this.withTimeout(
         CloudImageUtil.preloadImages(mockData.banners || []),
         3000
@@ -50,6 +58,9 @@ Page({
         return mockData.banners || [];
       });
 
+      console.log('[index] banners 转换完成，第一个 banner:', banners[0]);
+
+      console.log('[index] 开始转换 categories 图片...');
       const categories = await this.withTimeout(
         CloudImageUtil.preloadImages(
           (mockData.categories || []).filter(c => !c.parentId)
@@ -60,6 +71,7 @@ Page({
         return (mockData.categories || []).filter(c => !c.parentId);
       });
 
+      console.log('[index] 开始转换 hotProducts 图片...');
       const hotProductsWithImages = await this.withTimeout(
         CloudImageUtil.preloadImages(hotProducts),
         3000
@@ -68,6 +80,9 @@ Page({
         return hotProducts;
       });
 
+      console.log('[index] hotProducts 转换完成，第一个商品:', hotProductsWithImages[0]);
+
+      console.log('[index] 开始转换 newProducts 图片...');
       const newProductsWithImages = await this.withTimeout(
         CloudImageUtil.preloadImages(newProducts),
         3000
@@ -75,6 +90,8 @@ Page({
         console.warn('[index] newProducts图片转换失败，使用原始数据:', err);
         return newProducts;
       });
+
+      console.log('[index] 所有图片转换完成，准备 setData');
 
       this.setData({
         banners,
@@ -84,9 +101,12 @@ Page({
         loading: false
       });
 
-      console.log('[index] 数据加载成功');
+      console.log('[index] ✅ setData 完成');
+      console.log('[index] banners[0].image 类型:', typeof this.data.banners[0]?.image);
+      console.log('[index] banners[0].image 值:', this.data.banners[0]?.image);
+      console.log('[index] ========== 数据加载完成 ==========');
     } catch (err) {
-      console.error('[index] 数据加载失败', err);
+      console.error('[index] ❌ 数据加载失败', err);
 
       // 降级：直接使用原始数据（不转换图片）
       const allProducts = mockData.products || [];
