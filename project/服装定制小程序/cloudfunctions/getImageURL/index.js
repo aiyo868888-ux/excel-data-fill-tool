@@ -18,7 +18,10 @@ exports.main = async (event, context) => {
 
   try {
     const result = await cloud.getTempFileURL({
-      fileList: fileIds.map(id => ({ fileID: id }))
+      fileList: fileIds.map(id => ({
+        fileID: id,
+        maxAge: 7200 // 2小时有效期
+      }))
     })
 
     console.log('获取临时链接成功:', result)
@@ -31,7 +34,7 @@ exports.main = async (event, context) => {
     console.error('获取临时链接失败', err)
     return {
       code: 500,
-      error: err.message
+      error: err.message || err.errMsg
     }
   }
 }
