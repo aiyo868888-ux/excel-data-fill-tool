@@ -1,7 +1,7 @@
 // pages/index/index.js
 const mockData = require('../../mock/data.js');
 const store = require('../../store/index.js');
-const CloudImageUtil = require('../../utils/cloud-image.js');
+const { loadImages } = require('../../utils/simple-image-loader.js');
 
 Page({
   data: {
@@ -45,53 +45,23 @@ Page({
       const newProducts = allProducts.slice(-4);
       console.log('[index] 新品数量:', newProducts.length);
 
-      console.log('[index] 原始 banners 数量:', (mockData.banners || []).length);
-      console.log('[index] 第一个 banner image:', (mockData.banners || [])[0]?.image);
+      // 加载图片（使用简化版加载器）
+      console.log('[index] 开始加载图片...');
 
-      // 转换云存储图片为临时链接（设置3秒超时）
-      console.log('[index] 开始转换 banners 图片...');
-      const banners = await this.withTimeout(
-        CloudImageUtil.preloadImages(mockData.banners || []),
-        3000
-      ).catch((err) => {
-        console.warn('[index] banners图片转换失败，使用原始数据:', err);
-        return mockData.banners || [];
-      });
+      const banners = await loadImages(mockData.banners || [], 'image');
+      console.log('[index] ✅ banners 图片加载完成');
 
-      console.log('[index] banners 转换完成，第一个 banner:', banners[0]);
+      const categories = await loadImages(
+        (mockData.categories || []).filter(c => !c.parentId),
+        'icon'
+      );
+      console.log('[index] ✅ categories 图片加载完成');
 
-      console.log('[index] 开始转换 categories 图片...');
-      const categories = await this.withTimeout(
-        CloudImageUtil.preloadImages(
-          (mockData.categories || []).filter(c => !c.parentId)
-        ),
-        3000
-      ).catch((err) => {
-        console.warn('[index] categories图片转换失败，使用原始数据:', err);
-        return (mockData.categories || []).filter(c => !c.parentId);
-      });
+      const hotProductsWithImages = await loadImages(hotProducts, 'image');
+      console.log('[index] ✅ hotProducts 图片加载完成');
 
-      console.log('[index] 开始转换 hotProducts 图片...');
-      const hotProductsWithImages = await this.withTimeout(
-        CloudImageUtil.preloadImages(hotProducts),
-        3000
-      ).catch((err) => {
-        console.warn('[index] hotProducts图片转换失败，使用原始数据:', err);
-        return hotProducts;
-      });
-
-      console.log('[index] hotProducts 转换完成，第一个商品:', hotProductsWithImages[0]);
-
-      console.log('[index] 开始转换 newProducts 图片...');
-      const newProductsWithImages = await this.withTimeout(
-        CloudImageUtil.preloadImages(newProducts),
-        3000
-      ).catch((err) => {
-        console.warn('[index] newProducts图片转换失败，使用原始数据:', err);
-        return newProducts;
-      });
-
-      console.log('[index] 所有图片转换完成，准备 setData');
+      const newProductsWithImages = await loadImages(newProducts, 'image');
+      console.log('[index] ✅ newProducts 图片加载完成');
 
       this.setData({
         banners,
@@ -102,8 +72,7 @@ Page({
       });
 
       console.log('[index] ✅ setData 完成');
-      console.log('[index] banners[0].image 类型:', typeof this.data.banners[0]?.image);
-      console.log('[index] banners[0].image 值:', this.data.banners[0]?.image);
+      console.log('[index] banners[0].image:', this.data.banners[0]?.image?.substring(0, 50) + '...');
       console.log('[index] ========== 数据加载完成 ==========');
     } catch (err) {
       console.error('[index] ❌ 数据加载失败', err);
@@ -122,21 +91,6 @@ Page({
     } finally {
       wx.hideLoading();
     }
-  },
-
-  /**
-   * 超时包装器 - 防止图片转换卡住
-   * @param {Promise} promise - 要执行的Promise
-   * @param {number} timeout - 超时时间（毫秒）
-   * @returns {Promise} 带超时的Promise
-   */
-  withTimeout(promise, timeout) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
-      )
-    ]);
   },
 
   /**
