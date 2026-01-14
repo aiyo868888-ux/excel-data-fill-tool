@@ -5,6 +5,9 @@
     <button bindtap="onGoTest" style="margin: 10rpx; background: #07c160; color: #fff;">
       🧪 图片测试页面
     </button>
+    <button bindtap="onGoTestImage" style="margin: 10rpx; background: #1890ff; color: #fff;">
+      ☁️ 云函数测试
+    </button>
   </view>
 
   <!-- 搜索框 -->

@@ -5,7 +5,8 @@
     "pages/editor/editor",
     "pages/profile/profile",
     "pages/my-designs/my-designs",
-    "pages/test/test"
+    "pages/test/test",
+    "pages/test-image/test-image"
   ],
   "subpackages": [
     {

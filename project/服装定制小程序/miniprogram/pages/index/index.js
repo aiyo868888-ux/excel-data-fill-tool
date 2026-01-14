@@ -156,6 +156,15 @@ Page({
   },
 
   /**
+   * 跳转到云函数测试页面
+   */
+  onGoTestImage() {
+    wx.navigateTo({
+      url: '/pages/test-image/test-image'
+    });
+  },
+
+  /**
    * 点击分类
    */
   onCategoryTap(e) {
