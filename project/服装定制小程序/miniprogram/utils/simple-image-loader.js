@@ -5,7 +5,7 @@
 const CLOUD_FUNCTION_NAME = 'getImageURL';
 
 /**
- * 加载单个对象的图片
+ * 加载单个对象的单个图片字段
  * @param {Object} item - 包含图片字段的对象
  * @param {string} imageField - 图片字段名
  * @returns {Promise<Object>} 替换图片后的对象
@@ -16,6 +16,12 @@ async function loadItemImage(item, imageField = 'image') {
   }
 
   const imageUrl = item[imageField];
+
+  // 如果是数组，跳过（由专门的方法处理）
+  if (Array.isArray(imageUrl)) {
+    return item;
+  }
+
   if (!imageUrl.startsWith('cloud://')) {
     return item; // 不是云存储图片，直接返回
   }
@@ -50,12 +56,12 @@ async function loadImages(items, imageField = 'image') {
 
   // 处理数组
   if (Array.isArray(items)) {
-    const promises = items.map(item => loadItemImage(item, imageField));
+    const promises = items.map(item => loadProductImages(item));
     return await Promise.all(promises);
   }
 
-  // 处理单个对象
-  return await loadItemImage(items, imageField);
+  // 处理单个对象（商品对象）
+  return await loadProductImages(items);
 }
 
 /**
@@ -66,13 +72,12 @@ async function loadImages(items, imageField = 'image') {
 async function loadProductImages(product) {
   if (!product) return product;
 
-  // 加载主图
-  let loadedProduct = await loadItemImage(product, 'image');
+  let loadedProduct = { ...product };
 
-  // 加载 images 数组
+  // 加载 images 数组（商品主图）
   if (loadedProduct.images && Array.isArray(loadedProduct.images)) {
     try {
-      const cloudImages = loadedProduct.images.filter(img => img.startsWith('cloud://'));
+      const cloudImages = loadedProduct.images.filter(img => typeof img === 'string' && img.startsWith('cloud://'));
 
       if (cloudImages.length > 0) {
         const result = await wx.cloud.callFunction({
@@ -86,7 +91,7 @@ async function loadProductImages(product) {
           loadedProduct = {
             ...loadedProduct,
             images: loadedProduct.images.map(img => {
-              if (img.startsWith('cloud://')) {
+              if (typeof img === 'string' && img.startsWith('cloud://')) {
                 const index = cloudImages.indexOf(img);
                 return tempURLs[index] || img;
               }
@@ -100,10 +105,10 @@ async function loadProductImages(product) {
     }
   }
 
-  // 加载 detailImages 数组
+  // 加载 detailImages 数组（商品详情图）
   if (loadedProduct.detailImages && Array.isArray(loadedProduct.detailImages)) {
     try {
-      const cloudImages = loadedProduct.detailImages.filter(img => img.startsWith('cloud://'));
+      const cloudImages = loadedProduct.detailImages.filter(img => typeof img === 'string' && img.startsWith('cloud://'));
 
       if (cloudImages.length > 0) {
         const result = await wx.cloud.callFunction({
@@ -117,7 +122,7 @@ async function loadProductImages(product) {
           loadedProduct = {
             ...loadedProduct,
             detailImages: loadedProduct.detailImages.map(img => {
-              if (img.startsWith('cloud://')) {
+              if (typeof img === 'string' && img.startsWith('cloud://')) {
                 const index = cloudImages.indexOf(img);
                 return tempURLs[index] || img;
               }

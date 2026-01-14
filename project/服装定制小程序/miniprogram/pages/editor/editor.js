@@ -3,7 +3,7 @@ const mockData = require('../../mock/data.js');
 const store = require('../../store/index.js');
 const cloudService = require('../../utils/cloud.js');
 const ErrorHandler = require('../../utils/error-handler.js');
-const CloudImageUtil = require('../../utils/cloud-image.js');
+const { loadProductImages } = require('../../utils/simple-image-loader.js');
 
 Page({
   data: {
@@ -120,14 +120,9 @@ Page({
     console.log('找到的商品:', product);
 
     if (product) {
-      // 转换云存储图片为临时链接（设置3秒超时）
-      const productWithImages = await this.withTimeout(
-        CloudImageUtil.preloadImages(product),
-        3000
-      ).catch((err) => {
-        console.warn('[editor] 商品图片转换失败，使用原始数据:', err);
-        return product;
-      });
+      // 加载图片（使用简化版加载器）
+      const productWithImages = await loadProductImages(product);
+      console.log('[editor] ✅ 商品图片加载完成');
 
       const imageUrl = productWithImages.images[0];
 
@@ -178,14 +173,9 @@ Page({
         // 先加载商品信息
         const product = mockData.products.find(p => p._id === design.productId);
         if (product) {
-          // 转换云存储图片为临时链接（设置3秒超时）
-          const productWithImages = await this.withTimeout(
-            CloudImageUtil.preloadImages(product),
-            3000
-          ).catch((err) => {
-            console.warn('[editor] 设计图片转换失败，使用原始数据:', err);
-            return product;
-          });
+          // 加载图片（使用简化版加载器）
+          const productWithImages = await loadProductImages(product);
+          console.log('[editor] ✅ 设计商品图片加载完成');
 
           this.setData({
             productId: productWithImages._id,
@@ -214,18 +204,6 @@ Page({
         icon: 'none'
       });
     }
-  },
-
-  /**
-   * 超时包装器
-   */
-  withTimeout(promise, timeout) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
-      )
-    ]);
   },
 
   onShow() {

@@ -1,6 +1,6 @@
 // pages/category/category.js
 const mockData = require('../../mock/data.js');
-const CloudImageUtil = require('../../utils/cloud-image.js');
+const { loadImages } = require('../../utils/simple-image-loader.js');
 
 Page({
   data: {
@@ -81,14 +81,9 @@ Page({
         products.sort((a, b) => b.sales - a.sales);
       }
 
-      // 转换云存储图片为临时链接（设置3秒超时）
-      const productsWithImages = await this.withTimeout(
-        CloudImageUtil.preloadImages(products),
-        3000
-      ).catch((err) => {
-        console.warn('[category] 商品图片转换失败，使用原始数据:', err);
-        return products;
-      });
+      // 加载图片（使用简化版加载器）
+      const productsWithImages = await loadImages(products);
+      console.log('[category] ✅ 商品图片加载完成');
 
       this.setData({ products: productsWithImages });
       console.log('商品加载成功:', productsWithImages.length);
@@ -98,18 +93,6 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
-  },
-
-  /**
-   * 超时包装器
-   */
-  withTimeout(promise, timeout) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`操作超时 (${timeout}ms)`)), timeout)
-      )
-    ]);
   },
 
   /**
