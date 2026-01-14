@@ -17,17 +17,20 @@ class CloudImageUtil {
   static async getTempFileURLs(fileIds) {
     if (!fileIds || fileIds.length === 0) return [];
 
-    try {
-      console.log('[CloudImageUtil] 开始批量转换', fileIds.length, '张图片');
+    console.log('[CloudImageUtil] 开始批量转换', fileIds.length, '张图片');
+    console.log('[CloudImageUtil] 使用云函数代理模式');
 
-      const result = await wx.cloud.getTempFileURL({
-        fileList: fileIds.map(id => ({ fileID: id }))
+    try {
+      // 优先使用云函数（绕过客户端权限限制）
+      const result = await wx.cloud.callFunction({
+        name: 'getImageURL',
+        data: { fileIds }
       });
 
-      console.log('[CloudImageUtil] 批量转换响应:', result);
+      console.log('[CloudImageUtil] 云函数响应:', result);
 
-      if (result.fileList && result.fileList.length > 0) {
-        const urls = result.fileList.map((file, index) => {
+      if (result.result.code === 200 && result.result.data) {
+        const urls = result.result.data.map((file, index) => {
           if (file.status === 0) {
             console.log(`[CloudImageUtil] 图片 ${index} 转换成功:`, file.tempFileURL);
             return file.tempFileURL;
@@ -37,16 +40,39 @@ class CloudImageUtil {
           }
         });
         return urls;
+      } else {
+        console.error('[CloudImageUtil] 云函数返回错误:', result.result);
+        return fileIds;
       }
-
-      return fileIds; // 全部失败时返回原地址
     } catch (err) {
-      console.error('[CloudImageUtil] 批量转换失败:', err);
-      console.error('错误码:', err.errCode);
-      console.error('错误信息:', err.errMsg);
+      console.error('[CloudImageUtil] 云函数调用失败，尝试客户端API:', err);
 
-      // 降级：返回原地址
-      return fileIds;
+      // 降级：尝试客户端 API
+      try {
+        const clientResult = await wx.cloud.getTempFileURL({
+          fileList: fileIds.map(id => ({ fileID: id }))
+        });
+
+        console.log('[CloudImageUtil] 客户端API响应:', clientResult);
+
+        if (clientResult.fileList && clientResult.fileList.length > 0) {
+          const urls = clientResult.fileList.map((file, index) => {
+            if (file.status === 0) {
+              console.log(`[CloudImageUtil] 图片 ${index} 转换成功:`, file.tempFileURL);
+              return file.tempFileURL;
+            } else {
+              console.error(`[CloudImageUtil] 图片 ${index} 转换失败:`, file.errMsg);
+              return fileIds[index];
+            }
+          });
+          return urls;
+        }
+
+        return fileIds;
+      } catch (clientErr) {
+        console.error('[CloudImageUtil] 客户端API也失败:', clientErr);
+        return fileIds; // 最终降级：返回原地址
+      }
     }
   }
 
