@@ -45,14 +45,29 @@ Page({
       if (result.result && result.result.code === 200) {
         const data = result.result.data[0];
         this.addLog(`✅ 状态: ${data.status}`);
-        this.addLog(`✅ 临时链接: ${data.tempFileURL ? data.tempFileURL.substring(0, 50) + '...' : '无'}`);
+
+        const tempURL = data.tempFileURL;
+        this.addLog(`✅ 临时链接长度: ${tempURL ? tempURL.length : 0}`);
+
+        // 显示完整链接的前100个字符
+        if (tempURL) {
+          this.addLog(`✅ 临时链接前缀: ${tempURL.substring(0, 80)}...`);
+        }
 
         this.setData({
           status: '测试成功 ✅',
-          testImage: data.tempFileURL
+          testImage: tempURL
         });
+
+        this.addLog(`✅ setData 完成，testImage 长度: ${tempURL ? tempURL.length : 0}`);
+
+        // 验证数据是否设置成功
+        setTimeout(() => {
+          this.addLog(`🔍 验证: this.data.testImage 长度 = ${this.data.testImage ? this.data.testImage.length : 0}`);
+        }, 100);
       } else {
         this.addLog('❌ 云函数返回格式错误');
+        this.addLog(`返回内容: ${JSON.stringify(result.result)}`);
         this.setData({ status: '云函数返回错误' });
       }
     } catch (err) {
@@ -73,10 +88,21 @@ Page({
   onImageError(e) {
     console.error('[test-image] 图片加载失败:', e);
     this.addLog('❌ 图片加载失败');
+    this.addLog(`❌ 错误详情: ${JSON.stringify(e.detail)}`);
+
+    // 检查图片URL
+    const imgURL = this.data.testImage;
+    if (imgURL) {
+      this.addLog(`❌ 失败的URL: ${imgURL.substring(0, 100)}...`);
+      this.addLog(`❌ URL长度: ${imgURL.length}`);
+    } else {
+      this.addLog('❌ testImage 为空');
+    }
   },
 
-  onImageLoad() {
-    console.log('[test-image] 图片加载成功');
+  onImageLoad(e) {
+    console.log('[test-image] 图片加载成功', e);
     this.addLog('✅ 图片显示成功！');
+    this.addLog(`✅ 图片尺寸: ${e.detail.width}x${e.detail.height}`);
   }
 });
