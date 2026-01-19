@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调 - 优雅的深靛蓝色 -->
+    <color name="primary">#5C6BC0</color>
+    <color name="primary_dark">#3F51B5</color>
+    <color name="primary_light">#E8EAF6</color>
+
+    <!-- 强调色 - 温暖的橙色 -->
+    <color name="accent">#FF7043</color>
+    <color name="accent_light">#FF8A65</color>
+
+    <!-- 背景色 -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F5F5F5</color>
+
+    <!-- 文本色 -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+
+    <!-- 分割线 -->
+    <color name="divider">#E0E0E0</color>
+
+    <!-- 状态色 -->
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+    <color name="error">#F44336</color>
+
+    <!-- 卡片阴影 -->
+    <color name="shadow_light">#1A000000</color>
+    <color name="shadow_medium">#26000000</color>
+    <color name="shadow_dark">#42000000</color>
+
+    <!-- 基础色 -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

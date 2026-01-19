@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dp"
+    android:layout_height="72dp"
+    android:background="@drawable/floating_window_background"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 剪贴板图标 - 使用矢量图形 -->
+    <ImageView
+        android:id="@+id/floating_icon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_clipboard_floating"
+        android:contentDescription="悬浮窗" />
+
+</FrameLayout>

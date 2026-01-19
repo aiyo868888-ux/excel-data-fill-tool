@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 圆角矩形背景 - 左右缩小15% -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,31 L80,31 Q84,31 84,39 L84,69 Q84,77 80,77 L28,77 Q24,77 24,69 L24,39 Q24,31 28,31 Z"/>
+
+    <!-- 剪贴板主体 -->
+    <path
+        android:fillColor="@color/primary"
+        android:pathData="M40,38 L68,38 Q71,38 71,41 L71,70 Q71,73 68,73 L40,73 Q37,73 37,70 L37,41 Q37,38 40,38 Z"/>
+
+    <!-- 剪贴板夹子 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,38 L51,34 Q51,32 53,32 L57,32 Q59,32 59,34 L59,38"/>
+
+    <!-- 文档线条 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43,49 L65,49 L65,52 L43,52 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43,56 L65,56 L65,59 L43,59 Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M43,63 L57,63 L57,66 L43,66 Z"/>
+</vector>

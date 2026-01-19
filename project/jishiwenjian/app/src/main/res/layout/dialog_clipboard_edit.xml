@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background">
+
+    <!-- 顶部拖拽指示器 -->
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bottom_sheet_handle" />
+
+    <!-- 内容区域 -->
+    <ScrollView
+        android:id="@+id/contentScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"
+        android:scrollbarStyle="insideOverlay"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 内容输入区 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/surface_variant"
+                app:strokeWidth="0dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/contentInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="剪贴板内容"
+                    app:hintEnabled="false"
+                    app:boxBackgroundMode="none"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="5000"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/text_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/contentEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="80dp"
+                        android:maxHeight="200dp"
+                        android:gravity="top|start"
+                        android:padding="16dp"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
+                        android:background="@null"
+                        android:inputType="textMultiLine" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 标签选择区 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择标签"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/tagsChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="8dp" />
+
+            <!-- 自定义标签输入 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/surface_variant"
+                app:strokeWidth="0dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/customTagInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="添加自定义标签"
+                    app:hintEnabled="false"
+                    app:boxBackgroundMode="none"
+                    app:endIconDrawable="@drawable/ic_add"
+                    app:endIconMode="custom"
+                    app:endIconTint="@color/text_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/customTagInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
+                        android:background="@null"
+                        android:imeOptions="actionDone"
+                        android:inputType="text" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- 底部按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:gravity="center"
+        android:background="@color/surface"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="取消"
+            android:textSize="15sp"
+            android:textColor="@color/text_secondary"
+            app:backgroundTint="@color/surface_variant"
+            app:cornerRadius="12dp"
+            app:strokeWidth="0dp"
+            app:elevation="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="保存"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="12dp"
+            app:elevation="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
