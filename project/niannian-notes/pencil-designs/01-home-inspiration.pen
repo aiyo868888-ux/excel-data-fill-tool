@@ -1,0 +1,257 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "frame",
+      "x": 0,
+      "y": 0,
+      "name": "灵感首页",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header",
+          "x": 0,
+          "y": 0,
+          "name": "顶部",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "x": 24,
+          "y": 70,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "card-0",
+          "x": 16,
+          "y": 200,
+          "name": "卡片1",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90
+        },
+        {
+          "type": "rectangle",
+          "id": "card-0-accent",
+          "x": 16,
+          "y": 200,
+          "name": "指示条",
+          "fill": "#FF6B6B",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "card-0-content",
+          "x": 32,
+          "y": 230,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "可以做一个知识管理App，专注于快速捕获想法",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "time-0",
+          "x": 320,
+          "y": 260,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "10:23",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "card-1",
+          "x": 16,
+          "y": 310,
+          "name": "卡片2",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90
+        },
+        {
+          "type": "rectangle",
+          "id": "card-1-accent",
+          "x": 16,
+          "y": 310,
+          "name": "指示条",
+          "fill": "#FF6B6B",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "card-1-content",
+          "x": 32,
+          "y": 340,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "用动画增强用户体验，微妙的渐变和过渡",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "time-1",
+          "x": 320,
+          "y": 370,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "09:15",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "card-2",
+          "x": 16,
+          "y": 420,
+          "name": "卡片3",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90
+        },
+        {
+          "type": "rectangle",
+          "id": "card-2-accent",
+          "x": 16,
+          "y": 420,
+          "name": "指示条",
+          "fill": "#FF6B6B",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "card-2-content",
+          "x": 32,
+          "y": 450,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "悬浮窗设计需要考虑不同屏幕尺寸的适配",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "time-2",
+          "x": 320,
+          "y": 480,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "08:42",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "ellipse",
+          "id": "fab",
+          "x": 0,
+          "y": 0,
+          "name": "FAB",
+          "fill": "#6200EE",
+          "width": 53,
+          "height": 56
+        },
+        {
+          "type": "text",
+          "id": "fab-text",
+          "x": 341,
+          "y": 720,
+          "name": "FAB文字",
+          "fill": "#FFFFFF",
+          "content": "+",
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "fontWeight": "300"
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bg",
+          "x": 0,
+          "y": 772,
+          "name": "导航背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 80
+        },
+        {
+          "type": "text",
+          "id": "nav-0",
+          "x": 65,
+          "y": 795,
+          "name": "灵感导航",
+          "fill": "#6200EE",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "nav-1",
+          "x": 121,
+          "y": 795,
+          "name": "启发导航",
+          "fill": "#999999",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "nav-2",
+          "x": 289,
+          "y": 795,
+          "name": "待办导航",
+          "fill": "#999999",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "nav-3",
+          "x": 345,
+          "y": 795,
+          "name": "设置导航",
+          "fill": "#999999",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    }
+  ]
+}

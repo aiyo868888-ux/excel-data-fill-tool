@@ -1,0 +1,347 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "frame",
+      "x": 0,
+      "y": 0,
+      "name": "详情页面",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FFFFFF",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header",
+          "x": 0,
+          "y": 0,
+          "name": "顶部栏",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "ellipse",
+          "id": "back-btn",
+          "cx": 40,
+          "cy": 84,
+          "name": "返回按钮",
+          "fill": "#F5F5F5",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "type": "text",
+          "id": "back-icon",
+          "x": 29,
+          "y": 76,
+          "name": "返回图标",
+          "fill": "#000000",
+          "content": "←",
+          "fontFamily": "Inter",
+          "fontSize": 20
+        },
+        {
+          "type": "ellipse",
+          "id": "more-btn",
+          "cx": 353,
+          "cy": 84,
+          "name": "更多按钮",
+          "fill": "transparent",
+          "width": 40,
+          "height": 40
+        },
+        {
+          "type": "text",
+          "id": "more-icon",
+          "x": 343,
+          "y": 74,
+          "name": "更多图标",
+          "fill": "#000000",
+          "content": "⋯",
+          "fontFamily": "Inter",
+          "fontSize": 24
+        },
+        {
+          "type": "rectangle",
+          "id": "accent-bar",
+          "x": 0,
+          "y": 130,
+          "name": "指示条",
+          "fill": "#FF6B6B",
+          "width": 393,
+          "height": 4
+        },
+        {
+          "type": "text",
+          "id": "content-title",
+          "x": 24,
+          "y": 172,
+          "name": "内容标题",
+          "fill": "#000000",
+          "content": "可以做一个知识管理App，专注于快速捕获想法",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "fontWeight": "700",
+          "lineHeight": 1.4
+        },
+        {
+          "type": "rectangle",
+          "id": "meta-tag",
+          "x": 24,
+          "y": 276,
+          "name": "元信息标签",
+          "fill": "#FFE5E5",
+          "width": 48,
+          "height": 24,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "meta-tag-text",
+          "x": 32,
+          "y": 282,
+          "name": "标签文字",
+          "fill": "#FF6B6B",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "meta-time",
+          "x": 80,
+          "y": 282,
+          "name": "创建时间",
+          "fill": "#999999",
+          "content": "2025-01-23 10:23",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "line",
+          "id": "divider",
+          "x1": 24,
+          "y1": 328,
+          "x2": 369,
+          "y2": 328,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "section-title",
+          "x": 24,
+          "y": 360,
+          "name": "章节标题",
+          "fill": "#666666",
+          "content": "完整内容",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "content-body",
+          "x": 24,
+          "y": 392,
+          "name": "正文内容",
+          "fill": "#000000",
+          "content": "可以做一个知识管理App，专注于快速捕获想法。\n\n核心功能：\n1. 极简设计，打开即写\n2. 智能分类，自动整理\n3. 悬浮窗，随时记录\n4. 云端同步，多端访问",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "lineHeight": 1.8
+        },
+        {
+          "type": "rectangle",
+          "id": "related-section",
+          "x": 0,
+          "y": 620,
+          "name": "相关内容区域",
+          "fill": "#FAFAFA",
+          "width": 393,
+          "height": 152
+        },
+        {
+          "type": "text",
+          "id": "related-title",
+          "x": 24,
+          "y": 644,
+          "name": "相关标题",
+          "fill": "#666666",
+          "content": "相关内容",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "id": "related-card-0",
+          "x": 24,
+          "y": 676,
+          "name": "相关卡片1",
+          "fill": "#FFFFFF",
+          "width": 345,
+          "height": 44,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "related-0-text",
+          "x": 36,
+          "y": 692,
+          "name": "相关文字",
+          "fill": "#000000",
+          "content": "用动画增强用户体验",
+          "fontFamily": "Inter",
+          "fontSize": 14
+        },
+        {
+          "type": "rectangle",
+          "id": "related-card-1",
+          "x": 24,
+          "y": 728,
+          "name": "相关卡片2",
+          "fill": "#FFFFFF",
+          "width": 345,
+          "height": 44,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "related-1-text",
+          "x": 36,
+          "y": 744,
+          "name": "相关文字",
+          "fill": "#000000",
+          "content": "悬浮窗设计要点",
+          "fontFamily": "Inter",
+          "fontSize": 14
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bg",
+          "x": 0,
+          "y": 772,
+          "name": "导航背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 80
+        },
+        {
+          "type": "line",
+          "id": "nav-divider",
+          "x1": 0,
+          "y1": 772,
+          "x2": 393,
+          "y2": 772,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "ellipse",
+          "id": "nav-0-bg",
+          "cx": 65,
+          "cy": 792,
+          "name": "导航背景圆",
+          "fill": "#F0F0FF",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "nav-0-icon",
+          "x": 57,
+          "y": 784,
+          "name": "灵感图标",
+          "fill": "#6200EE",
+          "content": "💡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-0-label",
+          "x": 49,
+          "y": 812,
+          "name": "灵感文字",
+          "fill": "#6200EE",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "nav-1-icon",
+          "x": 113,
+          "y": 784,
+          "name": "启发图标",
+          "fill": "#999999",
+          "content": "📖",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-1-label",
+          "x": 105,
+          "y": 812,
+          "name": "启发文字",
+          "fill": "#999999",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-2-icon",
+          "x": 297,
+          "y": 784,
+          "name": "待办图标",
+          "fill": "#999999",
+          "content": "⚡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-2-label",
+          "x": 289,
+          "y": 812,
+          "name": "待办文字",
+          "fill": "#999999",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-3-icon",
+          "x": 353,
+          "y": 784,
+          "name": "设置图标",
+          "fill": "#999999",
+          "content": "⚙️",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-3-label",
+          "x": 345,
+          "y": 812,
+          "name": "设置文字",
+          "fill": "#999999",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        }
+      ]
+    }
+  ]
+}

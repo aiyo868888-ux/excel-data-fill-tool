@@ -1,0 +1,216 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "dialog-frame",
+      "x": -1,
+      "y": -2,
+      "name": "💡 新建灵感对话框",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "rgba(0,0,0,0.5)",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "cornerRadius": [
+            24,
+            24,
+            0,
+            0
+          ],
+          "id": "dialog-bg",
+          "x": 0,
+          "y": 300,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 552
+        },
+        {
+          "type": "rectangle",
+          "id": "dialog-header",
+          "x": 0,
+          "y": 300,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 68
+        },
+        {
+          "type": "line",
+          "id": "header-divider",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "type": "text",
+          "id": "dialog-title",
+          "x": 24,
+          "y": 328,
+          "fill": "#000000",
+          "content": "💡 新建灵感",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "700"
+        },
+        {
+          "type": "ellipse",
+          "id": "close-btn",
+          "x": 0,
+          "y": 0,
+          "fill": "transparent",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "close-icon",
+          "x": 353,
+          "y": 326,
+          "fill": "#666666",
+          "content": "✕",
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "clipboard-badge",
+          "x": 24,
+          "y": 388,
+          "fill": "#6200EE",
+          "width": 102,
+          "height": 28
+        },
+        {
+          "type": "text",
+          "id": "clipboard-text",
+          "x": 40,
+          "y": 392,
+          "fill": "#FFFFFF",
+          "content": "📋 剪切板 (2)",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "id": "textarea",
+          "x": 24,
+          "y": 428,
+          "fill": "#FFFFFF",
+          "width": 345,
+          "height": 200
+        },
+        {
+          "type": "text",
+          "id": "textarea-placeholder",
+          "x": 24,
+          "y": 438,
+          "fill": "#999999",
+          "content": "在这里记录你的灵感...\n\n支持多次粘贴剪切板内容\nCtrl+Enter 保存",
+          "lineHeight": 1.8,
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 12,
+          "id": "smart-hint",
+          "x": 24,
+          "y": 644,
+          "fill": "#F5F5F5",
+          "width": 345,
+          "height": 44
+        },
+        {
+          "type": "text",
+          "id": "hint-icon",
+          "x": 36,
+          "y": 654,
+          "fill": "#6200EE",
+          "content": "✨",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "hint-text",
+          "x": 60,
+          "y": 656,
+          "fill": "#666666",
+          "content": "点击悬浮窗可粘贴剪切板内容",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "rectangle",
+          "id": "dialog-footer",
+          "x": 0,
+          "y": 708,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 144
+        },
+        {
+          "type": "line",
+          "id": "footer-divider",
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 12,
+          "id": "btn-cancel",
+          "x": 24,
+          "y": 732,
+          "fill": "#F5F5F5",
+          "width": 165,
+          "height": 48
+        },
+        {
+          "type": "text",
+          "id": "btn-cancel-text",
+          "x": 85,
+          "y": 750,
+          "fill": "#000000",
+          "content": "取消",
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 12,
+          "id": "btn-save",
+          "x": 204,
+          "y": 732,
+          "fill": "#6200EE",
+          "width": 165,
+          "height": 48
+        },
+        {
+          "type": "text",
+          "id": "btn-save-text",
+          "x": 247,
+          "y": 750,
+          "fill": "#FFFFFF",
+          "content": "保存并关闭",
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    }
+  ]
+}

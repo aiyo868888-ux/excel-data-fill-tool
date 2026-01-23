@@ -1,0 +1,228 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "frame",
+      "x": 0,
+      "y": 0,
+      "name": "空状态页面",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header",
+          "x": 0,
+          "y": 0,
+          "name": "顶部",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "x": 24,
+          "y": 70,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "ellipse",
+          "id": "empty-icon-bg",
+          "cx": 196,
+          "cy": 380,
+          "name": "空状态图标背景",
+          "fill": "#FFF5F5",
+          "width": 120,
+          "height": 120
+        },
+        {
+          "type": "text",
+          "id": "empty-icon",
+          "x": 158,
+          "y": 352,
+          "name": "空状态图标",
+          "fill": "#FF6B6B",
+          "content": "💡",
+          "fontFamily": "Inter",
+          "fontSize": 64
+        },
+        {
+          "type": "text",
+          "id": "empty-title",
+          "x": 96,
+          "y": 530,
+          "name": "空状态标题",
+          "fill": "#000000",
+          "content": "还没有任何灵感",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "empty-desc",
+          "x": 48,
+          "y": 566,
+          "name": "空状态描述",
+          "fill": "#999999",
+          "content": "点击右下角按钮记录你的第一个灵感",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "textAlign": "center"
+        },
+        {
+          "type": "ellipse",
+          "id": "fab",
+          "cx": 353,
+          "cy": 732,
+          "name": "FAB",
+          "fill": "#6200EE",
+          "width": 56,
+          "height": 56
+        },
+        {
+          "type": "text",
+          "id": "fab-text",
+          "x": 341,
+          "y": 720,
+          "name": "FAB文字",
+          "fill": "#FFFFFF",
+          "content": "+",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "textAlign": "center",
+          "fontWeight": "300"
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bg",
+          "x": 0,
+          "y": 772,
+          "name": "导航背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 80
+        },
+        {
+          "type": "line",
+          "id": "nav-divider",
+          "x1": 0,
+          "y1": 772,
+          "x2": 393,
+          "y2": 772,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "ellipse",
+          "id": "nav-0-bg",
+          "cx": 65,
+          "cy": 792,
+          "name": "导航背景圆",
+          "fill": "#F0F0FF",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "nav-0-icon",
+          "x": 57,
+          "y": 784,
+          "name": "灵感图标",
+          "fill": "#6200EE",
+          "content": "💡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-0-label",
+          "x": 49,
+          "y": 812,
+          "name": "灵感文字",
+          "fill": "#6200EE",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "nav-1-icon",
+          "x": 113,
+          "y": 784,
+          "name": "启发图标",
+          "fill": "#999999",
+          "content": "📖",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-1-label",
+          "x": 105,
+          "y": 812,
+          "name": "启发文字",
+          "fill": "#999999",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-2-icon",
+          "x": 297,
+          "y": 784,
+          "name": "待办图标",
+          "fill": "#999999",
+          "content": "⚡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-2-label",
+          "x": 289,
+          "y": 812,
+          "name": "待办文字",
+          "fill": "#999999",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-3-icon",
+          "x": 353,
+          "y": 784,
+          "name": "设置图标",
+          "fill": "#999999",
+          "content": "⚙️",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-3-label",
+          "x": 345,
+          "y": 812,
+          "name": "设置文字",
+          "fill": "#999999",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        }
+      ]
+    }
+  ]
+}

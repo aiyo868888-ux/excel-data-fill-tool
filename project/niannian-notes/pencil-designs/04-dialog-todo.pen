@@ -1,0 +1,296 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "todo-dialog-frame",
+      "x": 0,
+      "y": 0,
+      "name": "⚡ 新建待办对话框",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "rgba(0,0,0,0.5)",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "dialog-bg",
+          "x": 0,
+          "y": 250,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 602,
+          "cornerRadius": [24, 24, 0, 0]
+        },
+        {
+          "type": "rectangle",
+          "id": "dialog-header",
+          "x": 0,
+          "y": 250,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 68
+        },
+        {
+          "type": "line",
+          "id": "header-divider",
+          "x1": 0,
+          "y1": 318,
+          "x2": 393,
+          "y2": 318,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "text",
+          "id": "dialog-title",
+          "x": 24,
+          "y": 278,
+          "fill": "#000000",
+          "content": "⚡ 新建待办",
+          "fontSize": 20,
+          "fontWeight": "700"
+        },
+        {
+          "type": "ellipse",
+          "id": "close-btn",
+          "cx": 361,
+          "cy": 284,
+          "fill": "transparent",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "close-icon",
+          "x": 353,
+          "y": 276,
+          "fill": "#666666",
+          "content": "✕",
+          "fontSize": 18
+        },
+        {
+          "type": "rectangle",
+          "id": "time-chip-1",
+          "x": 24,
+          "y": 338,
+          "fill": "#7C4DFF",
+          "width": 63,
+          "height": 36,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "time-chip-1-text",
+          "x": 36,
+          "y": 350,
+          "fill": "#FFFFFF",
+          "content": "☀️ 今天",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "rectangle",
+          "id": "time-chip-2",
+          "x": 99,
+          "y": 338,
+          "fill": "#F5F5F5",
+          "width": 67,
+          "height": 36,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "time-chip-2-text",
+          "x": 111,
+          "y": 350,
+          "fill": "#666666",
+          "content": "🌅 明天",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "rectangle",
+          "id": "time-chip-3",
+          "x": 174,
+          "y": 338,
+          "fill": "#F5F5F5",
+          "width": 75,
+          "height": 36,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "time-chip-3-text",
+          "x": 186,
+          "y": 350,
+          "fill": "#666666",
+          "content": "📅 选日期",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "rectangle",
+          "id": "time-chip-4",
+          "x": 257,
+          "y": 338,
+          "fill": "#F5F5F5",
+          "width": 63,
+          "height": 36,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "time-chip-4-text",
+          "x": 269,
+          "y": 350,
+          "fill": "#666666",
+          "content": "🔔 提醒",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "rectangle",
+          "id": "time-chip-5",
+          "x": 328,
+          "y": 338,
+          "fill": "#F5F5F5",
+          "width": 57,
+          "height": 36,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "time-chip-5-text",
+          "x": 340,
+          "y": 350,
+          "fill": "#666666",
+          "content": "🔁 重复",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "rectangle",
+          "id": "textarea",
+          "x": 24,
+          "y": 394,
+          "fill": "#FFFFFF",
+          "width": 345,
+          "height": 180,
+          "cornerRadius": 0
+        },
+        {
+          "type": "text",
+          "id": "textarea-placeholder",
+          "x": 24,
+          "y": 404,
+          "fill": "#999999",
+          "content": "在这里记录待办事项...\n\n支持多行输入，\n自动识别为多个任务",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "lineHeight": 1.8
+        },
+        {
+          "type": "rectangle",
+          "id": "smart-hint",
+          "x": 24,
+          "y": 590,
+          "fill": "#F5F5F5",
+          "width": 345,
+          "height": 44,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "hint-icon",
+          "x": 36,
+          "y": 600,
+          "fill": "#FFE66D",
+          "content": "⚡",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "hint-text",
+          "x": 60,
+          "y": 602,
+          "fill": "#666666",
+          "content": "检测到3行内容，是否生成为3个待办？",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "hint-action",
+          "x": 325,
+          "y": 602,
+          "fill": "#6200EE",
+          "content": "是",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "id": "dialog-footer",
+          "x": 0,
+          "y": 708,
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 144
+        },
+        {
+          "type": "line",
+          "id": "footer-divider",
+          "x1": 0,
+          "y1": 708,
+          "x2": 393,
+          "y2": 708,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "rectangle",
+          "id": "btn-cancel",
+          "x": 24,
+          "y": 732,
+          "fill": "#F5F5F5",
+          "width": 165,
+          "height": 48,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "btn-cancel-text",
+          "x": 85,
+          "y": 750,
+          "fill": "#000000",
+          "content": "取消",
+          "fontSize": 15,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "btn-save",
+          "x": 204,
+          "y": 732,
+          "fill": "#6200EE",
+          "width": 165,
+          "height": 48,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "btn-save-text",
+          "x": 265,
+          "y": 750,
+          "fill": "#FFFFFF",
+          "content": "保存",
+          "fontSize": 15,
+          "fontWeight": "600",
+          "textAlign": "center"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "test-frame",
+      "x": 0,
+      "y": 0,
+      "name": "测试画布",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "test-rect",
+          "x": 50,
+          "y": 100,
+          "fill": "#FA233B",
+          "width": 280,
+          "height": 280,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "test-text",
+          "x": 96.5,
+          "y": 240,
+          "fill": "#FFFFFF",
+          "content": "🎵 QQ音乐",
+          "fontSize": 40,
+          "fontWeight": "700",
+          "textAlign": "center"
+        },
+        {
+          "type": "text",
+          "id": "test-label",
+          "x": 96.5,
+          "y": 450,
+          "fill": "#000000",
+          "content": "告白气球",
+          "fontSize": 24,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "ellipse",
+          "id": "test-circle",
+          "cx": 196.5,
+          "cy": 600,
+          "fill": "#FA233B",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "text",
+          "id": "test-play",
+          "x": 196.5,
+          "y": 613,
+          "fill": "#FFFFFF",
+          "content": "▶",
+          "fontSize": 24,
+          "textAlign": "center"
+        }
+      ]
+    }
+  ]
+}

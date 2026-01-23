@@ -1,0 +1,423 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "frame",
+      "x": 0,
+      "y": 0,
+      "name": "搜索页面",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header",
+          "x": 0,
+          "y": 0,
+          "name": "顶部",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "rectangle",
+          "id": "search-bar",
+          "x": 16,
+          "y": 60,
+          "name": "搜索栏",
+          "fill": "#F5F5F5",
+          "width": 361,
+          "height": 48,
+          "cornerRadius": 24
+        },
+        {
+          "type": "text",
+          "id": "search-icon",
+          "x": 32,
+          "y": 76,
+          "name": "搜索图标",
+          "fill": "#999999",
+          "content": "🔍",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "search-text",
+          "x": 56,
+          "y": 76,
+          "name": "搜索文字",
+          "fill": "#999999",
+          "content": "搜索灵感、启发、待办...",
+          "fontFamily": "Inter",
+          "fontSize": 15
+        },
+        {
+          "type": "text",
+          "id": "cancel-btn",
+          "x": 340,
+          "y": 76,
+          "name": "取消按钮",
+          "fill": "#6200EE",
+          "content": "取消",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "id": "filter-bar",
+          "x": 0,
+          "y": 130,
+          "name": "筛选栏",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 52
+        },
+        {
+          "type": "rectangle",
+          "id": "filter-all",
+          "x": 16,
+          "y": 142,
+          "name": "全部筛选",
+          "fill": "#6200EE",
+          "width": 56,
+          "height": 28,
+          "cornerRadius": 14
+        },
+        {
+          "type": "text",
+          "id": "filter-all-text",
+          "x": 28,
+          "y": 150,
+          "name": "筛选文字",
+          "fill": "#FFFFFF",
+          "content": "全部",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "id": "filter-inspiration",
+          "x": 80,
+          "y": 142,
+          "name": "灵感筛选",
+          "fill": "#F5F5F5",
+          "width": 56,
+          "height": 28,
+          "cornerRadius": 14
+        },
+        {
+          "type": "text",
+          "id": "filter-inspiration-text",
+          "x": 92,
+          "y": 150,
+          "name": "筛选文字",
+          "fill": "#666666",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "id": "filter-insight",
+          "x": 144,
+          "y": 142,
+          "name": "启发筛选",
+          "fill": "#F5F5F5",
+          "width": 56,
+          "height": 28,
+          "cornerRadius": 14
+        },
+        {
+          "type": "text",
+          "id": "filter-insight-text",
+          "x": 156,
+          "y": 150,
+          "name": "筛选文字",
+          "fill": "#666666",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "id": "filter-todo",
+          "x": 208,
+          "y": 142,
+          "name": "待办筛选",
+          "fill": "#F5F5F5",
+          "width": 56,
+          "height": 28,
+          "cornerRadius": 14
+        },
+        {
+          "type": "text",
+          "id": "filter-todo-text",
+          "x": 220,
+          "y": 150,
+          "name": "筛选文字",
+          "fill": "#666666",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "result-count",
+          "x": 24,
+          "y": 206,
+          "name": "结果数量",
+          "fill": "#999999",
+          "content": "找到 12 条结果",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "rectangle",
+          "id": "result-0",
+          "x": 16,
+          "y": 240,
+          "name": "结果卡片1",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90,
+          "cornerRadius": 16
+        },
+        {
+          "type": "rectangle",
+          "id": "result-0-accent",
+          "x": 16,
+          "y": 240,
+          "name": "指示条",
+          "fill": "#FF6B6B",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "result-0-content",
+          "x": 32,
+          "y": 268,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "知识管理App的核心理念...",
+          "fontFamily": "Inter",
+          "fontSize": 15
+        },
+        {
+          "type": "rectangle",
+          "id": "result-0-tag",
+          "x": 32,
+          "y": 304,
+          "name": "标签",
+          "fill": "#FFE5E5",
+          "width": 48,
+          "height": 20,
+          "cornerRadius": 10
+        },
+        {
+          "type": "text",
+          "id": "result-0-tag-text",
+          "x": 40,
+          "y": 308,
+          "name": "标签文字",
+          "fill": "#FF6B6B",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "result-0-time",
+          "x": 320,
+          "y": 308,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "10:23",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "rectangle",
+          "id": "result-1",
+          "x": 16,
+          "y": 350,
+          "name": "结果卡片2",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90,
+          "cornerRadius": 16
+        },
+        {
+          "type": "rectangle",
+          "id": "result-1-accent",
+          "x": 16,
+          "y": 350,
+          "name": "指示条",
+          "fill": "#4ECDC4",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "result-1-source",
+          "x": 32,
+          "y": 364,
+          "name": "来源",
+          "fill": "#999999",
+          "content": "认知心理学",
+          "fontFamily": "Inter",
+          "fontSize": 13
+        },
+        {
+          "type": "text",
+          "id": "result-1-content",
+          "x": 32,
+          "y": 388,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "间隔重复效应提升记忆",
+          "fontFamily": "Inter",
+          "fontSize": 15
+        },
+        {
+          "type": "text",
+          "id": "result-1-time",
+          "x": 320,
+          "y": 410,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "14:20",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bg",
+          "x": 0,
+          "y": 772,
+          "name": "导航背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 80
+        },
+        {
+          "type": "line",
+          "id": "nav-divider",
+          "x1": 0,
+          "y1": 772,
+          "x2": 393,
+          "y2": 772,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "ellipse",
+          "id": "nav-0-bg",
+          "cx": 65,
+          "cy": 792,
+          "name": "导航背景圆",
+          "fill": "#F0F0FF",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "nav-0-icon",
+          "x": 57,
+          "y": 784,
+          "name": "灵感图标",
+          "fill": "#6200EE",
+          "content": "💡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-0-label",
+          "x": 49,
+          "y": 812,
+          "name": "灵感文字",
+          "fill": "#6200EE",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "nav-1-icon",
+          "x": 113,
+          "y": 784,
+          "name": "启发图标",
+          "fill": "#999999",
+          "content": "📖",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-1-label",
+          "x": 105,
+          "y": 812,
+          "name": "启发文字",
+          "fill": "#999999",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-2-icon",
+          "x": 297,
+          "y": 784,
+          "name": "待办图标",
+          "fill": "#999999",
+          "content": "⚡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-2-label",
+          "x": 289,
+          "y": 812,
+          "name": "待办文字",
+          "fill": "#999999",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-3-icon",
+          "x": 353,
+          "y": 784,
+          "name": "设置图标",
+          "fill": "#999999",
+          "content": "⚙️",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-3-label",
+          "x": 345,
+          "y": 812,
+          "name": "设置文字",
+          "fill": "#999999",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        }
+      ]
+    }
+  ]
+}

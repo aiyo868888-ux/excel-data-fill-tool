@@ -1,0 +1,280 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "frame",
+      "x": 0,
+      "y": 0,
+      "name": "待办首页",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header",
+          "x": 0,
+          "y": 0,
+          "name": "顶部",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "x": 24,
+          "y": 70,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-0",
+          "x": 16,
+          "y": 200,
+          "name": "卡片1",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90,
+          "cornerRadius": 16
+        },
+        {
+          "type": "rectangle",
+          "id": "card-0-accent",
+          "x": 16,
+          "y": 200,
+          "name": "指示条",
+          "fill": "#FFE66D",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "card-0-content",
+          "x": 32,
+          "y": 230,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "完成UI设计原型",
+          "fontFamily": "Inter",
+          "fontSize": 15
+        },
+        {
+          "type": "text",
+          "id": "card-0-priority",
+          "x": 200,
+          "y": 260,
+          "name": "优先级",
+          "fill": "#FF6B6B",
+          "content": "⚡ 重要",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "time-0",
+          "x": 320,
+          "y": 260,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "今天 18:00",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "rectangle",
+          "id": "card-1",
+          "x": 16,
+          "y": 310,
+          "name": "卡片2",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 90,
+          "cornerRadius": 16
+        },
+        {
+          "type": "rectangle",
+          "id": "card-1-accent",
+          "x": 16,
+          "y": 310,
+          "name": "指示条",
+          "fill": "#FFE66D",
+          "width": 3,
+          "height": 90
+        },
+        {
+          "type": "text",
+          "id": "card-1-content",
+          "x": 32,
+          "y": 340,
+          "name": "内容",
+          "fill": "#000000",
+          "content": "准备会议材料",
+          "fontFamily": "Inter",
+          "fontSize": 15
+        },
+        {
+          "type": "text",
+          "id": "time-1",
+          "x": 320,
+          "y": 370,
+          "name": "时间",
+          "fill": "#999999",
+          "content": "今天 15:00",
+          "fontFamily": "Inter",
+          "fontSize": 12
+        },
+        {
+          "type": "ellipse",
+          "id": "fab",
+          "cx": 353,
+          "cy": 732,
+          "name": "FAB",
+          "fill": "#6200EE",
+          "width": 56,
+          "height": 56
+        },
+        {
+          "type": "text",
+          "id": "fab-text",
+          "x": 341,
+          "y": 720,
+          "name": "FAB文字",
+          "fill": "#FFFFFF",
+          "content": "+",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "textAlign": "center",
+          "fontWeight": "300"
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bg",
+          "x": 0,
+          "y": 772,
+          "name": "导航背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 80
+        },
+        {
+          "type": "line",
+          "id": "nav-divider",
+          "x1": 0,
+          "y1": 772,
+          "x2": 393,
+          "y2": 772,
+          "stroke": "#E8E8E8",
+          "strokeWidth": 1
+        },
+        {
+          "type": "ellipse",
+          "id": "nav-0-bg",
+          "cx": 65,
+          "cy": 792,
+          "name": "导航背景圆",
+          "fill": "transparent",
+          "width": 32,
+          "height": 32
+        },
+        {
+          "type": "text",
+          "id": "nav-0-icon",
+          "x": 57,
+          "y": 784,
+          "name": "灵感图标",
+          "fill": "#999999",
+          "content": "💡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-0-label",
+          "x": 49,
+          "y": 812,
+          "name": "灵感文字",
+          "fill": "#999999",
+          "content": "灵感",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "nav-1-icon",
+          "x": 113,
+          "y": 784,
+          "name": "启发图标",
+          "fill": "#999999",
+          "content": "📖",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-1-label",
+          "x": 105,
+          "y": 812,
+          "name": "启发文字",
+          "fill": "#999999",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-2-icon",
+          "x": 297,
+          "y": 784,
+          "name": "待办图标",
+          "fill": "#FFE66D",
+          "content": "⚡",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-2-label",
+          "x": 289,
+          "y": 812,
+          "name": "待办文字",
+          "fill": "#FFE66D",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        },
+        {
+          "type": "text",
+          "id": "nav-3-icon",
+          "x": 353,
+          "y": 784,
+          "name": "设置图标",
+          "fill": "#999999",
+          "content": "⚙️",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "nav-3-label",
+          "x": 345,
+          "y": 812,
+          "name": "设置文字",
+          "fill": "#999999",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 11
+        }
+      ]
+    }
+  ]
+}

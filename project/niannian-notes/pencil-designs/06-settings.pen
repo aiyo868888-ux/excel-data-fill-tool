@@ -1,0 +1,156 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "insight-frame",
+      "x": 0,
+      "y": 0,
+      "name": "设置页面",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header-bg",
+          "x": 0,
+          "y": 0,
+          "name": "顶部背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 130
+        },
+        {
+          "type": "text",
+          "id": "page-title",
+          "x": 24,
+          "y": 70,
+          "name": "页面标题",
+          "fill": "#000000",
+          "content": "设置",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "nav-home-icon",
+          "x": 65,
+          "y": 795,
+          "name": "首页图标",
+          "fill": "#999999",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "nav-insight-icon",
+          "x": 177,
+          "y": 795,
+          "name": "启发图标",
+          "fill": "#6200EE",
+          "content": "启发",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "nav-todo-icon",
+          "x": 289,
+          "y": 795,
+          "name": "待办图标",
+          "fill": "#999999",
+          "content": "待办",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "setting-1",
+          "x": 16,
+          "y": 260,
+          "name": "设置项1",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 70
+        },
+        {
+          "type": "text",
+          "id": "setting-1-title",
+          "x": 32,
+          "y": 280,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "深色模式",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "setting-2",
+          "x": 16,
+          "y": 340,
+          "name": "设置项2",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 70
+        },
+        {
+          "type": "text",
+          "id": "setting-2-title",
+          "x": 32,
+          "y": 360,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "字体大小",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 16,
+          "id": "setting-3",
+          "x": 16,
+          "y": 420,
+          "name": "设置项3",
+          "fill": "#FFFFFF",
+          "width": 361,
+          "height": 70
+        },
+        {
+          "type": "text",
+          "id": "setting-3-title",
+          "x": 32,
+          "y": 440,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "数据导出",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "rectangle",
+      "id": "bottom-nav",
+      "x": -1169,
+      "y": 739,
+      "name": "底部导航",
+      "fill": "#FFFFFF",
+      "width": 393,
+      "height": 80
+    }
+  ]
+}
