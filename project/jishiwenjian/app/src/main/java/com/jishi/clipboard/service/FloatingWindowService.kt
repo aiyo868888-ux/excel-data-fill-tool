@@ -10,7 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -21,11 +23,15 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import com.jishi.clipboard.R
 import com.jishi.clipboard.ui.dialog.ClipboardEditDialogFragment
+import com.jishi.clipboard.utils.ClipboardUpdateEvent
+import com.jishi.clipboard.utils.DialogManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -146,8 +152,6 @@ class FloatingWindowService : Service() {
         }
 
         // 获取屏幕宽度，计算靠边位置
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screenWidthDp = screenWidth / resources.displayMetrics.density
         val marginDp = 16 // 边距 16dp
         val marginPx = (marginDp * resources.displayMetrics.density).toInt()
 
@@ -234,10 +238,27 @@ class FloatingWindowService : Service() {
     }
 
     /**
+     * 读取剪切板内容
+     */
+    private fun readClipboard(): String {
+        return try {
+            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                clipboardManager.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+            } else {
+                @Suppress("DEPRECATION")
+                clipboardManager.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "读取剪贴板失败")
+            ""
+        }
+    }
+
+    /**
      * 自动吸附到最近的边缘
      */
     private fun snapToEdge(params: WindowManager.LayoutParams) {
-        val screenWidth = resources.displayMetrics.widthPixels
         val marginPx = (16 * resources.displayMetrics.density).toInt()
 
         // 获取悬浮窗当前位置的中心点
@@ -284,7 +305,7 @@ class FloatingWindowService : Service() {
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         currentAnimator = null
-                        showEditDialog()
+                        handleFloatingWindowClick()
                     }
                 })
 
@@ -295,15 +316,110 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 显示编辑对话框
-     * 使用透明 Activity，不干扰当前应用
+     * 处理悬浮窗点击事件
+     * 根据当前状态决定：粘贴内容 / 带回对话框 / 显示类型选择
      */
-    private fun showEditDialog() {
-        val intent = Intent(this, com.jishi.clipboard.ui.EditActivity::class.java).apply {
+    private fun handleFloatingWindowClick() {
+        when {
+            // 场景1：编辑对话框正在显示 → 直接粘贴
+            DialogManager.isEditDialogShowing() -> {
+                pasteToCursor()
+            }
+            // 场景2：EditActivity 存在但对话框未显示 → 带到前台后粘贴
+            com.jishi.clipboard.ui.EditActivity.instance?.get() != null -> {
+                bringEditActivityToFront()
+                waitForDialogAndPaste()
+            }
+            // 场景3：首次使用 → 显示类型选择
+            else -> {
+                showContentTypeSelection()
+            }
+        }
+    }
+
+    /**
+     * 等待对话框恢复后粘贴内容
+     */
+    private fun waitForDialogAndPaste() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (DialogManager.isEditDialogShowing()) {
+                pasteToCursor()
+            } else {
+                Timber.w("对话框未显示，尝试直接粘贴")
+                pasteToCursor()
+            }
+        }, 500)
+    }
+
+    /**
+     * 尝试将 EditActivity 带到前台
+     * @return true 如果 EditActivity 存在并被带到前台，false 否则
+     */
+    private fun bringEditActivityToFront(): Boolean {
+        val activityInstance = com.jishi.clipboard.ui.EditActivity.instance?.get() ?: return false
+
+        // 检查 Activity 是否还在运行（未被销毁）
+        if (activityInstance.isFinishing || activityInstance.isDestroyed) {
+            Timber.d("EditActivity 已被销毁")
+            return false
+        }
+
+        try {
+            // 使用 FLAG_ACTIVITY_REORDER_TO_FRONT 将已有的 EditActivity 带到前台
+            // 不会重建 Activity，只是调整任务栈顺序
+            val intent = Intent(this, com.jishi.clipboard.ui.EditActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                        Intent.FLAG_ACTIVITY_NO_ANIMATION
+            }
+            startActivity(intent)
+            Timber.d("将 EditActivity 带到前台")
+            return true
+        } catch (e: Exception) {
+            Timber.e(e, "启动 EditActivity 失败")
+            return false
+        }
+    }
+
+    /**
+     * 粘贴剪切板内容到光标位置
+     */
+    private fun pasteToCursor() {
+        serviceScope.launch {
+            try {
+                val clipboardContent = readClipboard()
+
+                // 切换到主线程处理 UI 操作
+                withContext(Dispatchers.Main) {
+                    if (clipboardContent.isNotEmpty()) {
+                        // 获取当前编辑对话框实例
+                        val dialog = DialogManager.getCurrentEditDialog()
+                        if (dialog != null) {
+                            dialog.pasteToCursor(clipboardContent)
+                            Timber.d("粘贴到光标位置: ${clipboardContent.take(30)}...")
+                        } else {
+                            Timber.w("对话框实例不存在，无法粘贴")
+                        }
+                    } else {
+                        // 剪贴板为空，提示用户
+                        Toast.makeText(this@FloatingWindowService, "剪贴板没有内容", Toast.LENGTH_SHORT).show()
+                        Timber.w("剪贴板为空，用户尝试粘贴失败")
+                    }
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "粘贴到光标位置失败")
+            }
+        }
+    }
+
+    /**
+     * 显示内容类型选择对话框
+     */
+    private fun showContentTypeSelection() {
+        val intent = Intent(this, com.jishi.clipboard.ui.TypeSelectionActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_CLEAR_TASK or
                     Intent.FLAG_ACTIVITY_NO_ANIMATION
-            putExtra("auto_fill_clipboard", true)
         }
         startActivity(intent)
     }

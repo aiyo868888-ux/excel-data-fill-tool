@@ -10,6 +10,7 @@ import com.jishi.clipboard.ui.fragments.HistoryFragment
 import com.jishi.clipboard.ui.fragments.HomeFragment
 import com.jishi.clipboard.ui.fragments.SettingsFragment
 import com.jishi.clipboard.ui.fragments.TagsFragment
+import com.jishi.clipboard.ui.fragments.TodoListFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -53,6 +54,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_history -> {
                     replaceFragment(HistoryFragment.newInstance())
+                    true
+                }
+                R.id.navigation_todo -> {
+                    replaceFragment(TodoListFragment.newInstance())
                     true
                 }
                 R.id.navigation_tags -> {

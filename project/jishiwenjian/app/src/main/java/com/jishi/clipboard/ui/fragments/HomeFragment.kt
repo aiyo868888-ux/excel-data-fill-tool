@@ -166,8 +166,7 @@ class HomeFragment : Fragment() {
 
     private fun showAddDialog() {
         val dialog = ClipboardEditDialogFragment.newInstance(
-            initialContent = "",
-            autoFillClipboard = false
+            initialContent = ""
         )
 
         dialog.setOnSaveListener { _, _ ->

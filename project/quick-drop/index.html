@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>闪念笔记</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body { background: #0a0a0f; }
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .glow-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
+        .card { background: linear-gradient(145deg, #1a1a2e 0%, #161625 100%); }
+        .nav-item.active { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); }
+    </style>
+</head>
+<body class="min-h-screen text-white font-sans">
+    <div id="app" class="max-w-md mx-auto h-screen flex flex-col">
+        <!-- 标签选择页 -->
+        <div id="tag-select" class="flex-1 flex flex-col items-center justify-center p-6 space-y-6">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-8">闪念笔记</h1>
+            <div class="w-full space-y-4">
+                <button onclick="openInput('flash')" class="w-full p-6 rounded-2xl card glow-blue text-left hover:scale-105 transition-transform">
+                    <div class="text-2xl mb-2">⚡</div>
+                    <div class="text-xl font-bold text-blue-400">闪念</div>
+                    <div class="text-sm text-gray-500 mt-1">快速记录瞬间的想法</div>
+                </button>
+                <button onclick="openInput('insight')" class="w-full p-6 rounded-2xl card glow-purple text-left hover:scale-105 transition-transform">
+                    <div class="text-2xl mb-2">💡</div>
+                    <div class="text-xl font-bold text-purple-400">启发</div>
+                    <div class="text-sm text-gray-500 mt-1">捕捉灵感的火花</div>
+                </button>
+                <button onclick="openInput('todo')" class="w-full p-6 rounded-2xl card glow-green text-left hover:scale-105 transition-transform">
+                    <div class="text-2xl mb-2">✓</div>
+                    <div class="text-xl font-bold text-green-400">待办</div>
+                    <div class="text-sm text-gray-500 mt-1">规划要完成的任务</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 输入页 -->
+        <div id="input-page" class="flex-1 flex flex-col p-4 hidden">
+            <div class="flex items-center mb-4">
+                <button onclick="backToTagSelect()" class="text-gray-400 hover:text-white mr-4">← 返回</button>
+                <span id="input-title" class="text-xl font-bold"></span>
+            </div>
+            <textarea id="note-input" class="flex-1 w-full p-4 rounded-2xl card text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="在这里输入..."></textarea>
+            <button onclick="saveNote()" class="w-full p-4 mt-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 font-bold text-lg">保存</button>
+        </div>
+
+        <!-- 列表页 -->
+        <div id="list-page" class="flex-1 flex flex-col hidden">
+            <div class="flex items-center justify-between p-4 border-b border-gray-800">
+                <button onclick="backToTagSelect()" class="text-gray-400 hover:text-white">← 返回</button>
+                <span id="list-title" class="text-xl font-bold"></span>
+                <div class="w-12"></div>
+            </div>
+            <div id="notes-list" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div id="bottom-nav" class="hidden border-t border-gray-800 p-2">
+            <div class="flex justify-around">
+                <button onclick="showList('flash')" class="nav-item flex-1 py-3 rounded-xl text-center" data-tab="flash">
+                    <div class="text-2xl">⚡</div>
+                    <div class="text-xs mt-1">闪念</div>
+                </button>
+                <button onclick="showList('insight')" class="nav-item flex-1 py-3 rounded-xl text-center" data-tab="insight">
+                    <div class="text-2xl">💡</div>
+                    <div class="text-xs mt-1">启发</div>
+                </button>
+                <button onclick="showList('todo')" class="nav-item flex-1 py-3 rounded-xl text-center" data-tab="todo">
+                    <div class="text-2xl">✓</div>
+                    <div class="text-xs mt-1">待办</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentType = '';
+        const tagNames = { flash: '⚡ 闪念', insight: '💡 启发', todo: '✓ 待办' };
+        const tagColors = { flash: 'blue', insight: 'purple', todo: 'green' };
+
+        function openInput(type) {
+            currentType = type;
+            document.getElementById('tag-select').classList.add('hidden');
+            document.getElementById('input-page').classList.remove('hidden');
+            document.getElementById('bottom-nav').classList.add('hidden');
+            document.getElementById('input-title').textContent = tagNames[type];
+            document.getElementById('note-input').value = '';
+            document.getElementById('note-input').focus();
+        }
+
+        function backToTagSelect() {
+            document.getElementById('tag-select').classList.remove('hidden');
+            document.getElementById('input-page').classList.add('hidden');
+            document.getElementById('list-page').classList.add('hidden');
+            document.getElementById('bottom-nav').classList.add('hidden');
+        }
+
+        function saveNote() {
+            const content = document.getElementById('note-input').value.trim();
+            if (!content) return;
+
+            const notes = JSON.parse(localStorage.getItem(`notes_${currentType}`) || '[]');
+            notes.unshift({
+                id: Date.now(),
+                content: content,
+                timestamp: new Date().toLocaleString('zh-CN')
+            });
+            localStorage.setItem(`notes_${currentType}`, JSON.stringify(notes));
+
+            showList(currentType);
+        }
+
+        function showList(type) {
+            currentType = type;
+            document.getElementById('tag-select').classList.add('hidden');
+            document.getElementById('input-page').classList.add('hidden');
+            document.getElementById('list-page').classList.remove('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+
+            document.getElementById('list-title').textContent = tagNames[type];
+
+            // 更新导航激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.tab === type) item.classList.add('active');
+            });
+
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const notes = JSON.parse(localStorage.getItem(`notes_${currentType}`) || '[]');
+            const container = document.getElementById('notes-list');
+            const color = tagColors[currentType];
+
+            if (notes.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-600 py-12">暂无${tagNames[currentType]}记录</div>`;
+                return;
+            }
+
+            container.innerHTML = notes.map(note => `
+                <div class="card p-4 rounded-xl hover:scale-[1.02] transition-transform">
+                    <div class="text-white leading-relaxed">${note.content}</div>
+                    <div class="text-xs text-gray-600 mt-3">${note.timestamp}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

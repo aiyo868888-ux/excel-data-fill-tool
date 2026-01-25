@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>闪念笔记 - 灵感对话框</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 对话框 */
+        .dialog {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            width: calc(100% - 24px);
+            max-height: calc(100% - 24px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* 顶部栏 */
+        .dialog-header {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .dialog-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .dialog-title .icon {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 内容区 */
+        .dialog-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 16px;
+            overflow: hidden;
+        }
+
+        /* 输入框 */
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
+
+        .input-textarea {
+            flex: 1;
+            width: 100%;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.2s ease;
+            min-height: 150px;
+        }
+
+        .input-textarea:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .input-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        /* 场景输入框 */
+        .scene-input-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .scene-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #78350f;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scene-label .icon {
+            font-size: 12px;
+        }
+
+        .scene-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .scene-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .scene-input::placeholder {
+            color: #9ca3af;
+        }
+
+        /* 辅助工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .toolbar-btn.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .toolbar-btn .icon {
+            font-size: 14px;
+        }
+
+        .clipboard-count {
+            min-width: 18px;
+            height: 18px;
+            background: #f59e0b;
+            color: white;
+            border-radius: 9px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .toolbar-btn.has-clipboard .clipboard-count {
+            background: #10b981;
+        }
+
+        /* 标签栏 */
+        .tags-section {
+            padding: 8px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .tags-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tags-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 28px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #92400e;
+        }
+
+        .tag-text {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tag-remove {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .tag-remove:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tag-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .tag-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .tag-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .tags-hint {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* 悬浮窗状态 */
+        .floating-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #6b7280;
+            padding: 4px 8px;
+            background: #fef3c7;
+            border-radius: 6px;
+        }
+
+        .floating-status .icon {
+            font-size: 12px;
+        }
+
+        .floating-status.ready {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* 提示区 */
+        .hint {
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.4;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .hint .icon {
+            font-size: 12px;
+            margin-right: 4px;
+        }
+
+        /* 底部按钮区 */
+        .dialog-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 外部提示 */
+        .external-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            text-align: center;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- 对话框 -->
+        <div class="dialog">
+            <!-- 顶部栏 -->
+            <div class="dialog-header">
+                <div class="dialog-title">
+                    <span class="icon">💡</span>
+                    <span>灵感</span>
+                </div>
+                <div class="close-btn">✕</div>
+            </div>
+
+            <!-- 内容区 -->
+            <div class="dialog-content">
+                <!-- 输入框 -->
+                <div class="input-wrapper">
+                    <textarea
+                        class="input-textarea"
+                        id="inputTextarea"
+                        placeholder="在这里记录你的灵感...&#10;&#10;示例：&#10;• 突然想到的产品点子&#10;• 梦里想到的故事情节&#10;• 可以尝试的设计方案"
+                    ></textarea>
+                </div>
+
+                <!-- 场景输入框 -->
+                <div class="scene-input-wrapper">
+                    <div class="scene-label">
+                        <span class="icon">🎬</span>
+                        <span>场景（可选）</span>
+                    </div>
+                    <input
+                        type="text"
+                        class="scene-input"
+                        id="sceneInput"
+                        placeholder="灵感产生的场景，如：洗澡时、通勤路上、睡前..."
+                    />
+                </div>
+
+                <!-- 工具栏 -->
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <!-- 剪切板按钮 -->
+                        <div class="toolbar-btn" id="clipboardBtn">
+                            <span class="icon">📋</span>
+                            <span class="clipboard-count" id="clipboardCount">0</span>
+                        </div>
+
+                        <!-- 标签按钮 -->
+                        <div class="toolbar-btn" id="tagsBtn">
+                            <span class="icon">🏷️</span>
+                            <span>标签</span>
+                            <span class="clipboard-count" id="tagsCount">0</span>
+                        </div>
+                    </div>
+
+                    <!-- 悬浮窗状态 -->
+                    <div class="floating-status" id="floatingStatus">
+                        <span class="icon">💓</span>
+                        <span>可粘贴</span>
+                    </div>
+                </div>
+
+                <!-- 标签栏 -->
+                <div class="tags-section" id="tagsSection" style="display: none;">
+                    <div class="tags-input-wrapper">
+                        <!-- 已添加的标签 -->
+                        <div class="tags-display" id="tagsDisplay">
+                            <!-- 标签会动态添加到这里 -->
+                        </div>
+
+                        <!-- 标签输入框 -->
+                        <input
+                            type="text"
+                            class="tag-input"
+                            id="tagInput"
+                            placeholder="输入标签，按回车添加"
+                        />
+
+                        <!-- 提示 -->
+                        <div class="tags-hint">
+                            💡 提示：用空格或逗号分隔多个标签，如：产品 设计 创意
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 提示 -->
+                <div class="hint">
+                    <span class="icon">💡</span>
+                    <span>点击悬浮窗 💓 可快速添加剪切板内容</span>
+                </div>
+            </div>
+
+            <!-- 底部按钮 -->
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" id="continueBtn">继续记录</button>
+                <button class="btn btn-primary" id="saveBtn">保存并关闭</button>
+            </div>
+        </div>
+
+        <!-- 外部提示 -->
+        <div class="external-hint">模拟点击"💓 粘贴剪切板"</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const textarea = document.getElementById('inputTextarea');
+        const clipboardBtn = document.getElementById('clipboardBtn');
+        const clipboardCount = document.getElementById('clipboardCount');
+        const floatingStatus = document.getElementById('floatingStatus');
+        const saveBtn = document.getElementById('saveBtn');
+        const continueBtn = document.getElementById('continueBtn');
+        const tagsBtn = document.getElementById('tagsBtn');
+        const tagsSection = document.getElementById('tagsSection');
+        const tagsDisplay = document.getElementById('tagsDisplay');
+        const tagInput = document.getElementById('tagInput');
+        const tagsCount = document.getElementById('tagsCount');
+        const toast = document.getElementById('toast');
+        const closeBtn = document.querySelector('.close-btn');
+
+        let clipboardPasted = 0;
+        let tags = [];
+        let demoContent = [
+            "可以做一个知识管理App",
+            "结合闪念笔记和永久笔记",
+            "用卡片盒笔记法的理念"
+        ];
+        let demoIndex = 0;
+
+        // 模拟剪切板粘贴
+        function simulatePaste() {
+            if (demoIndex < demoContent.length) {
+                const content = demoContent[demoIndex];
+                const currentContent = textarea.value;
+
+                if (currentContent) {
+                    textarea.value = currentContent + '\n' + content;
+                } else {
+                    textarea.value = content;
+                }
+
+                textarea.focus();
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+                clipboardPasted++;
+                clipboardCount.textContent = clipboardPasted;
+                clipboardBtn.classList.add('has-clipboard');
+
+                // 更新悬浮窗状态
+                floatingStatus.classList.add('ready');
+                floatingStatus.innerHTML = '<span class="icon">✓</span><span>已添加</span>';
+
+                showToast(`📋 已添加第 ${clipboardPasted} 条内容`);
+
+                demoIndex++;
+
+                // 2秒后恢复悬浮窗状态
+                setTimeout(() => {
+                    floatingStatus.classList.remove('ready');
+                    floatingStatus.innerHTML = '<span class="icon">💓</span><span>可粘贴</span>';
+                }, 2000);
+            } else {
+                showToast('📋 演示内容已全部添加');
+            }
+        }
+
+        // 点击剪切板按钮
+        clipboardBtn.addEventListener('click', simulatePaste);
+
+        // 点击悬浮窗状态也触发粘贴
+        floatingStatus.addEventListener('click', simulatePaste);
+
+        // 保存并关闭
+        saveBtn.addEventListener('click', () => {
+            const content = textarea.value.trim();
+            if (content) {
+                showToast('💡 已保存到灵感');
+                setTimeout(() => {
+                    resetDialog();
+                }, 1500);
+            } else {
+                showToast('⚠️ 请输入内容');
+            }
+        });
+
+        // 继续记录
+        continueBtn.addEventListener('click', () => {
+            const content = textarea.value.trim();
+            if (content) {
+                showToast('💡 已保存，可继续记录');
+                textarea.value = '';
+                clipboardPasted = 0;
+                clipboardCount.textContent = '0';
+                clipboardBtn.classList.remove('has-clipboard');
+                demoIndex = 0;
+            } else {
+                showToast('⚠️ 请输入内容');
+            }
+        });
+
+        // 标签功能
+        tagsBtn.addEventListener('click', () => {
+            tagsSection.style.display = tagsSection.style.display === 'none' ? 'block' : 'none';
+            if (tagsSection.style.display === 'block') {
+                tagsBtn.classList.add('active');
+                tagInput.focus();
+            } else {
+                tagsBtn.classList.remove('active');
+            }
+        });
+
+        // 添加标签
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const input = tagInput.value.trim();
+                if (input) {
+                    // 支持空格、逗号、井号分隔
+                    const newTags = input
+                        .replace(/#/g, '')
+                        .split(/[,\s，]+/)
+                        .filter(tag => tag.trim().length > 0)
+                        .map(tag => tag.trim());
+
+                    newTags.forEach(tag => {
+                        if (!tags.includes(tag)) {
+                            tags.push(tag);
+                            addTagToDisplay(tag);
+                        }
+                    });
+
+                    tagInput.value = '';
+                    updateTagsCount();
+                }
+            }
+        });
+
+        // 添加标签到显示区
+        function addTagToDisplay(tag) {
+            const tagEl = document.createElement('div');
+            tagEl.className = 'tag';
+            tagEl.innerHTML = `
+                <span class="tag-text">#${tag}</span>
+                <span class="tag-remove" data-tag="${tag}">✕</span>
+            `;
+            tagsDisplay.appendChild(tagEl);
+        }
+
+        // 删除标签
+        tagsDisplay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-remove')) {
+                const tagToRemove = e.target.dataset.tag;
+                tags = tags.filter(t => t !== tagToRemove);
+                e.target.parentElement.remove();
+                updateTagsCount();
+                showToast(`🏷️ 已删除标签 #${tagToRemove}`);
+            }
+        });
+
+        // 更新标签计数
+        function updateTagsCount() {
+            tagsCount.textContent = tags.length;
+            if (tags.length > 0) {
+                tagsBtn.classList.add('active');
+            } else {
+                tagsBtn.classList.remove('active');
+            }
+        }
+
+        // 关闭按钮
+        closeBtn.addEventListener('click', () => {
+            if (textarea.value.trim()) {
+                if (confirm('内容未保存，确定关闭吗？')) {
+                    resetDialog();
+                }
+            } else {
+                resetDialog();
+            }
+        });
+
+        // 重置对话框
+        function resetDialog() {
+            textarea.value = '';
+            clipboardPasted = 0;
+            clipboardCount.textContent = '0';
+            clipboardBtn.classList.remove('has-clipboard');
+            demoIndex = 0;
+            tags = [];
+            tagsDisplay.innerHTML = '';
+            tagsCount.textContent = '0';
+            tagsBtn.classList.remove('active');
+            tagsSection.style.display = 'none';
+        }
+
+        // 显示 Toast
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                saveBtn.click();
+            }
+            if (e.key === 'Escape') {
+                closeBtn.click();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+                continueBtn.click();
+            }
+        });
+
+        // 自动聚焦
+        textarea.focus();
+    </script>
+</body>
+</html>

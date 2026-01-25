@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>及时记剪贴板 - 设备配对</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>📱 及时记剪贴板</h1>
+                <p class="subtitle">WiFi局域网同步</p>
+            </div>
+
+            <!-- 配对步骤1 -->
+            <div id="step-pair" class="step active">
+                <div class="step-number">1</div>
+                <h2>输入配对码</h2>
+                <p class="instruction">请在手机App上查看6位数字配对码</p>
+
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="pairingCode"
+                        class="code-input"
+                        placeholder="000000"
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        autocomplete="off"
+                    >
+                    <button id="pairBtn" class="btn btn-primary">配对</button>
+                </div>
+
+                <div id="pairError" class="error-message"></div>
+            </div>
+
+            <!-- 配对步骤2 -->
+            <div id="step-success" class="step hidden">
+                <div class="success-icon">✅</div>
+                <h2>配对成功!</h2>
+                <p class="instruction">您的电脑已与手机配对</p>
+
+                <div class="info-box">
+                    <p>现在您可以：</p>
+                    <ul>
+                        <li>✨ 在手机上推送剪贴板到电脑</li>
+                        <li>📋 电脑会自动复制收到的内容</li>
+                    </ul>
+                </div>
+
+                <button id="goDashboardBtn" class="btn btn-primary">
+                    打开控制台
+                </button>
+            </div>
+
+            <!-- 证书警告 -->
+            <div id="cert-warning" class="warning-box">
+                <h3>⚠️ 安全证书说明</h3>
+                <p>首次访问时，浏览器会显示证书警告（这是正常的）：</p>
+                <ol>
+                    <li><strong>Chrome/Edge</strong>：点击"高级" → "继续访问"</li>
+                    <li><strong>Firefox</strong>：点击"高级" → "接受风险并继续"</li>
+                </ol>
+                <p class="note">💡 这是自签名证书，您的数据仍在本地加密传输</p>
+            </div>
+
+            <!-- 状态信息 -->
+            <div class="status-info">
+                <p id="connectionStatus">⚪ 等待配对...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

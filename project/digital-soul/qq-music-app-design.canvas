@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "design-overview",
+      "type": "text",
+      "x": 100,
+      "y": 100,
+      "width": 400,
+      "height": 200,
+      "color": "1",
+      "text": "# QQ 音乐 App - Apple 设计风格\n\n## 设计原则\n- 大量留白\n- SF Pro 字体\n- 柔和圆角 (12-16px)\n- 浅色系: #FFFFFF / #F5F5F7\n- 毛玻璃效果\n- 简洁图标"
+    },
+    {
+      "id": "screen-1-home",
+      "type": "text",
+      "x": 600,
+      "y": 100,
+      "width": 320,
+      "height": 650,
+      "color": "2",
+      "text": "## 首页/发现页\n\n### 顶部\n- 状态栏 (透明)\n- 搜索栏: #F5F5F7, 12px 圆角\n- 导航标签: 推荐/歌单/直播\n\n### 内容区\n- 每日推荐卡片 (大圆角 16px)\n- 推荐歌单横向滚动\n- 精选歌单网格布局\n\n### 底部\n- Mini 播放器 (毛玻璃效果)\n- Tab Bar: 首页/我的/播放/账号"
+    },
+    {
+      "id": "screen-2-player",
+      "type": "text",
+      "x": 1000,
+      "y": 100,
+      "width": 320,
+      "height": 650,
+      "color": "3",
+      "text": "## 播放页面\n\n### 顶部\n- 下拉箭头 (24pt 图标)\n- 更多选项\n\n### 封面区\n- 大封面图 (240x240)\n- 柔和阴影 (offset 0, 8px)\n\n### 控制区\n- 歌名/艺术家 (SF Pro Display/Bold)\n- 进度条 (细线, 4pt)\n- 播放控制 (48pt 图标)\n\n### 底部\n- 播放模式/歌词/列表\n- 毛玻璃背景效果"
+    },
+    {
+      "id": "screen-3-library",
+      "type": "text",
+      "x": 600,
+      "y": 800,
+      "width": 320,
+      "height": 650,
+      "color": "4",
+      "text": "## 我的音乐\n\n### 顶部\n- 头像 (圆形 80px)\n- 用户名/会员标识\n\n### 快捷入口\n- 我喜欢/最近播放/下载/云盘\n- 4 列网格, 大图标\n\n### 列表区\n- 创建的歌单\n- 收藏的歌单\n- 每行带图标/标题/数量\n\n### 样式\n- 分组标题: 小字, 灰色\n- 列表项: 16px 圆角卡片"
+    },
+    {
+      "id": "screen-4-search",
+      "type": "text",
+      "x": 1000,
+      "y": 800,
+      "width": 320,
+      "height": 650,
+      "color": "5",
+      "text": "## 搜索页面\n\n### 搜索栏\n- 取消按钮 (右侧)\n- 实时搜索建议\n\n### 热搜榜\n- 排行榜列表 (1-50)\n- 前 3 名高亮标签\n- 搜索量指示\n\n### 分类搜索\n- 歌手/专辑/视频/歌单\n- 圆形图标入口\n\n### 历史记录\n- Tag 样式显示\n- 可单个删除"
+    },
+    {
+      "id": "color-palette",
+      "type": "text",
+      "x": 100,
+      "y": 800,
+      "width": 400,
+      "height": 250,
+      "color": "6",
+      "text": "## 色彩系统\n\n### 主色\n- 主品牌色: #FF3B30 (Apple 红色)\n- 次要色: #007AFF (蓝色)\n\n### 中性色\n- 背景: #FFFFFF\n- 次级背景: #F5F5F7\n- 分隔线: #E5E5EA\n- 文字主: #1C1C1E\n- 文字次: #8E8E93\n- 文字三级: #C7C7CC\n\n### 语义色\n- 成功: #34C759\n- 警告: #FF9500\n- 错误: #FF3B30"
+    },
+    {
+      "id": "components",
+      "type": "text",
+      "x": 100,
+      "y": 1100,
+      "width": 400,
+      "height": 280,
+      "color": "1",
+      "text": "## 组件规范\n\n### 按钮\n- 主要按钮: 16px 圆角\n- 次要按钮: 仅描边\n- 图标按钮: 48x48pt\n\n### 卡片\n- 圆角: 12-16px\n- 阴影: 0 2px 8px rgba(0,0,0,0.04)\n- 内边距: 16px\n\n### 字体\n- 标题: SF Pro Display 20-28pt\n- 正文: SF Pro Text 15-17pt\n- 辅助: SF Pro Text 13pt\n\n### 间距\n- 屏幕边距: 16-20px\n- 元素间距: 8/12/16/24px"
+    },
+    {
+      "id": "group-screens",
+      "type": "group",
+      "x": 560,
+      "y": 50,
+      "width": 820,
+      "height": 1450,
+      "label": "主要界面设计",
+      "color": "2"
+    },
+    {
+      "id": "group-design-system",
+      "type": "group",
+      "x": 60,
+      "y": 750,
+      "width": 480,
+      "height": 680,
+      "label": "设计系统",
+      "color": "6"
+    }
+  ],
+  "edges": []
+}

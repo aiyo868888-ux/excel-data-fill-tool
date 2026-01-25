@@ -1,0 +1,59 @@
+# Simple Memory - 极简记忆系统
+
+> **产品哲学**：专注单点，做到极致
+
+## 功能
+
+1. **自动记录**：关键决策、bug 修复、功能变更自动保存
+2. **智能检索**：自然语言搜索历史记录
+3. **项目隔离**：每个项目独立的记忆空间
+
+## 快速开始
+
+### 记录内容
+```
+/mem 记录了用户认证功能，使用 JWT token
+```
+
+### 搜索记忆
+```
+/mem-search 用户认证
+```
+
+### 查看最近
+```
+/mem-list
+```
+
+## 数据存储
+
+- **位置**：`{project}/.memory/memory.json`
+- **格式**：JSON 数组
+- **大小**：通常 < 100KB
+
+## 配置
+
+在项目根目录创建 `.memory-config.json`：
+
+```json
+{
+  "autoRecord": true,
+  "maxRecords": 1000,
+  "categories": ["decision", "bugfix", "feature", "refactor"]
+}
+```
+
+## MCP 集成
+
+在 `.mcp.json` 中添加：
+
+```json
+{
+  "mcpServers": {
+    "simple-memory": {
+      "command": "node",
+      "args": ["skills/simple-memory/server.js"]
+    }
+  }
+}
+```

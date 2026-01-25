@@ -38,6 +38,7 @@ class SettingsFragment : Fragment() {
     private lateinit var statusText: TextView
     private lateinit var toggleButton: Button
     private lateinit var permissionButton: Button
+    private lateinit var tagManageButton: Button
     private lateinit var clearDataButton: Button
     private lateinit var todoReminderSwitch: Switch
     private lateinit var todoReminderTimeText: TextView
@@ -59,13 +60,17 @@ class SettingsFragment : Fragment() {
         reminderPrefs = ReminderPreferences(requireContext())
         initViews()
         checkFloatingWindowStatus()
+        // 先加载设置（设置 isChecked），这会触发监听器
         loadReminderSettings()
+        // 加载完后再设置监听器，避免触发 Toast
+        setupReminderSwitchListener()
     }
 
     private fun initViews() {
         statusText = requireView().findViewById(R.id.statusText)
         toggleButton = requireView().findViewById(R.id.toggleButton)
         permissionButton = requireView().findViewById(R.id.permissionButton)
+        tagManageButton = requireView().findViewById(R.id.tagManageButton)
         clearDataButton = requireView().findViewById(R.id.clearDataButton)
         todoReminderSwitch = requireView().findViewById(R.id.todoReminderSwitch)
         todoReminderTimeText = requireView().findViewById(R.id.todoReminderTimeText)
@@ -81,22 +86,30 @@ class SettingsFragment : Fragment() {
             requestPermission()
         }
 
+        // 标签管理按钮
+        tagManageButton.setOnClickListener {
+            val intent = Intent(requireContext(), com.jishi.clipboard.ui.TagManageActivity::class.java)
+            startActivity(intent)
+        }
+
         // 清空数据按钮
         clearDataButton.setOnClickListener {
             showClearDataDialog()
         }
 
-        // 待办提醒开关
+        // 待办提醒时间设置
+        todoReminderTimeLayout.setOnClickListener {
+            showTimePickerDialog()
+        }
+    }
+
+    private fun setupReminderSwitchListener() {
+        // 待办提醒开关监听器 - 在 loadReminderSettings 之后设置，避免加载时触发 Toast
         todoReminderSwitch.setOnCheckedChangeListener { _, isChecked ->
             reminderPrefs.setTodoReminderEnabled(isChecked)
             Toast.makeText(requireContext(),
                 if (isChecked) "✅ 已启用待办提醒" else "❌ 已禁用待办提醒",
                 Toast.LENGTH_SHORT).show()
-        }
-
-        // 待办提醒时间设置
-        todoReminderTimeLayout.setOnClickListener {
-            showTimePickerDialog()
         }
     }
 

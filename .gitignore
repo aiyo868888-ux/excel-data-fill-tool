@@ -46,6 +46,12 @@ package-lock.json
 
 # Claude Code
 .claude/
+tmpclaude-*-cwd
+
+# 浏览器/爬虫临时数据
+chrome_profile/
+zsxq_chrome_profile/
+zsxq_posts.json
 
 # 项目特定（根据需要调整）
 # project/数据填充/uploads/

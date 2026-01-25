@@ -1,0 +1,398 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "QQ音乐 - 播放列表 (Apple Style)"
+  },
+  "pages": [
+    {
+      "id": "playlist-page",
+      "name": "播放列表",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "top-bar",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 56,
+          "backgroundColor": "#FAFAFA",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "back-button",
+          "text": "<",
+          "x": 16,
+          "y": 24,
+          "fontSize": 24,
+          "color": "#007AFF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "text": "播放列表",
+          "x": 196.5,
+          "y": 24,
+          "fontSize": 17,
+          "fontWeight": "600",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "edit-button",
+          "text": "编辑",
+          "x": 361,
+          "y": 26,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "textAlign": "right",
+          "color": "#007AFF"
+        },
+        {
+          "type": "rectangle",
+          "id": "current-playing-card",
+          "x": 0,
+          "y": 56,
+          "width": 393,
+          "height": 72,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "left": {
+              "width": 4,
+              "color": "#FA233B"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "playing-icon",
+          "text": "▶",
+          "x": 24,
+          "y": 88,
+          "fontSize": 20,
+          "color": "#FA233B"
+        },
+        {
+          "type": "text",
+          "id": "playing-song",
+          "text": "告白气球 - 周杰伦",
+          "x": 56,
+          "y": 82,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "playing-artist",
+          "text": "床边故事",
+          "x": 56,
+          "y": 106,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "mini-progress-track",
+          "x": 56,
+          "y": 118,
+          "width": 200,
+          "height": 2,
+          "backgroundColor": "#E5E5E5"
+        },
+        {
+          "type": "rectangle",
+          "id": "mini-progress-fill",
+          "x": 56,
+          "y": 118,
+          "width": 80,
+          "height": 2,
+          "backgroundColor": "#FA233B"
+        },
+        {
+          "type": "text",
+          "id": "section-title",
+          "text": "即将播放 (28)",
+          "x": 16,
+          "y": 156,
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-1",
+          "x": 0,
+          "y": 184,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-1-num",
+          "text": "02",
+          "x": 24,
+          "y": 212,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-1-title",
+          "text": "晴天 - 周杰伦",
+          "x": 56,
+          "y": 206,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-1-artist",
+          "text": "叶惠美",
+          "x": 56,
+          "y": 230,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-2",
+          "x": 0,
+          "y": 248,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-2-num",
+          "text": "03",
+          "x": 24,
+          "y": 276,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-2-title",
+          "text": "七里香 - 周杰伦",
+          "x": 56,
+          "y": 270,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-2-artist",
+          "text": "七里香",
+          "x": 56,
+          "y": 294,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-3",
+          "x": 0,
+          "y": 312,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-3-num",
+          "text": "04",
+          "x": 24,
+          "y": 340,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-3-title",
+          "text": "稻香 - 周杰伦",
+          "x": 56,
+          "y": 334,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-3-artist",
+          "text": "魔杰座",
+          "x": 56,
+          "y": 358,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-4",
+          "x": 0,
+          "y": 376,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-4-num",
+          "text": "05",
+          "x": 24,
+          "y": 404,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-4-title",
+          "text": "青花瓷 - 周杰伦",
+          "x": 56,
+          "y": 398,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-4-artist",
+          "text": "我很忙",
+          "x": 56,
+          "y": 422,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-5",
+          "x": 0,
+          "y": 440,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-5-num",
+          "text": "06",
+          "x": 24,
+          "y": 468,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-5-title",
+          "text": "夜曲 - 周杰伦",
+          "x": 56,
+          "y": 462,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-5-artist",
+          "text": "十一月的萧邦",
+          "x": 56,
+          "y": 486,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "song-6",
+          "x": 0,
+          "y": 504,
+          "width": 393,
+          "height": 64,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "song-6-num",
+          "text": "07",
+          "x": 24,
+          "y": 532,
+          "fontSize": 15,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "song-6-title",
+          "text": "简单爱 - 周杰伦",
+          "x": 56,
+          "y": 526,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "song-6-artist",
+          "text": "范特西",
+          "x": 56,
+          "y": 550,
+          "fontSize": 13,
+          "color": "#8E8E93"
+        }
+      ]
+    }
+  ]
+}

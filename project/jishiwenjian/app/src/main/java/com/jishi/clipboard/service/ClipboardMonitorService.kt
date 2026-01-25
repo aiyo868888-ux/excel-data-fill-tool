@@ -6,6 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,6 +23,7 @@ class ClipboardMonitorService : Service() {
     @Inject
     lateinit var clipboardRepository: com.jishi.clipboard.repository.ClipboardRepository
 
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var clipboardManager: ClipboardManager
     private var lastContent: String? = null
 
@@ -26,9 +31,19 @@ class ClipboardMonitorService : Service() {
         val currentContent = readClipboard()
         Timber.d("剪贴板变化: ${currentContent?.take(50)}...")
 
-        if (currentContent != null && currentContent != lastContent) {
+        if (currentContent != null && currentContent.isNotEmpty() && currentContent != lastContent) {
             lastContent = currentContent
-            Timber.d("剪贴板内容已更新")
+            Timber.d("剪贴板内容已更新，开始保存")
+
+            // 保存到数据库
+            serviceScope.launch {
+                try {
+                    clipboardRepository.saveClipboard(currentContent, emptyList())
+                    Timber.d("剪贴板内容已保存")
+                } catch (e: Exception) {
+                    Timber.e(e, "保存剪贴板内容失败")
+                }
+            }
         }
     }
 

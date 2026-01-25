@@ -1,0 +1,266 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "shiyan-frame",
+      "x": 0,
+      "y": 0,
+      "name": "实验",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "header-bg",
+          "x": 0,
+          "y": 0,
+          "name": "顶部背景",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 88,
+          "stroke": {
+            "align": "inside",
+            "thickness": 0.5,
+            "fill": "#E5E5E5"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "x": 196.5,
+          "y": 54,
+          "name": "标题",
+          "fill": "#000000",
+          "content": "实验页面",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-1",
+          "x": 16,
+          "y": 104,
+          "name": "卡片1",
+          "fill": "#FA233B",
+          "width": 361,
+          "height": 120,
+          "cornerRadius": 12,
+          "effects": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#FA233B",
+              "offset": {
+                "x": 0,
+                "y": 4
+              },
+              "blur": 16
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "card-1-text",
+          "x": 196.5,
+          "y": 158,
+          "name": "卡片1文字",
+          "fill": "#FFFFFF",
+          "content": "🎵 QQ音乐",
+          "fontFamily": "Inter",
+          "fontSize": 32,
+          "fontWeight": "700",
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-2",
+          "x": 16,
+          "y": 240,
+          "name": "卡片2",
+          "fill": "#007AFF",
+          "width": 175,
+          "height": 100,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "card-2-text",
+          "x": 103.5,
+          "y": 283,
+          "name": "卡片2文字",
+          "fill": "#FFFFFF",
+          "content": "按钮A",
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-3",
+          "x": 202,
+          "y": 240,
+          "name": "卡片3",
+          "fill": "#34C759",
+          "width": 175,
+          "height": 100,
+          "cornerRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "card-3-text",
+          "x": 289.5,
+          "y": 283,
+          "name": "卡片3文字",
+          "fill": "#FFFFFF",
+          "content": "按钮B",
+          "fontFamily": "Inter",
+          "fontSize": 18,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "ellipse",
+          "id": "circle-1",
+          "cx": 196.5,
+          "cy": 420,
+          "name": "圆形1",
+          "fill": "#FF9500",
+          "width": 100,
+          "height": 100
+        },
+        {
+          "type": "text",
+          "id": "circle-text",
+          "x": 196.5,
+          "y": 432,
+          "name": "圆形文字",
+          "fill": "#FFFFFF",
+          "content": "播放",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-bar",
+          "x": 32,
+          "y": 500,
+          "name": "进度条轨道",
+          "fill": "#E5E5E5",
+          "width": 329,
+          "height": 8,
+          "cornerRadius": 4
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-fill",
+          "x": 32,
+          "y": 500,
+          "name": "进度条",
+          "fill": "#FA233B",
+          "width": 180,
+          "height": 8,
+          "cornerRadius": 4
+        },
+        {
+          "type": "text",
+          "id": "label-1",
+          "x": 32,
+          "y": 520,
+          "name": "标签1",
+          "fill": "#8E8E93",
+          "content": "1:23",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "label-2",
+          "x": 361,
+          "y": 520,
+          "name": "标签2",
+          "fill": "#8E8E93",
+          "content": "3:45",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "right"
+        },
+        {
+          "type": "rectangle",
+          "id": "bottom-nav",
+          "x": 0,
+          "y": 769,
+          "name": "底部导航",
+          "fill": "#FFFFFF",
+          "width": 393,
+          "height": 83,
+          "stroke": {
+            "align": "inside",
+            "thickness": 0.5,
+            "fill": "#E5E5E5"
+          }
+        },
+        {
+          "type": "text",
+          "id": "nav-1",
+          "x": 45,
+          "y": 795,
+          "name": "导航1",
+          "fill": "#8E8E93",
+          "content": "🏠",
+          "fontSize": 26
+        },
+        {
+          "type": "text",
+          "id": "nav-2",
+          "x": 117,
+          "y": 795,
+          "name": "导航2",
+          "fill": "#FA233B",
+          "content": "🎵",
+          "fontSize": 26
+        },
+        {
+          "type": "text",
+          "id": "nav-3",
+          "x": 189,
+          "y": 795,
+          "name": "导航3",
+          "fill": "#8E8E93",
+          "content": "🔍",
+          "fontSize": 26
+        },
+        {
+          "type": "text",
+          "id": "nav-4",
+          "x": 261,
+          "y": 795,
+          "name": "导航4",
+          "fill": "#8E8E93",
+          "content": "👤",
+          "fontSize": 26
+        },
+        {
+          "type": "text",
+          "id": "nav-5",
+          "x": 333,
+          "y": 795,
+          "name": "导航5",
+          "fill": "#8E8E93",
+          "content": "☰",
+          "fontSize": 26
+        }
+      ]
+    }
+  ]
+}

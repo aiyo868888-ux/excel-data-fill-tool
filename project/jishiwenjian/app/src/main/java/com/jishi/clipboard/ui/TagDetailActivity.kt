@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jishi.clipboard.R
 import com.jishi.clipboard.data.ClipboardEntity
+import com.jishi.clipboard.data.TagDefinition
 import com.jishi.clipboard.repository.ClipboardRepository
+import com.jishi.clipboard.repository.TagRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,9 +26,13 @@ import javax.inject.Inject
 class TagDetailActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var repository: ClipboardRepository
+    lateinit var clipboardRepository: ClipboardRepository
+
+    @Inject
+    lateinit var tagRepository: TagRepository
 
     private lateinit var tagName: String
+    private var tagDefinitionId: Long = -1
     private val adapter = ClipboardAdapter(
         onDeleteClick = { item -> showDeleteDialog(item) },
         onItemClick = { item -> openDetailActivity(item) }
@@ -56,8 +62,16 @@ class TagDetailActivity : AppCompatActivity() {
     private fun loadTagClipboards() {
         lifecycleScope.launch {
             try {
-                repository.getClipboardsByTag(tagName).collect { clipboards ->
-                    adapter.submitList(clipboards)
+                // 先获取标签定义
+                val tagDef = tagRepository.getTagDefinitionByName(tagName)
+                if (tagDef != null) {
+                    tagDefinitionId = tagDef.id
+                    // 使用 tagDefinitionId 获取剪贴板
+                    clipboardRepository.getClipboardsByTagDefinition(tagDef.id).collect { clipboards ->
+                        adapter.submitList(clipboards)
+                    }
+                } else {
+                    Toast.makeText(this@TagDetailActivity, "标签不存在", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Timber.e(e, "加载标签内容失败")
@@ -87,7 +101,7 @@ class TagDetailActivity : AppCompatActivity() {
     private fun deleteItem(item: ClipboardEntity) {
         lifecycleScope.launch {
             try {
-                repository.deleteClipboard(item)
+                clipboardRepository.deleteClipboard(item)
                 Toast.makeText(this@TagDetailActivity, "✅ 已删除", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Timber.e(e, "删除失败")

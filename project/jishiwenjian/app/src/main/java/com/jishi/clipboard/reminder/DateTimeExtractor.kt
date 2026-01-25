@@ -12,6 +12,7 @@ import java.util.regex.Pattern
  * 支持格式：
  * - 绝对时间：2024-01-20 14:30、1月20日下午3点
  * - 相对时间：明天上午9点、下周三、3天后、2小时后
+ * - 模糊时间：月底、季度末、年底、周末（新增）
  */
 object DateTimeExtractor {
 
@@ -27,6 +28,7 @@ object DateTimeExtractor {
      * 优先级：
      * 1. 用户明确指定的时间（明天早上6点）→ 使用用户的6点
      * 2. 只有时间段（明天早上）→ 使用默认时间段映射
+     * 3. 模糊时间（月底、季度末、年底、周末）
      */
     fun extract(text: String): ExtractedDateTime? {
         android.util.Log.d("DateTimeExtractor", "========== 开始提取时间: $text ==========")
@@ -45,6 +47,19 @@ object DateTimeExtractor {
         if (relativeResult != null) {
             android.util.Log.d("DateTimeExtractor", "✅ 使用相对时间结果: ${formatTimestamp(relativeResult.timestamp)}")
             return relativeResult
+        }
+
+        android.util.Log.d("DateTimeExtractor", "⚠️ 相对时间匹配失败，尝试模糊时间")
+
+        // 3. 尝试模糊时间匹配（月底、季度末、年底、周末）
+        val fuzzyTimestamp = FuzzyTimeParser.parse(text)
+        if (fuzzyTimestamp != null && fuzzyTimestamp > System.currentTimeMillis()) {
+            android.util.Log.d("DateTimeExtractor", "✅ 使用模糊时间结果: ${formatTimestamp(fuzzyTimestamp)}")
+            return ExtractedDateTime(
+                timestamp = fuzzyTimestamp,
+                originalText = text.take(50),
+                confidence = 0.7f
+            )
         }
 
         android.util.Log.d("DateTimeExtractor", "❌ 无法提取时间")
@@ -138,30 +153,170 @@ object DateTimeExtractor {
         android.util.Log.d("DateTimeExtractor", "  当前时间: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(calendar.time)}")
 
         // 4. 提取日期前缀
+        var dateHandled = false
+
+        // 4.1 先匹配相对日期（明天/后天/今天）
         when {
-            // 明天
             text.contains("明天") -> {
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
                 android.util.Log.d("DateTimeExtractor", "  日期: 明天")
+                dateHandled = true
             }
-            // 后天
             text.contains("后天") -> {
                 calendar.add(Calendar.DAY_OF_MONTH, 2)
                 android.util.Log.d("DateTimeExtractor", "  日期: 后天")
+                dateHandled = true
             }
-            // 大后天
             text.contains("大后天") -> {
                 calendar.add(Calendar.DAY_OF_MONTH, 3)
                 android.util.Log.d("DateTimeExtractor", "  日期: 大后天")
+                dateHandled = true
             }
-            // 今天（不加）
             text.contains("今天") -> {
                 android.util.Log.d("DateTimeExtractor", "  日期: 今天")
+                dateHandled = true
             }
-            // 具体日期
-            else -> {
-                android.util.Log.d("DateTimeExtractor", "  日期: 具体日期（未实现）")
+        }
+
+        // 4.2 如果没有相对日期，尝试匹配具体日期（阿拉伯数字）
+        if (!dateHandled) {
+            // 匹配：下月15日、本月3号、5月20日、12-25、12/25
+            val numericDatePattern = Pattern.compile(
+                "(?:下?(?:个)?月|本?(?:个)?月)?(\\d{1,2})(?:日|号)|" +  // 15日、3号、下月15日、本月3号
+                "(\\d{1,2})-(\\d{1,2})|" +                           // 5-20、12-25
+                "(\\d{1,2})/(\\d{1,2})"                              // 5/20、12/25
+            )
+            val numericDateMatcher = numericDatePattern.matcher(text)
+
+            if (numericDateMatcher.find()) {
+                android.util.Log.d("DateTimeExtractor", "  匹配到数字日期格式")
+
+                when {
+                    // 模式1: (下月|本月)15日、15日、15号
+                    numericDateMatcher.group(1) != null -> {
+                        val day = numericDateMatcher.group(1)!!.toInt()
+
+                        // 判断是否有"下月"前缀
+                        if (text.contains("下月") || text.contains("下个月")) {
+                            calendar.add(Calendar.MONTH, 1)
+                            android.util.Log.d("DateTimeExtractor", "  日期: 下月${day}日")
+                        } else if (text.contains("本月") || text.contains("这个月")) {
+                            // 本月不加
+                            android.util.Log.d("DateTimeExtractor", "  日期: 本月${day}日")
+                        } else {
+                            // 没有"下月/本月"前缀，检查日期是否已过
+                            val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+                            if (day < currentDay) {
+                                calendar.add(Calendar.MONTH, 1)
+                                android.util.Log.d("DateTimeExtractor", "  日期: ${day}日（已过，加1月）")
+                            } else {
+                                android.util.Log.d("DateTimeExtractor", "  日期: ${day}日（本月）")
+                            }
+                        }
+
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+                        dateHandled = true
+                    }
+
+                    // 模式2: 5-20、12-25
+                    numericDateMatcher.group(2) != null -> {
+                        val month = numericDateMatcher.group(2)!!.toInt()
+                        val day = numericDateMatcher.group(3)!!.toInt()
+
+                        calendar.set(Calendar.MONTH, month - 1)
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+
+                        // 如果日期已过，加1年
+                        if (calendar.timeInMillis < System.currentTimeMillis()) {
+                            calendar.add(Calendar.YEAR, 1)
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}-${day}（已过，加1年）")
+                        } else {
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}-${day}")
+                        }
+                        dateHandled = true
+                    }
+
+                    // 模式3: 5/20、12/25
+                    numericDateMatcher.group(4) != null -> {
+                        val month = numericDateMatcher.group(4)!!.toInt()
+                        val day = numericDateMatcher.group(5)!!.toInt()
+
+                        calendar.set(Calendar.MONTH, month - 1)
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+
+                        if (calendar.timeInMillis < System.currentTimeMillis()) {
+                            calendar.add(Calendar.YEAR, 1)
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}/${day}（已过，加1年）")
+                        } else {
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}/${day}")
+                        }
+                        dateHandled = true
+                    }
+                }
             }
+        }
+
+        // 4.3 如果数字日期也没匹配到，尝试中文数字日期（十五日、三月五号）
+        if (!dateHandled) {
+            val chineseDatePattern = Pattern.compile(
+                "(?:下?(?:个)?月|本?(?:个)?月)?([一二三四五六七八九十百千万零]+)(?:日|号)|" +
+                "([一二三四五六七八九十百千万零]+)月([一二三四五六七八九十百千万零]+)(?:日|号)"
+            )
+            val chineseDateMatcher = chineseDatePattern.matcher(text)
+
+            if (chineseDateMatcher.find()) {
+                android.util.Log.d("DateTimeExtractor", "  匹配到中文数字日期格式")
+
+                when {
+                    // 模式1: 下月十五日、十五日、十五号
+                    chineseDateMatcher.group(1) != null -> {
+                        val day = chineseNumberToInt(chineseDateMatcher.group(1)!!)
+                        android.util.Log.d("DateTimeExtractor", "  中文数字转阿拉伯数字: ${chineseDateMatcher.group(1)} → $day")
+
+                        if (text.contains("下月") || text.contains("下个月")) {
+                            calendar.add(Calendar.MONTH, 1)
+                            android.util.Log.d("DateTimeExtractor", "  日期: 下月${day}日")
+                        } else if (text.contains("本月") || text.contains("这个月")) {
+                            android.util.Log.d("DateTimeExtractor", "  日期: 本月${day}日")
+                        } else {
+                            val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+                            if (day < currentDay) {
+                                calendar.add(Calendar.MONTH, 1)
+                                android.util.Log.d("DateTimeExtractor", "  日期: ${day}日（已过，加1月）")
+                            } else {
+                                android.util.Log.d("DateTimeExtractor", "  日期: ${day}日（本月）")
+                            }
+                        }
+
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+                        dateHandled = true
+                    }
+
+                    // 模式2: 三月五号、十二月二十五日
+                    chineseDateMatcher.group(2) != null -> {
+                        val month = chineseNumberToInt(chineseDateMatcher.group(2)!!)
+                        val day = chineseNumberToInt(chineseDateMatcher.group(3)!!)
+
+                        android.util.Log.d("DateTimeExtractor", "  中文数字转阿拉伯数字: ${chineseDateMatcher.group(2)}${chineseDateMatcher.group(3)} → ${month}-${day}")
+
+                        calendar.set(Calendar.MONTH, month - 1)
+                        calendar.set(Calendar.DAY_OF_MONTH, day)
+
+                        if (calendar.timeInMillis < System.currentTimeMillis()) {
+                            calendar.add(Calendar.YEAR, 1)
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}月${day}日（已过，加1年）")
+                        } else {
+                            android.util.Log.d("DateTimeExtractor", "  日期: ${month}月${day}日")
+                        }
+                        dateHandled = true
+                    }
+                }
+            }
+        }
+
+        // 4.4 如果都没匹配到，记录日志
+        if (!dateHandled) {
+            android.util.Log.d("DateTimeExtractor", "  日期: 未匹配到日期格式")
         }
 
         // 5. 先清除秒和毫秒
@@ -285,7 +440,7 @@ object DateTimeExtractor {
             val weekMatcher = weekPattern.matcher(text)
             if (weekMatcher.find()) {
                 val prefix = weekMatcher.group(1) ?: "本"
-                val weekDay = weekMatcher.group(2)
+                val weekDay = weekMatcher.group(2) ?: "一"
                 val period = weekMatcher.group(3)
 
                 val currentDay = calendar.get(Calendar.DAY_OF_WEEK)
@@ -393,8 +548,6 @@ object DateTimeExtractor {
      */
     fun formatTimestamp(timestamp: Long): String {
         val now = System.currentTimeMillis()
-        val diff = timestamp - now
-
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
         }
@@ -439,5 +592,75 @@ object DateTimeExtractor {
     private fun isInWeek(now: Long, timestamp: Long): Boolean {
         val diff = timestamp - now
         return diff in 1..(7 * 24 * 60 * 60 * 1000)
+    }
+
+    /**
+     * 中文数字转阿拉伯数字
+     * 支持简单中文数字：一、二、三、...、十、十五、二十、二十五、三十一
+     * 支持复合表达：二十五、三十八、一百零五
+     *
+     * @param chinese 中文数字字符串
+     * @return 阿拉伯数字，无法解析返回 -1
+     */
+    private fun chineseNumberToInt(chinese: String): Int {
+        val basicMap = mapOf(
+            "零" to 0, "一" to 1, "二" to 2, "三" to 3, "四" to 4,
+            "五" to 5, "六" to 6, "七" to 7, "八" to 8, "九" to 9,
+            "十" to 10
+        )
+
+        // 1. 单个字符（一~十、零）
+        if (chinese.length == 1) {
+            return basicMap[chinese] ?: -1
+        }
+
+        // 2. 十几（十一、十二、...、十九）
+        if (chinese.startsWith("十")) {
+            return when (chinese.length) {
+                1 -> 10
+                2 -> 10 + (basicMap[chinese[1].toString()] ?: 0)
+                else -> {
+                    // 十五十五这种不合理的，逐字解析
+                    chinese.sumOf { basicMap[it.toString()] ?: 0 }
+                }
+            }
+        }
+
+        // 3. 几十几（二十、二十一、二十五、三十八）
+        if (chinese.contains("十")) {
+            val parts = chinese.split("十")
+            if (parts.size == 2) {
+                val tens = basicMap[parts[0]] ?: 0
+                val units = if (parts[1].isEmpty()) 0 else (basicMap[parts[1]] ?: 0)
+                return tens * 10 + units
+            }
+        }
+
+        // 4. 简单情况：直接拼接基本数字（如"十五"当作 10 + 5）
+        // 这种情况只处理两个字的组合
+        if (chinese.length == 2) {
+            val first = basicMap[chinese[0].toString()] ?: 0
+            val second = basicMap[chinese[1].toString()] ?: 0
+            // 如果第一个是"十"，上面已经处理
+            // 如果是"二十"，上面contains("十")会处理
+            // 这里处理"十五"、"十八"这类
+            return if (chinese[0].toString() == "十") {
+                10 + second
+            } else {
+                first * 10 + second
+            }
+        }
+
+        // 5. 三个字的组合（二十五、三十八）
+        if (chinese.length == 3 && chinese[1].toString() == "十") {
+            val tens = basicMap[chinese[0].toString()] ?: 0
+            val units = basicMap[chinese[2].toString()] ?: 0
+            return tens * 10 + units
+        }
+
+        // 6. 其他复杂情况（一百零五、九十九等），暂时不支持
+        // 尝试逐字相加作为fallback
+        android.util.Log.w("DateTimeExtractor", "  复杂中文数字暂不支持: $chinese，尝试逐字解析")
+        return chinese.sumOf { basicMap[it.toString()] ?: 0 }
     }
 }

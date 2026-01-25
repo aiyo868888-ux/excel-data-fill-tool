@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>闪念笔记 - 导航页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 主容器 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 顶部栏 */
+        .app-header {
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f4f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .header-btn:hover {
+            background: #e5e7eb;
+        }
+
+        /* 内容区 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .empty-desc {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* 列表容器 */
+        .list-container {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 列表项 - 卡片式 */
+        .list-item {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3f4f6;
+        }
+
+        .list-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .item-content {
+            font-size: 14px;
+            color: #1f2937;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .item-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .item-tag {
+            padding: 3px 8px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* 灵感卡片样式 */
+        .idea-item {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #fde68a;
+        }
+
+        .idea-item.v1 {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #fde68a;
+        }
+
+        .idea-item.v2 {
+            background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+            border-color: #facc15;
+        }
+
+        .idea-item.v3 {
+            background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+            border-color: #fdba74;
+        }
+
+        .idea-item .item-content {
+            color: #78350f;
+        }
+
+        .idea-item .item-tag {
+            background: rgba(255, 255, 255, 0.6);
+            color: #92400e;
+        }
+
+        /* 启发卡片样式 */
+        .insight-item {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #bfdbfe;
+        }
+
+        .insight-item.v1 {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #bfdbfe;
+        }
+
+        .insight-item.v2 {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-color: #a5b4fc;
+        }
+
+        .insight-item.v3 {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-color: #d8b4fe;
+        }
+
+        .insight-item .item-content {
+            color: #1e40af;
+        }
+
+        .insight-item .item-tag {
+            background: rgba(255, 255, 255, 0.6);
+            color: #1e40af;
+        }
+
+        .insight-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            font-size: 10px;
+            color: #1e40af;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .key-insight-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #3b82f6;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        /* 待办页面样式 */
+        .todo-item {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: #fecaca;
+        }
+
+        .todo-item.v1 {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: #fecaca;
+        }
+
+        .todo-item.v2 {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border-color: #f9a8d4;
+        }
+
+        .todo-item.v3 {
+            background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+            border-color: #fda4af;
+        }
+
+        .todo-item .item-content {
+            color: #991b1b;
+        }
+
+        .todo-item.completed {
+            opacity: 0.5;
+        }
+
+        .todo-item.completed .item-content {
+            text-decoration: line-through;
+        }
+
+        .todo-priority {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .todo-priority.high {
+            color: #dc2626;
+        }
+
+        .todo-priority.medium {
+            color: #d97706;
+        }
+
+        .todo-priority.low {
+            color: #059669;
+        }
+
+        .todo-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            display: flex;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #f9fafb;
+        }
+
+        .nav-item.active {
+            color: inherit;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* 灵感导航项 - 黄色 */
+        .nav-item.idea {
+            color: #f59e0b;
+        }
+
+        .nav-item.idea.active {
+            background: #fef3c7;
+        }
+
+        .nav-item.idea.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #f59e0b;
+        }
+
+        /* 启发导航项 - 蓝色 */
+        .nav-item.insight {
+            color: #3b82f6;
+        }
+
+        .nav-item.insight.active {
+            background: #dbeafe;
+        }
+
+        .nav-item.insight.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3b82f6;
+        }
+
+        /* 待办导航项 - 红色 */
+        .nav-item.todo {
+            color: #ef4444;
+        }
+
+        .nav-item.todo.active {
+            background: #fee2e2;
+        }
+
+        .nav-item.todo.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ef4444;
+        }
+
+        /* 设置导航项 - 灰色 */
+        .nav-item.settings {
+            color: #6b7280;
+        }
+
+        .nav-item.settings.active {
+            background: #f3f4f6;
+        }
+
+        .nav-item.settings.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6b7280;
+        }
+
+        /* 设置页面样式 */
+        .settings-list {
+            padding: 8px 0;
+        }
+
+        .settings-group {
+            margin-bottom: 16px;
+        }
+
+        .settings-group-title {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .settings-item:hover {
+            background: #f9fafb;
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-item-icon {
+            font-size: 20px;
+        }
+
+        .settings-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-item-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .settings-item-desc {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .settings-item-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-item-value {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .settings-item-arrow {
+            font-size: 12px;
+            color: #d1d5db;
+        }
+
+        /* 开关控件 */
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* 数据统计卡片 */
+        .stats-card {
+            margin: 12px 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stats-title {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* 滚动条美化 */
+        .content-area::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="app-container">
+            <!-- 顶部栏 -->
+            <div class="app-header">
+                <div class="header-title" id="headerTitle">灵感</div>
+                <div class="header-actions">
+                    <div class="header-btn" id="searchBtn">🔍</div>
+                    <div class="header-btn" id="addBtn">➕</div>
+                </div>
+            </div>
+
+            <!-- 内容区 -->
+            <div class="content-area">
+                <!-- 灵感页面 -->
+                <div class="page active" id="ideaPage">
+                    <div class="empty-state">
+                        <div class="empty-icon">💡</div>
+                        <div class="empty-title">还没有灵感</div>
+                        <div class="empty-desc">点击右上角 ➕ 添加你的第一个灵感</div>
+                    </div>
+                </div>
+
+                <!-- 启发页面 -->
+                <div class="page" id="insightPage">
+                    <div class="empty-state">
+                        <div class="empty-icon">📖</div>
+                        <div class="empty-title">还没有启发</div>
+                        <div class="empty-desc">点击右上角 ➕ 记录你的学习收获</div>
+                    </div>
+                </div>
+
+                <!-- 待办页面 -->
+                <div class="page" id="todoPage">
+                    <div class="empty-state">
+                        <div class="empty-icon">⚡</div>
+                        <div class="empty-title">还没有待办</div>
+                        <div class="empty-desc">点击右上角 ➕ 添加待办事项</div>
+                    </div>
+                </div>
+
+                <!-- 设置页面 -->
+                <div class="page" id="settingsPage">
+                    <!-- 数据统计卡片 -->
+                    <div class="stats-card">
+                        <div class="stats-title">📊 数据统计</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">灵感</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">8</div>
+                                <div class="stat-label">启发</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">5</div>
+                                <div class="stat-label">待办</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 设置列表 -->
+                    <div class="settings-list">
+                        <!-- 数据管理 -->
+                        <div class="settings-group">
+                            <div class="settings-group-title">数据管理</div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">📤</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">导出数据</div>
+                                        <div class="settings-item-desc">将所有数据导出为 JSON 文件</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-arrow">›</div>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">🗑️</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">清空数据</div>
+                                        <div class="settings-item-desc">删除所有闪念笔记</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <!-- 悬浮窗设置 -->
+                        <div class="settings-group">
+                            <div class="settings-group-title">悬浮窗</div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">💓</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">显示悬浮窗</div>
+                                        <div class="settings-item-desc">在桌面显示快速记录悬浮窗</div>
+                                    </div>
+                                </div>
+                                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                        </div>
+
+                        <!-- 外观设置 -->
+                        <div class="settings-group">
+                            <div class="settings-group-title">外观</div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">🌙</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">深色模式</div>
+                                        <div class="settings-item-desc">切换深色/浅色主题</div>
+                                    </div>
+                                </div>
+                                <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">🎨</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">主题颜色</div>
+                                        <div class="settings-item-desc">选择应用的主题色</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-value">默认</div>
+                                <div class="settings-item-arrow">›</div>
+                            </div>
+                        </div>
+
+                        <!-- 关于 -->
+                        <div class="settings-group">
+                            <div class="settings-group-title">关于</div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">ℹ️</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">版本信息</div>
+                                        <div class="settings-item-desc">闪念笔记 v1.0.0</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-value">v1.0.0</div>
+                            </div>
+
+                            <div class="settings-item">
+                                <div class="settings-item-left">
+                                    <div class="settings-item-icon">💬</div>
+                                    <div class="settings-item-info">
+                                        <div class="settings-item-title">反馈建议</div>
+                                        <div class="settings-item-desc">告诉我们您的想法</div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-arrow">›</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部导航 -->
+            <div class="bottom-nav">
+                <div class="nav-item idea active" data-page="idea">
+                    <div class="nav-icon">💡</div>
+                    <div class="nav-label">灵感</div>
+                </div>
+                <div class="nav-item insight" data-page="insight">
+                    <div class="nav-icon">📖</div>
+                    <div class="nav-label">启发</div>
+                </div>
+                <div class="nav-item todo" data-page="todo">
+                    <div class="nav-icon">⚡</div>
+                    <div class="nav-label">待办</div>
+                </div>
+                <div class="nav-item settings" data-page="settings">
+                    <div class="nav-icon">⚙️</div>
+                    <div class="nav-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const headerTitle = document.getElementById('headerTitle');
+        const searchBtn = document.getElementById('searchBtn');
+        const addBtn = document.getElementById('addBtn');
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = {
+            idea: document.getElementById('ideaPage'),
+            insight: document.getElementById('insightPage'),
+            todo: document.getElementById('todoPage'),
+            settings: document.getElementById('settingsPage')
+        };
+
+        const titles = {
+            idea: '灵感',
+            insight: '启发',
+            todo: '待办',
+            settings: '设置'
+        };
+
+        // 切换页面
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const pageName = item.dataset.page;
+
+                // 更新导航状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+
+                // 切换页面
+                Object.values(pages).forEach(page => page.classList.remove('active'));
+                pages[pageName].classList.add('active');
+
+                // 更新标题
+                headerTitle.textContent = titles[pageName];
+
+                // 设置页面隐藏添加和搜索按钮
+                if (pageName === 'settings') {
+                    searchBtn.style.display = 'none';
+                    addBtn.style.display = 'none';
+                } else {
+                    searchBtn.style.display = 'flex';
+                    addBtn.style.display = 'flex';
+                }
+            });
+        });
+
+        // 添加按钮（示例）
+        addBtn.addEventListener('click', () => {
+            const activePage = document.querySelector('.nav-item.active').dataset.page;
+            if (activePage === 'idea') {
+                addDemoIdea();
+            } else if (activePage === 'insight') {
+                addDemoInsight();
+            } else if (activePage === 'todo') {
+                addDemoTodo();
+            }
+        });
+
+        // 添加示例灵感
+        function addDemoIdea() {
+            const page = pages.idea;
+            const emptyState = page.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+                // 添加列表容器
+                const container = document.createElement('div');
+                container.className = 'list-container';
+                page.appendChild(container);
+            }
+
+            const container = page.querySelector('.list-container') || page;
+            const item = document.createElement('div');
+            const variant = Math.floor(Math.random() * 3) + 1;
+            item.className = `list-item idea-item v${variant}`;
+            item.innerHTML = `
+                <div class="item-content">可以做一个知识管理App，结合闪念笔记和永久笔记，用卡片盒笔记法的理念</div>
+                <div class="item-meta">
+                    <span>🎬 通勤路上</span>
+                    <div class="item-tags">
+                        <span class="item-tag">#产品</span>
+                        <span class="item-tag">#知识管理</span>
+                    </div>
+                </div>
+            `;
+            if (container.className === 'list-container') {
+                container.insertBefore(item, container.firstChild);
+            } else {
+                page.insertBefore(item, page.firstChild);
+            }
+        }
+
+        // 添加示例启发
+        function addDemoInsight() {
+            const page = pages.insight;
+            const emptyState = page.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+                // 添加列表容器
+                const container = document.createElement('div');
+                container.className = 'list-container';
+                page.appendChild(container);
+            }
+
+            const container = page.querySelector('.list-container') || page;
+            const item = document.createElement('div');
+            const variant = Math.floor(Math.random() * 3) + 1;
+            item.className = `list-item insight-item v${variant}`;
+            item.innerHTML = `
+                <div class="insight-source">📚《卡片盒笔记法》</div>
+                <div class="item-content">笔记不是存储容器，而是思考工具。每张笔记应该像原子一样独立，又可以通过链接形成分子结构</div>
+                <div class="key-insight-badge">✨ 笔记即思考</div>
+                <div class="item-meta">
+                    <span>2024-01-15</span>
+                    <div class="item-tags">
+                        <span class="item-tag">#笔记方法</span>
+                    </div>
+                </div>
+            `;
+            if (container.className === 'list-container') {
+                container.insertBefore(item, container.firstChild);
+            } else {
+                page.insertBefore(item, page.firstChild);
+            }
+        }
+
+        // 添加示例待办
+        function addDemoTodo() {
+            const page = pages.todo;
+            const emptyState = page.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+                // 添加列表容器
+                const container = document.createElement('div');
+                container.className = 'list-container';
+                page.appendChild(container);
+            }
+
+            const container = page.querySelector('.list-container') || page;
+            const item = document.createElement('div');
+            const variant = Math.floor(Math.random() * 3) + 1;
+            item.className = `list-item todo-item v${variant}`;
+            item.innerHTML = `
+                <div class="todo-priority high">🔴 高优先级</div>
+                <div class="item-content">完成闪念笔记的原型设计，包括悬浮窗、三个对话框和导航页面</div>
+                <div class="todo-time">⏰ 今天 18:00</div>
+                <div class="item-meta">
+                    <div class="item-tags">
+                        <span class="item-tag">#设计</span>
+                        <span class="item-tag">#原型</span>
+                    </div>
+                </div>
+            `;
+            if (container.className === 'list-container') {
+                container.insertBefore(item, container.firstChild);
+            } else {
+                page.insertBefore(item, page.firstChild);
+            }
+        }
+
+        // 搜索按钮
+        searchBtn.addEventListener('click', () => {
+            alert('搜索功能：根据关键词筛选当前页面的内容');
+        });
+    </script>
+</body>
+</html>

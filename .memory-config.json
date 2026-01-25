@@ -1,0 +1,23 @@
+{
+  "autoRecord": true,
+  "maxRecords": 1000,
+  "categories": [
+    "decision",
+    "bugfix",
+    "feature",
+    "refactor",
+    "discovery",
+    "config",
+    "workflow"
+  ],
+  "autoCapture": {
+    "enabled": true,
+    "patterns": [
+      "修复了",
+      "实现了",
+      "配置了",
+      "决策",
+      "发现"
+    ]
+  }
+}

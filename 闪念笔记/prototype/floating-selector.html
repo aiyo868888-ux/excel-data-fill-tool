@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>闪念笔记 - 悬浮窗选择器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 悬浮窗图标 */
+        .floating-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 10;
+            user-select: none;
+        }
+
+        .floating-icon:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .floating-icon:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        /* 选择菜单 */
+        .selector-menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 16px 14px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20;
+            min-width: 200px;
+        }
+
+        .selector-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .selector-menu::before {
+            content: '✕';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 16px;
+            color: #999;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .selector-menu::before:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #333;
+        }
+
+        .menu-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .type-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .type-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 12px 14px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .type-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .type-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .type-button:hover::before {
+            opacity: 0.05;
+        }
+
+        .type-button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .type-button .icon {
+            font-size: 28px;
+            margin-right: 10px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .type-button .label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            position: relative;
+            z-index: 1;
+        }
+
+        .type-button .description {
+            font-size: 11px;
+            color: #999;
+            margin-left: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .type-button .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 灵感按钮 - 黄色主题 */
+        .type-button.idea {
+            color: #f59e0b;
+        }
+
+        .type-button.idea:hover {
+            border-color: #f59e0b;
+        }
+
+        /* 启发按钮 - 蓝色主题 */
+        .type-button.insight {
+            color: #3b82f6;
+        }
+
+        .type-button.insight:hover {
+            border-color: #3b82f6;
+        }
+
+        /* 待办按钮 - 红色主题 */
+        .type-button.todo {
+            color: #ef4444;
+        }
+
+        .type-button.todo:hover {
+            border-color: #ef4444;
+        }
+
+        /* 提示信息 */
+        .hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* 选中反馈 */
+        .selected-feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .selected-feedback.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 动画 */
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 48px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .floating-icon.pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* 背景遮罩 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 15;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- 悬浮窗图标 -->
+        <div class="floating-icon pulse" id="floatingIcon">
+            💡
+        </div>
+
+        <!-- 选择菜单 -->
+        <div class="selector-menu" id="selectorMenu">
+            <div class="menu-title">选择记录类型</div>
+
+            <div class="type-buttons">
+                <!-- 灵感按钮 -->
+                <div class="type-button idea" data-type="idea">
+                    <div class="icon">💡</div>
+                    <div class="content-wrapper">
+                        <div class="label">灵感</div>
+                        <div class="description">突然想到的点子</div>
+                    </div>
+                </div>
+
+                <!-- 启发按钮 -->
+                <div class="type-button insight" data-type="insight">
+                    <div class="icon">📖</div>
+                    <div class="content-wrapper">
+                        <div class="label">启发</div>
+                        <div class="description">学到的知识</div>
+                    </div>
+                </div>
+
+                <!-- 待办按钮 -->
+                <div class="type-button todo" data-type="todo">
+                    <div class="icon">⚡</div>
+                    <div class="content-wrapper">
+                        <div class="label">待办</div>
+                        <div class="description">要做的事情</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示信息 -->
+        <div class="hint" id="hint">
+            点击悬浮窗图标打开菜单
+        </div>
+    </div>
+
+    <!-- 背景遮罩 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 选中反馈 -->
+    <div class="selected-feedback" id="feedback"></div>
+
+    <script>
+        const floatingIcon = document.getElementById('floatingIcon');
+        const selectorMenu = document.getElementById('selectorMenu');
+        const overlay = document.getElementById('overlay');
+        const hint = document.getElementById('hint');
+        const feedback = document.getElementById('feedback');
+        const typeButtons = document.querySelectorAll('.type-button');
+
+        let isMenuOpen = false;
+
+        // 打开/关闭菜单
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+
+            if (isMenuOpen) {
+                selectorMenu.classList.add('active');
+                overlay.classList.add('active');
+                floatingIcon.classList.remove('pulse');
+                hint.textContent = '点击 ✕ 关闭菜单';
+            } else {
+                selectorMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                floatingIcon.classList.add('pulse');
+                hint.textContent = '点击悬浮窗图标打开菜单';
+            }
+        }
+
+        // 点击悬浮窗图标
+        floatingIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        // 点击遮罩关闭菜单
+        overlay.addEventListener('click', () => {
+            if (isMenuOpen) {
+                toggleMenu();
+            }
+        });
+
+        // 点击类型按钮
+        typeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const type = button.dataset.type;
+                const label = button.querySelector('.label').textContent;
+                const icon = button.querySelector('.icon').textContent;
+
+                // 显示反馈
+                feedback.textContent = `${icon} 已选择"${label}"`;
+                feedback.classList.add('show');
+
+                // 关闭菜单
+                toggleMenu();
+
+                // 3秒后隐藏反馈
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 3000);
+
+                console.log(`Selected type: ${type}`);
+            });
+        });
+
+        // 点击菜单的关闭按钮
+        selectorMenu.addEventListener('click', (e) => {
+            if (e.target === selectorMenu) {
+                return;
+            }
+
+            // 检查是否点击了右上角的 ✕
+            const rect = selectorMenu.getBoundingClientRect();
+            const closeX = rect.right - 32;
+            const closeY = rect.top + 24;
+
+            if (e.clientX >= closeX - 16 && e.clientX <= closeX + 16 &&
+                e.clientY >= closeY - 16 && e.clientY <= closeY + 16) {
+                toggleMenu();
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isMenuOpen) {
+                toggleMenu();
+            }
+            if (e.key === '1') {
+                document.querySelector('.type-button.idea').click();
+            }
+            if (e.key === '2') {
+                document.querySelector('.type-button.insight').click();
+            }
+            if (e.key === '3') {
+                document.querySelector('.type-button.todo').click();
+            }
+        });
+    </script>
+</body>
+</html>

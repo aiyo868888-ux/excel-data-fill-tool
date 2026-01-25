@@ -1,0 +1,21 @@
+# Simple Memory MCP Server
+
+基于 MCP 的简化记忆系统，在 VS Code 扩展中可用。
+
+## 功能
+
+1. **会话摘要**：自动保存关键决策和发现
+2. **上下文搜索**：跨会话搜索历史记录
+3. **项目记忆**：每个项目独立的记忆空间
+
+## 安装
+
+1. 将此目录复制到 `~/.claude/servers/memory-mcp/`
+2. 在 `.mcp.json` 中添加配置
+3. 重启 Claude Code
+
+## 使用
+
+- `/mem-save` - 保存当前上下文
+- `/mem-search <query>` - 搜索历史记录
+- `/mem-summary` - 查看项目摘要

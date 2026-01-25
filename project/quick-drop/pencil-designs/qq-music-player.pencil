@@ -1,0 +1,288 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "QQ音乐 - 播放首页 (Apple Style)"
+  },
+  "pages": [
+    {
+      "id": "player-page",
+      "name": "播放首页",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "top-bar",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 56,
+          "backgroundColor": "#FAFAFA",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "text": "正在播放",
+          "x": 196.5,
+          "y": 24,
+          "fontSize": 17,
+          "fontWeight": "600",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "back-button",
+          "text": "<",
+          "x": 16,
+          "y": 24,
+          "fontSize": 24,
+          "color": "#007AFF"
+        },
+        {
+          "type": "rectangle",
+          "id": "album-cover",
+          "x": 56.5,
+          "y": 120,
+          "width": 280,
+          "height": 280,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 8,
+            "blur": 32,
+            "color": "rgba(0, 0, 0, 0.12)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "album-placeholder",
+          "text": "🎵",
+          "x": 196.5,
+          "y": 240,
+          "fontSize": 80,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "song-title",
+          "text": "告白气球",
+          "x": 196.5,
+          "y": 440,
+          "fontSize": 22,
+          "fontWeight": "700",
+          "textAlign": "center",
+          "letterSpacing": -0.5,
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "artist-name",
+          "text": "周杰伦 · 床边故事",
+          "x": 196.5,
+          "y": 472,
+          "fontSize": 15,
+          "textAlign": "center",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-track",
+          "x": 32,
+          "y": 520,
+          "width": 329,
+          "height": 4,
+          "backgroundColor": "#E5E5E5",
+          "borderRadius": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-fill",
+          "x": 32,
+          "y": 520,
+          "width": 120,
+          "height": 4,
+          "backgroundColor": "#FA233B",
+          "borderRadius": 2
+        },
+        {
+          "type": "circle",
+          "id": "progress-dot",
+          "cx": 152,
+          "cy": 522,
+          "r": 8,
+          "backgroundColor": "#FA233B",
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(250, 35, 59, 0.3)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "current-time",
+          "text": "1:23",
+          "x": 32,
+          "y": 538,
+          "fontSize": 11,
+          "fontWeight": "500",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "total-time",
+          "text": "3:45",
+          "x": 361,
+          "y": 538,
+          "fontSize": 11,
+          "fontWeight": "500",
+          "textAlign": "right",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "prev-button",
+          "text": "⏮",
+          "x": 88,
+          "y": 580,
+          "fontSize": 28,
+          "color": "#000000"
+        },
+        {
+          "type": "circle",
+          "id": "play-button",
+          "cx": 196.5,
+          "cy": 594,
+          "r": 32,
+          "backgroundColor": "#FA233B"
+        },
+        {
+          "type": "text",
+          "id": "play-icon",
+          "text": "▶",
+          "x": 196.5,
+          "y": 607,
+          "fontSize": 24,
+          "textAlign": "center",
+          "color": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "next-button",
+          "text": "⏭",
+          "x": 277,
+          "y": 580,
+          "fontSize": 28,
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "loop-button",
+          "text": "🔁",
+          "x": 56,
+          "y": 660,
+          "fontSize": 24,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "volume-button",
+          "text": "🔊",
+          "x": 130,
+          "y": 660,
+          "fontSize": 24,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "queue-button",
+          "text": "↪",
+          "x": 263,
+          "y": 660,
+          "fontSize": 24,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "like-button",
+          "text": "♡",
+          "x": 337,
+          "y": 660,
+          "fontSize": 24,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "bottom-nav",
+          "x": 0,
+          "y": 769,
+          "width": 393,
+          "height": 83,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "top": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          },
+          "blur": 20
+        },
+        {
+          "type": "text",
+          "id": "nav-home",
+          "text": "♪",
+          "x": 45,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-message",
+          "text": "✉",
+          "x": 117,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-activity",
+          "text": "③",
+          "x": 189,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-profile",
+          "text": "✓",
+          "x": 261,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-more",
+          "text": "☰",
+          "x": 333,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#FA233B"
+        }
+      ]
+    }
+  ]
+}

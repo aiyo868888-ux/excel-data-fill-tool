@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>imageToExcel - 图片表格识别填入工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 imageToExcel</h1>
+            <p class="subtitle">图片表格识别并自动填入Excel工具</p>
+        </header>
+
+        <main>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <!-- Excel文件上传 -->
+                <section class="upload-section">
+                    <h2>1. 上传Excel模板</h2>
+                    <div class="upload-tips">
+                        <strong>⚠️ 重要提示：</strong>请上传Excel文件（.xlsx或.xls），不要上传图片文件
+                    </div>
+                    <div class="file-upload" id="excelDropZone">
+                        <input type="file" id="excelFile" name="excel_file" accept=".xlsx,.xls" required>
+                        <label for="excelFile">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span>点击或拖拽上传Excel文件</span>
+                            <small>支持 .xlsx, .xls 格式 · 不支持图片文件</small>
+                        </label>
+                        <div class="file-info" id="excelFileInfo"></div>
+                    </div>
+                </section>
+
+                <!-- 图片文件上传 -->
+                <section class="upload-section">
+                    <h2>2. 上传图片</h2>
+                    <div class="file-upload" id="imageDropZone">
+                        <input type="file" id="imageFiles" name="image_files" accept="image/*" multiple>
+                        <label for="imageFiles">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span>点击或拖拽上传图片（可多选）</span>
+                            <small>支持 .png, .jpg, .jpeg, .gif, .bmp 格式</small>
+                        </label>
+                        <div class="file-info" id="imageFileInfo"></div>
+                    </div>
+                </section>
+
+                <!-- 可选：数据文件上传 -->
+                <section class="upload-section optional">
+                    <h2>3. 上传数据文件（可选）</h2>
+                    <details>
+                        <summary>如果已有提取的数据JSON文件，可在此上传</summary>
+                        <div class="file-upload">
+                            <input type="file" id="dataFile" name="data_file" accept=".json">
+                            <label for="dataFile">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <span>上传已提取的数据JSON文件</span>
+                            </label>
+                            <div class="file-info" id="dataFileInfo"></div>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- 自定义数据 -->
+                <section class="upload-section optional">
+                    <h2>4. 自定义数据（可选）</h2>
+                    <details>
+                        <summary>需要自定义某些列的内容？</summary>
+                        <textarea id="customData" name="custom_data" rows="6" placeholder='输入JSON格式的自定义数据，例如：
+{
+  "序号": "10",
+  "材料名称": "水泥",
+  "规格型号": "P.O 42.5",
+  "单位": "吨",
+  "数量": "100",
+  "备注": "优质水泥"}'></textarea>
+                        <div class="json-validator" id="jsonValidator"></div>
+                    </details>
+                </section>
+
+                <!-- 提交按钮 -->
+                <section class="action-section">
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        <span class="btn-icon">⚡</span>
+                        开始处理
+                    </button>
+                </section>
+            </form>
+
+            <!-- 处理结果 -->
+            <section id="resultSection" class="result-section" style="display: none;">
+                <h2>处理结果</h2>
+                <div id="resultContent"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>基于 image-table-excel 技能 · 使用 PaddleOCR · 完全免费</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -205,6 +205,15 @@
                     android:layout_marginBottom="12dp" />
 
                 <Button
+                    android:id="@+id/tagManageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="管理标签"
+                    android:textSize="14sp"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_marginBottom="8dp" />
+
+                <Button
                     android:id="@+id/clearDataButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

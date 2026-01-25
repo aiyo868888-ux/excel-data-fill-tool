@@ -1,0 +1,233 @@
+package com.fleetingnotes.presentation.ui.home
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fleetingnotes.data.model.NoteType
+import com.fleetingnotes.data.model.TodoNote
+import com.fleetingnotes.presentation.theme.*
+import com.fleetingnotes.presentation.viewmodel.MainViewModel
+import timber.log.Timber
+
+/**
+ * ViewModel Factory
+ */
+private val MainViewModelFactory = object : androidx.lifecycle.ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        return MainViewModel.create(
+            repository = com.fleetingnotes.ServiceLocator.noteRepository
+        ) as T
+    }
+}
+
+/**
+ * 待办列表页 - 显示所有待办事项
+ */
+@Composable
+fun TodoListPage(
+    viewModel: MainViewModel = viewModel(factory = MainViewModelFactory)
+) {
+    val notes by viewModel.todoNotes.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotes(NoteType.TODO)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("⚡ 待办") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { Timber.d("Add todo clicked") },
+                containerColor = MaterialTheme.colorScheme.tertiary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "添加待办")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // 搜索框
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("搜索待办...") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Search,
+                            contentDescription = "搜索"
+                        )
+                    },
+                    singleLine = true
+                )
+            }
+
+            // 待办列表
+            items(
+                items = notes,
+                key = { it.id }
+            ) { note ->
+                TodoCard(note = note as TodoNote)
+            }
+        }
+    }
+}
+
+/**
+ * 待办卡片 - 红色主题
+ */
+@Composable
+fun TodoCard(note: TodoNote) {
+    val colorVariants = listOf(
+        Brush.horizontalGradient(
+            colors = listOf(Red100, Red200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Pink100, Pink200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Red200, Red300)
+        )
+    )
+
+    val randomGradient = colorVariants[note.id.hashCode().mod(colorVariants.size)]
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(randomGradient)
+                .padding(16.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 任务内容
+                    Text(
+                        text = note.content,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                        textDecoration = if (note.completed) {
+                            TextDecoration.LineThrough
+                        } else null
+                    )
+
+                    // 优先级标识
+                    Surface(
+                        color = when (note.priority) {
+                            com.fleetingnotes.data.model.Priority.HIGH -> Red500
+                            com.fleetingnotes.data.model.Priority.MEDIUM -> Orange500
+                            com.fleetingnotes.data.model.Priority.LOW -> Green500
+                        }.copy(alpha = 0.8f),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            text = when (note.priority) {
+                                com.fleetingnotes.data.model.Priority.HIGH -> "高"
+                                com.fleetingnotes.data.model.Priority.MEDIUM -> "中"
+                                com.fleetingnotes.data.model.Priority.LOW -> "低"
+                            },
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 底部信息
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 截止时间
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.AccessTime,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp),
+                            tint = Gray700
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = formatDueDate(note.dueDate),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Gray700
+                        )
+                    }
+
+                    // 完成状态
+                    Surface(
+                        color = if (note.completed) {
+                            Green500.copy(alpha = 0.3f)
+                        } else {
+                            Gray300
+                        },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = if (note.completed) "✓ 已完成" else "待完成",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun formatDueDate(dueDate: LocalDate?): String {
+    if (dueDate == null) return "无截止日期"
+
+    val today = LocalDate.now()
+    return when {
+        dueDate == today -> "今天"
+        dueDate == today.plusDays(1) -> "明天"
+        dueDate.isBefore(today) -> "逾期 ${dueDate.format(DateTimeFormatter.ofPattern("MM-dd"))}"
+        else -> dueDate.format(DateTimeFormatter.ofPattern("MM-dd"))
+    }
+}

@@ -1,0 +1,409 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "QQ音乐 - 音乐库 (Apple Style)"
+  },
+  "pages": [
+    {
+      "id": "library-page",
+      "name": "音乐库",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "top-bar",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 56,
+          "backgroundColor": "#FAFAFA",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "text": "音乐库",
+          "x": 16,
+          "y": 24,
+          "fontSize": 22,
+          "fontWeight": "700",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "favorites-card",
+          "x": 16,
+          "y": 72,
+          "width": 361,
+          "height": 80,
+          "backgroundColor": "linear-gradient(135deg, #FA233B, #FF6B6B)",
+          "borderRadius": 12,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 4,
+            "blur": 12,
+            "color": "rgba(250, 35, 59, 0.15)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "favorites-icon",
+          "text": "❤️",
+          "x": 36,
+          "y": 96,
+          "fontSize": 32
+        },
+        {
+          "type": "text",
+          "id": "favorites-title",
+          "text": "我喜欢的音乐",
+          "x": 36,
+          "y": 125,
+          "fontSize": 18,
+          "fontWeight": "600",
+          "color": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "favorites-count",
+          "text": "128首",
+          "x": 36,
+          "y": 145,
+          "fontSize": 14,
+          "color": "rgba(255, 255, 255, 0.9)"
+        },
+        {
+          "type": "text",
+          "id": "section-title-1",
+          "text": "最近播放",
+          "x": 16,
+          "y": 188",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "album-1",
+          "x": 16,
+          "y": 216,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "album-1-icon",
+          "text": "💿",
+          "x": 72.5,
+          "y": 262,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "album-1-title",
+          "text": "床边故事",
+          "x": 72.5,
+          "y": 309,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "album-2",
+          "x": 137,
+          "y": 216,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "album-2-icon",
+          "text": "💿",
+          "x": 193.5,
+          "y": 262,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "album-2-title",
+          "text": "七里香",
+          "x": 193.5,
+          "y": 309,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "album-3",
+          "x": 258,
+          "y": 216,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "album-3-icon",
+          "text": "💿",
+          "x": 314.5,
+          "y": 262,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "album-3-title",
+          "text": "十一月的萧邦",
+          "x": 314.5,
+          "y": 309,
+          "fontSize": 11,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "section-title-2",
+          "text": "本地音乐",
+          "x": 16,
+          "y": 369",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "folder-1",
+          "x": 16,
+          "y": 397,
+          "width": 361,
+          "height": 60,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 1,
+            "blur": 4,
+            "color": "rgba(0, 0, 0, 0.06)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "folder-1-icon",
+          "text": "📱",
+          "x": 36,
+          "y": 420,
+          "fontSize": 28
+        },
+        {
+          "type": "text",
+          "id": "folder-1-title",
+          "text": "本地歌曲",
+          "x": 72,
+          "y": 420,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "folder-1-count",
+          "text": "56",
+          "x": 365,
+          "y": 420,
+          "fontSize": 13,
+          "textAlign": "right",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "folder-2",
+          "x": 16,
+          "y": 465,
+          "width": 361,
+          "height": 60,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 1,
+            "blur": 4,
+            "color": "rgba(0, 0, 0, 0.06)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "folder-2-icon",
+          "text": "⬇️",
+          "x": 36,
+          "y": 488,
+          "fontSize": 28
+        },
+        {
+          "type": "text",
+          "id": "folder-2-title",
+          "text": "已下载",
+          "x": 72,
+          "y": 488,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "folder-2-count",
+          "text": "23",
+          "x": 365,
+          "y": 488,
+          "fontSize": 13,
+          "textAlign": "right",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "folder-3",
+          "x": 16,
+          "y": 533,
+          "width": 361,
+          "height": 60,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 1,
+            "blur": 4,
+            "color": "rgba(0, 0, 0, 0.06)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "folder-3-icon",
+          "text": "💾",
+          "x": 36,
+          "y": 556,
+          "fontSize": 28
+        },
+        {
+          "type": "text",
+          "id": "folder-3-title",
+          "text": "我的歌单",
+          "x": 72,
+          "y": 556,
+          "fontSize": 16,
+          "fontWeight": "500",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "folder-3-count",
+          "text": "12",
+          "x": 365,
+          "y": 556,
+          "fontSize": 13,
+          "textAlign": "right",
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "bottom-nav",
+          "x": 0,
+          "y": 769,
+          "width": 393,
+          "height": 83,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "top": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          },
+          "blur": 20
+        },
+        {
+          "type": "text",
+          "id": "nav-home",
+          "text": "♪",
+          "x": 45,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-message",
+          "text": "✉",
+          "x": 117,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-activity",
+          "text": "③",
+          "x": 189,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-profile",
+          "text": "✓",
+          "x": 261,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#FA233B"
+        },
+        {
+          "type": "text",
+          "id": "nav-more",
+          "text": "☰",
+          "x": 333,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        }
+      ]
+    }
+  ]
+}

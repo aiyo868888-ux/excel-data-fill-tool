@@ -1,0 +1,211 @@
+package com.fleetingnotes.presentation.ui.home
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fleetingnotes.data.model.InsightNote
+import com.fleetingnotes.data.model.NoteType
+import com.fleetingnotes.presentation.theme.*
+import com.fleetingnotes.presentation.viewmodel.MainViewModel
+import timber.log.Timber
+
+/**
+ * ViewModel Factory
+ */
+private val MainViewModelFactory = object : androidx.lifecycle.ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        return MainViewModel.create(
+            repository = com.fleetingnotes.ServiceLocator.noteRepository
+        ) as T
+    }
+}
+
+/**
+ * 启发列表页 - 显示所有启发笔记
+ */
+@Composable
+fun InsightListPage(
+    viewModel: MainViewModel = viewModel(factory = MainViewModelFactory)
+) {
+    val notes by viewModel.insightNotes.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotes(NoteType.INSIGHT)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("📖 启发") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { Timber.d("Add insight clicked") },
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "添加启发")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // 搜索框
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("搜索启发...") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Search,
+                            contentDescription = "搜索"
+                        )
+                    },
+                    singleLine = true
+                )
+            }
+
+            // 启发列表
+            items(
+                items = notes,
+                key = { it.id }
+            ) { note ->
+                InsightCard(note = note as InsightNote)
+            }
+        }
+    }
+}
+
+/**
+ * 启发卡片 - 蓝色主题
+ */
+@Composable
+fun InsightCard(note: InsightNote) {
+    val colorVariants = listOf(
+        Brush.horizontalGradient(
+            colors = listOf(Blue100, Blue200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Purple100, Purple200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Blue200, Blue300)
+        )
+    )
+
+    val randomGradient = colorVariants[note.id.hashCode().mod(colorVariants.size)]
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(140.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(randomGradient)
+                .padding(16.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // 来源
+                note.source?.let { source ->
+                    Surface(
+                        color = Blue500.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "${source.icon} ${source.label}",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                // 关键启发
+                if (note.keyInsight != null) {
+                    Text(
+                        text = note.keyInsight,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Text(
+                        text = note.content,
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                // 来源详情
+                if (note.sourceDetail != null) {
+                    Text(
+                        text = note.sourceDetail,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Gray700,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                // 底部信息
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = formatTime(note.createdAt),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Gray600
+                    )
+
+                    // 关键词
+                    if (note.keywords.isNotEmpty()) {
+                        Text(
+                            text = note.keywords.take(3).joinToString(" • "),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Gray600,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

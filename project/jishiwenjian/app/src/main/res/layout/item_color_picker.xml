@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<View xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/colorItem"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:layout_margin="4dp"
+    android:background="@drawable/tag_color_circle"
+    android:backgroundTint="#4ECDC4"
+    android:clickable="true"
+    android:focusable="true"
+    android:contentDescription="选择颜色" />

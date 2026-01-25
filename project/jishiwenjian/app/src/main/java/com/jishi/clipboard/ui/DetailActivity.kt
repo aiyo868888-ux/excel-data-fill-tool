@@ -89,8 +89,8 @@ class DetailActivity : AppCompatActivity() {
                 contentText.text = clipboard!!.content
                 timeText.text = "创建时间: ${formatTime(clipboard!!.createdAt)}"
 
-                // 加载标签 - 使用 first() 获取单次结果
-                val tags = repository.getTagsForClipboard(clipboardId).first()
+                // 加载标签 - getTagsForClipboard 现在直接返回 List
+                val tags = repository.getTagsForClipboard(clipboardId)
                 displayTags(tags)
             } catch (e: Exception) {
                 Timber.e(e, "加载数据失败")
@@ -99,7 +99,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayTags(tags: List<com.jishi.clipboard.data.TagEntity>) {
+    private fun displayTags(tags: List<com.jishi.clipboard.data.TagDefinition>) {
         tagsContainer.removeAllViews()
 
         if (tags.isEmpty()) {
@@ -156,7 +156,6 @@ class DetailActivity : AppCompatActivity() {
     private fun openEditActivity() {
         val dialog = com.jishi.clipboard.ui.dialog.ClipboardEditDialogFragment.newInstance(
             initialContent = clipboard?.content ?: "",
-            autoFillClipboard = false,
             editMode = true,
             editClipboardId = clipboardId
         )

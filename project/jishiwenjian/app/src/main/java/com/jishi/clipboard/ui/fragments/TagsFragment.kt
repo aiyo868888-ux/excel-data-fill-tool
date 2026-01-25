@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jishi.clipboard.R
 import com.jishi.clipboard.data.TagWithCount
 import com.jishi.clipboard.repository.ClipboardRepository
+import com.jishi.clipboard.repository.TagRepository
 import com.jishi.clipboard.ui.TagAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,7 +30,10 @@ import javax.inject.Inject
 class TagsFragment : Fragment() {
 
     @Inject
-    lateinit var repository: ClipboardRepository
+    lateinit var clipboardRepository: ClipboardRepository
+
+    @Inject
+    lateinit var tagRepository: TagRepository
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: LinearLayout
@@ -61,7 +65,7 @@ class TagsFragment : Fragment() {
     private fun loadTags() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                repository.getAllTags().collect { tags ->
+                clipboardRepository.getAllTags().collect { tags ->
                     if (tags.isEmpty()) {
                         recyclerView.visibility = View.GONE
                         emptyView.visibility = View.VISIBLE
@@ -99,8 +103,14 @@ class TagsFragment : Fragment() {
     private fun deleteTag(tagName: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                repository.deleteTag(tagName)
-                Toast.makeText(requireContext(), "✅ 已删除标签", Toast.LENGTH_SHORT).show()
+                // 通过 tagName 获取 tagDefinition，然后删除
+                val tagDef = tagRepository.getTagDefinitionByName(tagName)
+                if (tagDef != null) {
+                    tagRepository.deleteTagDefinition(tagDef.id)
+                    Toast.makeText(requireContext(), "✅ 已删除标签", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "❌ 标签不存在", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Timber.e(e, "删除标签失败")
                 Toast.makeText(requireContext(), "❌ 删除失败", Toast.LENGTH_SHORT).show()

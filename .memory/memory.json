@@ -1,0 +1,520 @@
+[
+  {
+    "id": "mktf8bkwg33izlac8o",
+    "timestamp": "2026-01-25T07:32:38.432Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktf8blbxho6an5uxnj",
+    "timestamp": "2026-01-25T07:32:38.447Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktf8nrw6046sqa6c5x",
+    "timestamp": "2026-01-25T07:32:54.236Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktf8nrz32dmohg2aim",
+    "timestamp": "2026-01-25T07:32:54.239Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktfamn50rckcw6pvvn",
+    "timestamp": "2026-01-25T07:34:26.081Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktfamnehy646uw6hso",
+    "timestamp": "2026-01-25T07:34:26.090Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktfamngyou8z3k1ur",
+    "timestamp": "2026-01-25T07:34:26.092Z",
+    "content": "怎么配置环境变量？",
+    "category": "config",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgb7if63k6on1l4gm",
+    "timestamp": "2026-01-25T08:02:52.743Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论"
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9jzveqy5sfi48",
+    "timestamp": "2026-01-25T08:03:53.335Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "极简主义",
+          "score": 5
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9sbiglnstc8xw",
+    "timestamp": "2026-01-25T08:03:53.344Z",
+    "content": "我们要数据驱动决策，不能凭感觉",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "决策方式讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "数据驱动",
+          "score": 4
+        },
+        {
+          "dimension": "决策风格",
+          "value": "直觉决策",
+          "score": 4
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9tfdhs0dkuvog",
+    "timestamp": "2026-01-25T08:03:53.345Z",
+    "content": "快速迭代，先上线再优化",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "开发节奏讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "快速试错",
+          "score": 4
+        },
+        {
+          "dimension": "工作态度",
+          "value": "快速交付",
+          "score": 8
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9u1c9ish57zef",
+    "timestamp": "2026-01-25T08:03:53.346Z",
+    "content": "用户体验是第一位的",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "需求优先级讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "用户体验",
+          "score": 5
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9vckvu8pxbqav",
+    "timestamp": "2026-01-25T08:03:53.347Z",
+    "content": "技术要服务于业务，不要为了技术而技术",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "CTO",
+      "context": "技术选型讨论",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9wyvw83y08ush",
+    "timestamp": "2026-01-25T08:03:53.348Z",
+    "content": "团队协作很重要，要多沟通",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "项目经理",
+      "context": "团队管理讨论",
+      "values": [
+        {
+          "dimension": "团队观念",
+          "value": "团队协作",
+          "score": 6
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9xbs1w8m876wf",
+    "timestamp": "2026-01-25T08:03:53.349Z",
+    "content": "要敢于尝试新东西，不怕失败",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "创始人",
+      "context": "创新讨论",
+      "values": [
+        {
+          "dimension": "风险态度",
+          "value": "风险偏好",
+          "score": 6
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgci9yitvwis0rv28",
+    "timestamp": "2026-01-25T08:03:53.350Z",
+    "content": "质量很重要，不能为了快就降低标准",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "质量vs速度讨论",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdotkcm76oybf0pt",
+    "timestamp": "2026-01-25T08:04:48.488Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "极简主义",
+          "score": 5
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdotmzcjhjedsd6",
+    "timestamp": "2026-01-25T08:04:48.490Z",
+    "content": "我们要数据驱动决策，不能凭感觉",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "决策方式讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "数据驱动",
+          "score": 4
+        },
+        {
+          "dimension": "决策风格",
+          "value": "直觉决策",
+          "score": 4
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdotng6wptgh9jyv",
+    "timestamp": "2026-01-25T08:04:48.491Z",
+    "content": "快速迭代，先上线再优化",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "开发节奏讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "快速试错",
+          "score": 4
+        },
+        {
+          "dimension": "工作态度",
+          "value": "快速交付",
+          "score": 8
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdoto36wlonl45vq",
+    "timestamp": "2026-01-25T08:04:48.492Z",
+    "content": "用户体验是第一位的",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "需求优先级讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "用户体验",
+          "score": 5
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdoto27t8qw3be28",
+    "timestamp": "2026-01-25T08:04:48.492Z",
+    "content": "技术要服务于业务，不要为了技术而技术",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "CTO",
+      "context": "技术选型讨论",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdotpsn7ei9cir8c",
+    "timestamp": "2026-01-25T08:04:48.493Z",
+    "content": "团队协作很重要，要多沟通",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "项目经理",
+      "context": "团队管理讨论",
+      "values": [
+        {
+          "dimension": "团队观念",
+          "value": "团队协作",
+          "score": 6
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdotqe84lbff7rd8",
+    "timestamp": "2026-01-25T08:04:48.495Z",
+    "content": "要敢于尝试新东西，不怕失败",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "创始人",
+      "context": "创新讨论",
+      "values": [
+        {
+          "dimension": "风险态度",
+          "value": "风险偏好",
+          "score": 6
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgdots50r5iv0inal",
+    "timestamp": "2026-01-25T08:04:48.496Z",
+    "content": "质量很重要，不能为了快就降低标准",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "质量vs速度讨论",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0is5adnmbwkvb",
+    "timestamp": "2026-01-25T08:12:21.042Z",
+    "content": "开发了智能记忆系统，支持自动检测和记录",
+    "category": "feature",
+    "metadata": {
+      "speaker": "orange",
+      "context": "系统开发",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0mjd1u0qfdumf",
+    "timestamp": "2026-01-25T08:12:21.046Z",
+    "content": "实现了价值观检测功能，可以分析产品哲学、决策风格等6个维度",
+    "category": "feature",
+    "metadata": {
+      "speaker": "orange",
+      "context": "功能开发",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0nsrhiidbdcq",
+    "timestamp": "2026-01-25T08:12:21.047Z",
+    "content": "集成记忆系统和价值观检测，自动分析对话内容",
+    "category": "feature",
+    "metadata": {
+      "speaker": "orange",
+      "context": "系统集成",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0o0a509y1861wa",
+    "timestamp": "2026-01-25T08:12:21.048Z",
+    "content": "决定使用关键词匹配的方式实现价值观检测，准确率86%",
+    "category": "decision",
+    "metadata": {
+      "speaker": "orange",
+      "context": "技术决策",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0p3zqw30n5gbm",
+    "timestamp": "2026-01-25T08:12:21.049Z",
+    "content": "修复了中文字符长度检测的bug，使用Array.from正确处理多字节字符",
+    "category": "bugfix",
+    "metadata": {
+      "speaker": "orange",
+      "context": "问题修复",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0qrrlubosm7qj",
+    "timestamp": "2026-01-25T08:12:21.050Z",
+    "content": "系统应该简单、专注单点，不追求功能全面",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "orange",
+      "context": "产品哲学",
+      "date": "2026/1/25",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "极简主义",
+          "score": 10
+        },
+        {
+          "dimension": "产品哲学",
+          "value": "功能主义",
+          "score": 5
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0rikmbevqr05i",
+    "timestamp": "2026-01-25T08:12:21.052Z",
+    "content": "用户的核心需求是得到记忆功能，而不是复杂的自动化系统",
+    "category": "discovery",
+    "metadata": {
+      "speaker": "orange",
+      "context": "需求理解",
+      "date": "2026/1/25",
+      "values": []
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgne0ttwkmdgtu3h",
+    "timestamp": "2026-01-25T08:12:21.053Z",
+    "content": "优先完成核心功能，快速迭代，先上线再优化",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "orange",
+      "context": "工作态度",
+      "date": "2026/1/25",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "快速试错",
+          "score": 4
+        },
+        {
+          "dimension": "工作态度",
+          "value": "快速交付",
+          "score": 8
+        }
+      ]
+    },
+    "project": "claude code -11"
+  },
+  {
+    "id": "mktgr2synq8bvl6jcb",
+    "timestamp": "2026-01-25T08:15:13.138Z",
+    "content": "关键改进：使用 editable.replace() 而不是 setText()，手动计算并设置光标位置到粘贴内容末尾，在末尾粘贴时自动添加换行。测试流程：对话框打开 → 切换到微信 → 复制 → 点击悬浮窗。✅ 点击悬浮窗 → 检查 EditActivity 是否存在\n✅ 使用 FLAG_ACTIVITY_CLEAR_TOP 带回对话框\n✅ 延迟 500ms 等待 Activity 恢复\n✅ 对话框恢复后粘贴内容\n✅ 光标定位到粘贴内容末尾\n✅ 可继续在末尾输入",
+    "category": "bugfix",
+    "metadata": {
+      "speaker": "orange",
+      "project": "jishiwenjian",
+      "context": "悬浮窗粘贴功能改进",
+      "date": "2026/1/25",
+      "values": [
+        {
+          "dimension": "团队观念",
+          "value": "层级管理",
+          "score": 3
+        }
+      ]
+    },
+    "project": "claude code -11"
+  }
+]

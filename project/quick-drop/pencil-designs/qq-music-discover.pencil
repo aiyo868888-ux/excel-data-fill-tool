@@ -1,0 +1,491 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "QQ音乐 - 发现页 (Apple Style)"
+  },
+  "pages": [
+    {
+      "id": "discover-page",
+      "name": "发现页",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "top-bar",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 56,
+          "backgroundColor": "#FAFAFA",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "text": "发现音乐",
+          "x": 16,
+          "y": 24,
+          "fontSize": 22,
+          "fontWeight": "700",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "search-icon",
+          "text": "🔍",
+          "x": 361,
+          "y": 24,
+          "fontSize": 24,
+          "color": "#007AFF"
+        },
+        {
+          "type": "rectangle",
+          "id": "hero-banner",
+          "x": 16,
+          "y": 72,
+          "width": 361,
+          "height": 140,
+          "backgroundColor": "linear-gradient(135deg, #FA233B, #FF6B6B)",
+          "borderRadius": 16,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 4,
+            "blur": 16,
+            "color": "rgba(250, 35, 59, 0.2)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "hero-icon",
+          "text": "🔥",
+          "x": 36,
+          "y": 100,
+          "fontSize": 40
+        },
+        {
+          "type": "text",
+          "id": "hero-title",
+          "text": "每日推荐",
+          "x": 36,
+          "y": 155,
+          "fontSize": 24,
+          "fontWeight": "700",
+          "color": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "hero-desc",
+          "text": "30首为你精选",
+          "x": 36,
+          "y": 182,
+          "fontSize": 15,
+          "color": "rgba(255, 255, 255, 0.9)"
+        },
+        {
+          "type": "text",
+          "id": "section-title-1",
+          "text": "为你推荐",
+          "x": 16,
+          "y": 244,
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-1",
+          "x": 16,
+          "y": 272,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-1-icon",
+          "text": "🎵",
+          "x": 72.5,
+          "y": 318,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-1-title",
+          "text": "轻音乐",
+          "x": 72.5,
+          "y": 365,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-2",
+          "x": 137,
+          "y": 272,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-2-icon",
+          "text": "🎸",
+          "x": 193.5,
+          "y": 318,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-2-title",
+          "text": "摇滚",
+          "x": 193.5,
+          "y": 365,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-3",
+          "x": 258,
+          "y": 272,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-3-icon",
+          "text": "🎹",
+          "x": 314.5,
+          "y": 318,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-3-title",
+          "text": "流行",
+          "x": 314.5,
+          "y": 365,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-4",
+          "x": 16,
+          "y": 395,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-4-icon",
+          "text": "🎷",
+          "x": 72.5,
+          "y": 441,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-4-title",
+          "text": "民谣",
+          "x": 72.5,
+          "y": 488,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-5",
+          "x": 137,
+          "y": 395,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-5-icon",
+          "text": "🎤",
+          "x": 193.5,
+          "y": 441,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-5-title",
+          "text": "说唱",
+          "x": 193.5,
+          "y": 488,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "card-6",
+          "x": 258,
+          "y": 395,
+          "width": 113,
+          "height": 113,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "card-6-icon",
+          "text": "🎻",
+          "x": 314.5,
+          "y": 441,
+          "fontSize": 48,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "card-6-title",
+          "text": "古典",
+          "x": 314.5,
+          "y": 488,
+          "fontSize": 12,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "section-title-2",
+          "text": "新歌速递",
+          "x": 16,
+          "y": 536,
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "new-card-1",
+          "x": 16,
+          "y": 564,
+          "width": 150,
+          "height": 200,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "new-card-1-cover",
+          "x": 16,
+          "y": 564,
+          "width": 150,
+          "height": 150,
+          "backgroundColor": "#F5F5F5",
+          "borderRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "new-card-1-icon",
+          "text": "🎵",
+          "x": 91,
+          "y": 629,
+          "fontSize": 64,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "new-card-1-title",
+          "text": "最新单曲",
+          "x": 91,
+          "y": 738,
+          "fontSize": 13,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "new-card-2",
+          "x": 182,
+          "y": 564,
+          "width": 150,
+          "height": 200,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 2,
+            "blur": 8,
+            "color": "rgba(0, 0, 0, 0.08)"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "new-card-2-cover",
+          "x": 182,
+          "y": 564,
+          "width": 150,
+          "height": 150,
+          "backgroundColor": "#F5F5F5",
+          "borderRadius": 12
+        },
+        {
+          "type": "text",
+          "id": "new-card-2-icon",
+          "text": "🎶",
+          "x": 257,
+          "y": 629,
+          "fontSize": 64,
+          "textAlign": "center",
+          "color": "#C7C7CC"
+        },
+        {
+          "type": "text",
+          "id": "new-card-2-title",
+          "text": "热门新歌",
+          "x": 257,
+          "y": 738,
+          "fontSize": 13,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "bottom-nav",
+          "x": 0,
+          "y": 769,
+          "width": 393,
+          "height": 83,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "top": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          },
+          "blur": 20
+        },
+        {
+          "type": "text",
+          "id": "nav-home",
+          "text": "♪",
+          "x": 45,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#FA233B"
+        },
+        {
+          "type": "text",
+          "id": "nav-message",
+          "text": "✉",
+          "x": 117,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-activity",
+          "text": "③",
+          "x": 189,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-profile",
+          "text": "✓",
+          "x": 261,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-more",
+          "text": "☰",
+          "x": 333,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        }
+      ]
+    }
+  ]
+}

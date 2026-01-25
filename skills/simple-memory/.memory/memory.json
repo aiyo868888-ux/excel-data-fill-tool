@@ -1,0 +1,79 @@
+[
+  {
+    "id": "mktf8bkwg33izlac8o",
+    "timestamp": "2026-01-25T07:32:38.432Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktf8blbxho6an5uxnj",
+    "timestamp": "2026-01-25T07:32:38.447Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktf8nrw6046sqa6c5x",
+    "timestamp": "2026-01-25T07:32:54.236Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktf8nrz32dmohg2aim",
+    "timestamp": "2026-01-25T07:32:54.239Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktfamn50rckcw6pvvn",
+    "timestamp": "2026-01-25T07:34:26.081Z",
+    "content": "修复了数据库连接问题",
+    "category": "bugfix",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 10
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktfamnehy646uw6hso",
+    "timestamp": "2026-01-25T07:34:26.090Z",
+    "content": "选择 React 作为前端框架",
+    "category": "decision",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "simple-memory"
+  },
+  {
+    "id": "mktfamngyou8z3k1ur",
+    "timestamp": "2026-01-25T07:34:26.092Z",
+    "content": "怎么配置环境变量？",
+    "category": "config",
+    "metadata": {
+      "autoDetected": true,
+      "confidence": 4
+    },
+    "project": "simple-memory"
+  }
+]

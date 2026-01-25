@@ -26,6 +26,12 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var reminderRepository: ReminderRepository
 
+    @Inject
+    lateinit var todoRepository: com.jishi.clipboard.repository.TodoRepository
+
+    @Inject
+    lateinit var tagRepository: com.jishi.clipboard.repository.TagRepository
+
     private lateinit var contentText: android.widget.TextView
     private lateinit var extractedTimeText: android.widget.TextView
     private lateinit var typeNotification: android.widget.CheckBox
@@ -38,6 +44,7 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
     private var extractedTime: DateTimeExtractor.ExtractedDateTime? = null
     private var selectedTimestamp: Long = 0
     private var clipboardId: Long = -1
+    private var isTodoMode: Boolean = false  // 是否为待办模式
 
     private var onConfirmListener: (() -> Unit)? = null
 
@@ -98,17 +105,23 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
         content = arguments?.getString(ARG_CONTENT) ?: ""
         val timestamp = arguments?.getLong(ARG_TIMESTAMP) ?: 0L
         clipboardId = arguments?.getLong(ARG_CLIPBOARD_ID) ?: -1L
+        isTodoMode = arguments?.getBoolean(ARG_TODO_MODE, false) ?: false
 
         android.util.Log.d("ReminderConfirmDialog", "handleArguments 开始")
         android.util.Log.d("ReminderConfirmDialog", "接收内容: ${content.take(50)}")
         android.util.Log.d("ReminderConfirmDialog", "接收时间戳: $timestamp, ${DateTimeExtractor.formatTimestamp(timestamp)}")
         android.util.Log.d("ReminderConfirmDialog", "接收clipboardId: $clipboardId")
+        android.util.Log.d("ReminderConfirmDialog", "接收isTodoMode: $isTodoMode")
 
         if (timestamp > 0) {
-            // 提前30分钟提醒
-            selectedTimestamp = timestamp - (30 * 60 * 1000)
+            // 待办模式使用原始时间，普通模式提前30分钟
+            selectedTimestamp = if (isTodoMode) {
+                timestamp
+            } else {
+                timestamp - (30 * 60 * 1000)
+            }
 
-            android.util.Log.d("ReminderConfirmDialog", "提前30分钟后: $selectedTimestamp, ${DateTimeExtractor.formatTimestamp(selectedTimestamp)}")
+            android.util.Log.d("ReminderConfirmDialog", "最终提醒时间: $selectedTimestamp, ${DateTimeExtractor.formatTimestamp(selectedTimestamp)} (isTodoMode=$isTodoMode)")
 
             // 检查时间戳是否合法
             if (selectedTimestamp < System.currentTimeMillis()) {
@@ -131,8 +144,13 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
         contentText.text = content
         extractedTime?.let {
             val formattedTime = DateTimeExtractor.formatTimestamp(it.timestamp)
-            extractedTimeText.text = "$formattedTime (提前30分钟)"
-            android.util.Log.d("ReminderConfirmDialog", "显示时间: $formattedTime")
+            val timeLabel = if (isTodoMode) {
+                formattedTime
+            } else {
+                "$formattedTime (提前30分钟)"
+            }
+            extractedTimeText.text = timeLabel
+            android.util.Log.d("ReminderConfirmDialog", "显示时间: $timeLabel")
         } ?: run {
             android.util.Log.e("ReminderConfirmDialog", "❌ extractedTime为null，无法显示时间")
         }
@@ -140,34 +158,49 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
     }
 
     /**
-     * 显示时间选择器
+     * 显示日期时间选择器
      */
     private fun showTimePicker() {
         val calendar = java.util.Calendar.getInstance().apply {
             timeInMillis = selectedTimestamp
         }
 
-        android.app.TimePickerDialog(
+        // 先显示日期选择器
+        android.app.DatePickerDialog(
             requireContext(),
-            { _, hourOfDay, minute ->
-                // 更新时间
-                calendar.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay)
-                calendar.set(java.util.Calendar.MINUTE, minute)
-                selectedTimestamp = calendar.timeInMillis
+            { _, year, month, dayOfMonth ->
+                // 更新日期
+                calendar.set(java.util.Calendar.YEAR, year)
+                calendar.set(java.util.Calendar.MONTH, month)
+                calendar.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                // 更新显示
-                extractedTime = DateTimeExtractor.ExtractedDateTime(
-                    timestamp = selectedTimestamp,
-                    originalText = "",
-                    confidence = extractedTime?.confidence ?: 0.8f
-                )
+                // 再显示时间选择器
+                android.app.TimePickerDialog(
+                    requireContext(),
+                    { _, hourOfDay, minute ->
+                        // 更新时间
+                        calendar.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay)
+                        calendar.set(java.util.Calendar.MINUTE, minute)
+                        selectedTimestamp = calendar.timeInMillis
 
-                val formattedTime = DateTimeExtractor.formatTimestamp(selectedTimestamp)
-                extractedTimeText.text = "$formattedTime (已修改)"
+                        // 更新显示
+                        extractedTime = DateTimeExtractor.ExtractedDateTime(
+                            timestamp = selectedTimestamp,
+                            originalText = "",
+                            confidence = 1.0f  // 用户手动修改，置信度最高
+                        )
+
+                        val formattedTime = DateTimeExtractor.formatTimestamp(selectedTimestamp)
+                        extractedTimeText.text = "$formattedTime (已修改)"
+                    },
+                    calendar.get(java.util.Calendar.HOUR_OF_DAY),
+                    calendar.get(java.util.Calendar.MINUTE),
+                    true // 24小时制
+                ).show()
             },
-            calendar.get(java.util.Calendar.HOUR_OF_DAY),
-            calendar.get(java.util.Calendar.MINUTE),
-            true // 24小时制
+            calendar.get(java.util.Calendar.YEAR),
+            calendar.get(java.util.Calendar.MONTH),
+            calendar.get(java.util.Calendar.DAY_OF_MONTH)
         ).show()
     }
 
@@ -265,6 +298,13 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
                     if (hasAlarm) types.add("闹铃")
                     android.util.Log.d("ReminderConfirm", "所有提醒设置成功: ${types.joinToString("、")}")
                     Toast.makeText(requireContext(), "✅ 已设置${types.joinToString("、")}提醒", Toast.LENGTH_SHORT).show()
+
+                    // 待办模式：创建待办记录
+                    if (isTodoMode) {
+                        android.util.Log.d("ReminderConfirm", "待办模式，创建待办记录...")
+                        createTodoRecord()
+                    }
+
                     onConfirmListener?.invoke()
                     dismiss()
                 } else {
@@ -292,6 +332,38 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
             .show()
     }
 
+    /**
+     * 创建待办记录
+     */
+    private fun createTodoRecord() {
+        lifecycleScope.launch {
+            try {
+                // 解析任务描述
+                val parseResult = com.jishi.clipboard.parser.TaskExtractor.extract(content)
+
+                android.util.Log.d("ReminderConfirm", "创建待办: task=${parseResult.task}, timestamp=$selectedTimestamp")
+
+                val todoEntity = com.jishi.clipboard.data.TodoEntity(
+                    task = parseResult.task,
+                    rawContent = content,
+                    dueTimestamp = selectedTimestamp,
+                    originalTimeText = extractedTimeText.text.toString(),
+                    status = "PENDING",
+                    tags = parseResult.tags.joinToString(","),
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis()
+                )
+
+                val todoId = todoRepository.insertTodo(todoEntity)
+                android.util.Log.d("ReminderConfirm", "✅ 待办记录已创建, id=$todoId")
+
+            } catch (e: Exception) {
+                android.util.Log.e("ReminderConfirm", "❌ 创建待办记录失败", e)
+                Timber.e(e, "创建待办记录失败")
+            }
+        }
+    }
+
     fun setOnConfirmListener(listener: () -> Unit) {
         onConfirmListener = listener
     }
@@ -301,11 +373,13 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
         private const val ARG_TIMESTAMP = "timestamp"
         private const val ARG_CLIPBOARD_ID = "clipboard_id"
         private const val ARG_CONFIDENCE = "confidence"
+        private const val ARG_TODO_MODE = "todo_mode"
 
         fun newInstance(
             content: String,
             extractedTime: DateTimeExtractor.ExtractedDateTime,
-            clipboardId: Long
+            clipboardId: Long,
+            isTodoMode: Boolean = false
         ): ReminderConfirmDialog {
             return ReminderConfirmDialog().apply {
                 arguments = Bundle().apply {
@@ -313,6 +387,7 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
                     putLong(ARG_TIMESTAMP, extractedTime.timestamp)
                     putLong(ARG_CLIPBOARD_ID, clipboardId)
                     putFloat(ARG_CONFIDENCE, extractedTime.confidence)
+                    putBoolean(ARG_TODO_MODE, isTodoMode)
                 }
             }
         }

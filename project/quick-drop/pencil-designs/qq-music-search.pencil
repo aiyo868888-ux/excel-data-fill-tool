@@ -1,0 +1,436 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "QQ音乐 - 搜索页 (Apple Style)"
+  },
+  "pages": [
+    {
+      "id": "search-page",
+      "name": "搜索页",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "top-bar",
+          "x": 0,
+          "y": 0,
+          "width": 393,
+          "height": 56,
+          "backgroundColor": "#FAFAFA",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "text": "搜索音乐",
+          "x": 16,
+          "y": 24,
+          "fontSize": 22,
+          "fontWeight": "700",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "search-bar",
+          "x": 16,
+          "y": 72,
+          "width": 361,
+          "height": 36,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 10
+        },
+        {
+          "type": "text",
+          "id": "search-placeholder",
+          "text": "🔍 搜索歌曲、歌手",
+          "x": 28,
+          "y": 95,
+          "fontSize": 16,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "section-title-1",
+          "text": "热门搜索",
+          "x": 16,
+          "y": 140",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-1",
+          "x": 16,
+          "y": 168,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-1-text",
+          "text": "周杰伦",
+          "x": 56,
+          "y": 187,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-2",
+          "x": 104,
+          "y": 168,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-2-text",
+          "text": "Taylor",
+          "x": 144,
+          "y": 187,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-3",
+          "x": 192,
+          "y": 168,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-3-text",
+          "text": "毛不易",
+          "x": 232,
+          "y": 187,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-4",
+          "x": 280,
+          "y": 168,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-4-text",
+          "text": "邓紫棋",
+          "x": 320,
+          "y": 187,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-5",
+          "x": 16,
+          "y": 208,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-5-text",
+          "text": "林俊杰",
+          "x": 56,
+          "y": 227,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-6",
+          "x": 104,
+          "y": 208,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-6-text",
+          "text": "陈奕迅",
+          "x": 144,
+          "y": 227,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-7",
+          "x": 192,
+          "y": 208,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-7-text",
+          "text": "薛之谦",
+          "x": 232,
+          "y": 227,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "tag-8",
+          "x": 280,
+          "y": 208,
+          "width": 80,
+          "height": 32,
+          "backgroundColor": "#EFEFF0",
+          "borderRadius": 16
+        },
+        {
+          "type": "text",
+          "id": "tag-8-text",
+          "text": "李荣浩",
+          "x": 320,
+          "y": 227,
+          "fontSize": 14,
+          "fontWeight": "500",
+          "textAlign": "center",
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "section-title-2",
+          "text": "历史搜索",
+          "x": 16,
+          "y": 276",
+          "fontSize": 20,
+          "fontWeight": "600",
+          "color": "#000000"
+        },
+        {
+          "type": "rectangle",
+          "id": "history-1",
+          "x": 0,
+          "y": 304,
+          "width": 393,
+          "height": 44,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "history-1-delete",
+          "text": "×",
+          "x": 361,
+          "y": 319,
+          "fontSize": 18,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "history-1-text",
+          "text": "告白气球",
+          "x": 56,
+          "y": 321,
+          "fontSize": 15,
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "history-1-icon",
+          "text": "🕐",
+          "x": 24,
+          "y": 319,
+          "fontSize": 16,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "history-2",
+          "x": 0,
+          "y": 348,
+          "width": 393,
+          "height": 44,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "history-2-delete",
+          "text": "×",
+          "x": 361,
+          "y": 363,
+          "fontSize": 18,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "history-2-text",
+          "text": "晴天",
+          "x": 56,
+          "y": 365,
+          "fontSize": 15,
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "history-2-icon",
+          "text": "🕐",
+          "x": 24,
+          "y": 363,
+          "fontSize": 16,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "history-3",
+          "x": 0,
+          "y": 392,
+          "width": 393,
+          "height": 44,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "bottom": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          }
+        },
+        {
+          "type": "text",
+          "id": "history-3-delete",
+          "text": "×",
+          "x": 361,
+          "y": 407,
+          "fontSize": 18,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "history-3-text",
+          "text": "七里香",
+          "x": 56,
+          "y": 409,
+          "fontSize": 15,
+          "color": "#000000"
+        },
+        {
+          "type": "text",
+          "id": "history-3-icon",
+          "text": "🕐",
+          "x": 24,
+          "y": 407,
+          "fontSize": 16,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "rectangle",
+          "id": "bottom-nav",
+          "x": 0,
+          "y": 769,
+          "width": 393,
+          "height": 83,
+          "backgroundColor": "#FFFFFF",
+          "border": {
+            "top": {
+              "width": 0.5,
+              "color": "#E5E5E5"
+            }
+          },
+          "blur": 20
+        },
+        {
+          "type": "text",
+          "id": "nav-home",
+          "text": "♪",
+          "x": 45,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-message",
+          "text": "✉",
+          "x": 117,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-activity",
+          "text": "③",
+          "x": 189,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-profile",
+          "text": "✓",
+          "x": 261,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        },
+        {
+          "type": "text",
+          "id": "nav-more",
+          "text": "☰",
+          "x": 333,
+          "y": 795,
+          "fontSize": 26,
+          "color": "#8E8E93"
+        }
+      ]
+    }
+  ]
+}

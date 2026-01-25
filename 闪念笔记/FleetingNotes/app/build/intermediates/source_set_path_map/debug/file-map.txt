@@ -1,0 +1,72 @@
+com.fleetingnotes.app-jetified-emoji2-views-helper-1.3.0-0 C:\Users\15085\.gradle\caches\transforms-3\05c1802d753cbbb4ca6e971d305fbf17\transformed\jetified-emoji2-views-helper-1.3.0\res
+com.fleetingnotes.app-transition-1.2.0-1 C:\Users\15085\.gradle\caches\transforms-3\09c079b3bc0b2f2f697e6d92369d63b5\transformed\transition-1.2.0\res
+com.fleetingnotes.app-jetified-ui-text-release-2 C:\Users\15085\.gradle\caches\transforms-3\11ff4bac3d6d035470823f63edc2b6f5\transformed\jetified-ui-text-release\res
+com.fleetingnotes.app-jetified-ui-graphics-release-3 C:\Users\15085\.gradle\caches\transforms-3\13be2d1ccffd25504708aec17e575f79\transformed\jetified-ui-graphics-release\res
+com.fleetingnotes.app-jetified-viewpager2-1.0.0-4 C:\Users\15085\.gradle\caches\transforms-3\177e3371a6b304b192c35a577a7c34e2\transformed\jetified-viewpager2-1.0.0\res
+com.fleetingnotes.app-jetified-material-icons-core-release-5 C:\Users\15085\.gradle\caches\transforms-3\186b3e144fab1363397c507a8cf122c5\transformed\jetified-material-icons-core-release\res
+com.fleetingnotes.app-jetified-ui-release-6 C:\Users\15085\.gradle\caches\transforms-3\1b04c4e6942a9a0a9ea4b912a51c770e\transformed\jetified-ui-release\res
+com.fleetingnotes.app-jetified-material3-release-7 C:\Users\15085\.gradle\caches\transforms-3\1bb56d06f6f034cd90d6b15130f590db\transformed\jetified-material3-release\res
+com.fleetingnotes.app-jetified-ui-tooling-release-8 C:\Users\15085\.gradle\caches\transforms-3\1ebce7737195c1edc2585d8cc5576d9d\transformed\jetified-ui-tooling-release\res
+com.fleetingnotes.app-jetified-animation-core-release-9 C:\Users\15085\.gradle\caches\transforms-3\2058993ce5fbda9a09cc3cb381d05066\transformed\jetified-animation-core-release\res
+com.fleetingnotes.app-jetified-lifecycle-livedata-core-ktx-2.6.2-10 C:\Users\15085\.gradle\caches\transforms-3\2b44e3a92ccda6e0e2ec3841aabf753c\transformed\jetified-lifecycle-livedata-core-ktx-2.6.2\res
+com.fleetingnotes.app-navigation-common-ktx-2.7.5-11 C:\Users\15085\.gradle\caches\transforms-3\2efb9f334920cdd3189f4bdc61064edc\transformed\navigation-common-ktx-2.7.5\res
+com.fleetingnotes.app-jetified-ui-unit-release-12 C:\Users\15085\.gradle\caches\transforms-3\2f87e717c79932d1ecc7f9c70bd53467\transformed\jetified-ui-unit-release\res
+com.fleetingnotes.app-jetified-lifecycle-viewmodel-compose-2.6.2-13 C:\Users\15085\.gradle\caches\transforms-3\31104a236e9f3294e676f66ce87e9d56\transformed\jetified-lifecycle-viewmodel-compose-2.6.2\res
+com.fleetingnotes.app-jetified-animation-release-14 C:\Users\15085\.gradle\caches\transforms-3\349e3ee9c77334353e32cbcd5cf15bd3\transformed\jetified-animation-release\res
+com.fleetingnotes.app-jetified-startup-runtime-1.1.1-15 C:\Users\15085\.gradle\caches\transforms-3\424a317632fb8f8ec457acbeb3553198\transformed\jetified-startup-runtime-1.1.1\res
+com.fleetingnotes.app-coordinatorlayout-1.1.0-16 C:\Users\15085\.gradle\caches\transforms-3\4554c5917c713bfe46fb5137e64cf071\transformed\coordinatorlayout-1.1.0\res
+com.fleetingnotes.app-jetified-annotation-experimental-1.4.0-17 C:\Users\15085\.gradle\caches\transforms-3\48ac9763ca5e193df0a77305f42d1f32\transformed\jetified-annotation-experimental-1.4.0\res
+com.fleetingnotes.app-lifecycle-livedata-2.6.2-18 C:\Users\15085\.gradle\caches\transforms-3\4ab84986606013ff095078a5b576c061\transformed\lifecycle-livedata-2.6.2\res
+com.fleetingnotes.app-jetified-lifecycle-viewmodel-savedstate-2.6.2-19 C:\Users\15085\.gradle\caches\transforms-3\4edde181aadd20335817788e22c9893f\transformed\jetified-lifecycle-viewmodel-savedstate-2.6.2\res
+com.fleetingnotes.app-jetified-ui-tooling-data-release-20 C:\Users\15085\.gradle\caches\transforms-3\4f889c81a536df3cb8a98e3cf568f102\transformed\jetified-ui-tooling-data-release\res
+com.fleetingnotes.app-jetified-foundation-release-21 C:\Users\15085\.gradle\caches\transforms-3\4f8a3807be536deeec4e1ee86ec89307\transformed\jetified-foundation-release\res
+com.fleetingnotes.app-jetified-datastore-preferences-1.0.0-22 C:\Users\15085\.gradle\caches\transforms-3\4fb71b5a8004e02ad5c27054721dccbd\transformed\jetified-datastore-preferences-1.0.0\res
+com.fleetingnotes.app-jetified-appcompat-resources-1.6.1-23 C:\Users\15085\.gradle\caches\transforms-3\5256389636524044a0fe87760c91b4c1\transformed\jetified-appcompat-resources-1.6.1\res
+com.fleetingnotes.app-jetified-ui-geometry-release-24 C:\Users\15085\.gradle\caches\transforms-3\5628fc4f4abf9e49531e75216afa607a\transformed\jetified-ui-geometry-release\res
+com.fleetingnotes.app-jetified-savedstate-1.2.1-25 C:\Users\15085\.gradle\caches\transforms-3\568365f708a82d362ed2fbc07dc65291\transformed\jetified-savedstate-1.2.1\res
+com.fleetingnotes.app-jetified-ui-util-release-26 C:\Users\15085\.gradle\caches\transforms-3\56975c6edf3c877958a4719b54e44250\transformed\jetified-ui-util-release\res
+com.fleetingnotes.app-jetified-emoji2-1.3.0-27 C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\res
+com.fleetingnotes.app-jetified-material-release-28 C:\Users\15085\.gradle\caches\transforms-3\6c291a7eb99e9f60446ccc9e431b3491\transformed\jetified-material-release\res
+com.fleetingnotes.app-jetified-lifecycle-process-2.6.2-29 C:\Users\15085\.gradle\caches\transforms-3\6eafc56fc1c0430d19291afbe487a5b0\transformed\jetified-lifecycle-process-2.6.2\res
+com.fleetingnotes.app-jetified-lifecycle-viewmodel-ktx-2.6.2-30 C:\Users\15085\.gradle\caches\transforms-3\7401c9890987d9bf9dd1e39a5ce12b66\transformed\jetified-lifecycle-viewmodel-ktx-2.6.2\res
+com.fleetingnotes.app-navigation-common-2.7.5-31 C:\Users\15085\.gradle\caches\transforms-3\7594bd95a5142462c5bfc7553d933c3b\transformed\navigation-common-2.7.5\res
+com.fleetingnotes.app-cardview-1.0.0-32 C:\Users\15085\.gradle\caches\transforms-3\75b1aa18d2366f1d93fade14b6406524\transformed\cardview-1.0.0\res
+com.fleetingnotes.app-drawerlayout-1.1.1-33 C:\Users\15085\.gradle\caches\transforms-3\76c57dbb5444f35dbe2c5ec1be8cd85b\transformed\drawerlayout-1.1.1\res
+com.fleetingnotes.app-jetified-activity-1.8.1-34 C:\Users\15085\.gradle\caches\transforms-3\799ec37cde83c1bca47e55ccc29d2ffa\transformed\jetified-activity-1.8.1\res
+com.fleetingnotes.app-jetified-customview-poolingcontainer-1.0.0-35 C:\Users\15085\.gradle\caches\transforms-3\7dcac3ca4446d019dc4fd4c3511df0ba\transformed\jetified-customview-poolingcontainer-1.0.0\res
+com.fleetingnotes.app-jetified-lifecycle-runtime-compose-2.6.2-36 C:\Users\15085\.gradle\caches\transforms-3\7ee72cc2a9e7b9e753c2d92417c9fcd5\transformed\jetified-lifecycle-runtime-compose-2.6.2\res
+com.fleetingnotes.app-navigation-runtime-2.7.5-37 C:\Users\15085\.gradle\caches\transforms-3\836923b4678bc4dd1ab4d8c25d5e0d68\transformed\navigation-runtime-2.7.5\res
+com.fleetingnotes.app-jetified-runtime-release-38 C:\Users\15085\.gradle\caches\transforms-3\8bef5e32c3111bd40a97ef6cbd4617d5\transformed\jetified-runtime-release\res
+com.fleetingnotes.app-core-1.12.0-39 C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\res
+com.fleetingnotes.app-jetified-coil-base-2.5.0-40 C:\Users\15085\.gradle\caches\transforms-3\91951f5a08055162252eee0e5ba8c672\transformed\jetified-coil-base-2.5.0\res
+com.fleetingnotes.app-jetified-navigation-compose-2.7.5-41 C:\Users\15085\.gradle\caches\transforms-3\943787b9e69378444bd1b5c1cc299e47\transformed\jetified-navigation-compose-2.7.5\res
+com.fleetingnotes.app-lifecycle-viewmodel-2.6.2-42 C:\Users\15085\.gradle\caches\transforms-3\95e20add84e79c3607fd9b3e3460bf83\transformed\lifecycle-viewmodel-2.6.2\res
+com.fleetingnotes.app-jetified-datastore-1.0.0-43 C:\Users\15085\.gradle\caches\transforms-3\97c594289399394ddd20f3fb27c49fd8\transformed\jetified-datastore-1.0.0\res
+com.fleetingnotes.app-jetified-activity-compose-1.8.1-44 C:\Users\15085\.gradle\caches\transforms-3\9d177a444c7c51c7776e81d1464604e6\transformed\jetified-activity-compose-1.8.1\res
+com.fleetingnotes.app-lifecycle-runtime-2.6.2-45 C:\Users\15085\.gradle\caches\transforms-3\9eb429b78a65baaf704794207836fdbb\transformed\lifecycle-runtime-2.6.2\res
+com.fleetingnotes.app-constraintlayout-2.0.1-46 C:\Users\15085\.gradle\caches\transforms-3\a292c8117b95b67e1263731bd5fa7dfd\transformed\constraintlayout-2.0.1\res
+com.fleetingnotes.app-material-1.11.0-47 C:\Users\15085\.gradle\caches\transforms-3\a3fc1deea381b69077abd38b38e5b7d4\transformed\material-1.11.0\res
+com.fleetingnotes.app-lifecycle-livedata-core-2.6.2-48 C:\Users\15085\.gradle\caches\transforms-3\a49dc0a29fe934d5967449820cdc5031\transformed\lifecycle-livedata-core-2.6.2\res
+com.fleetingnotes.app-jetified-runtime-saveable-release-49 C:\Users\15085\.gradle\caches\transforms-3\a8ff753551c7dd1659d4899e11e8fbe2\transformed\jetified-runtime-saveable-release\res
+com.fleetingnotes.app-jetified-material-icons-extended-release-50 C:\Users\15085\.gradle\caches\transforms-3\aab508ffe51058b99b042b4d3bb914f2\transformed\jetified-material-icons-extended-release\res
+com.fleetingnotes.app-jetified-lifecycle-runtime-ktx-2.6.2-51 C:\Users\15085\.gradle\caches\transforms-3\af86626d5464b3a1d9e744be13d54787\transformed\jetified-lifecycle-runtime-ktx-2.6.2\res
+com.fleetingnotes.app-jetified-material-ripple-release-52 C:\Users\15085\.gradle\caches\transforms-3\b2185fb6f5010a948848458e38a60329\transformed\jetified-material-ripple-release\res
+com.fleetingnotes.app-jetified-activity-ktx-1.8.1-53 C:\Users\15085\.gradle\caches\transforms-3\b63a5de315402753656425c08870318f\transformed\jetified-activity-ktx-1.8.1\res
+com.fleetingnotes.app-jetified-ui-tooling-preview-release-54 C:\Users\15085\.gradle\caches\transforms-3\bec67d4a1d7e3f6ad799fcf79273bd47\transformed\jetified-ui-tooling-preview-release\res
+com.fleetingnotes.app-core-runtime-2.2.0-55 C:\Users\15085\.gradle\caches\transforms-3\cafd8d9e19efea4c9204ecb98f42dd4e\transformed\core-runtime-2.2.0\res
+com.fleetingnotes.app-navigation-runtime-ktx-2.7.5-56 C:\Users\15085\.gradle\caches\transforms-3\d82c678640e526d61b41b113c0d5ddea\transformed\navigation-runtime-ktx-2.7.5\res
+com.fleetingnotes.app-jetified-profileinstaller-1.3.1-57 C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\res
+com.fleetingnotes.app-appcompat-1.6.1-58 C:\Users\15085\.gradle\caches\transforms-3\e33e718dcafa4eff406fcfddce1e1894\transformed\appcompat-1.6.1\res
+com.fleetingnotes.app-jetified-foundation-layout-release-59 C:\Users\15085\.gradle\caches\transforms-3\e3fc92d5aeaab30b3783659f8da96622\transformed\jetified-foundation-layout-release\res
+com.fleetingnotes.app-jetified-fragment-ktx-1.6.2-60 C:\Users\15085\.gradle\caches\transforms-3\e53db6b9d5d839456484963d49d0f634\transformed\jetified-fragment-ktx-1.6.2\res
+com.fleetingnotes.app-jetified-core-ktx-1.12.0-61 C:\Users\15085\.gradle\caches\transforms-3\e83c43436ae9ca421b5fe8bb8bc15583\transformed\jetified-core-ktx-1.12.0\res
+com.fleetingnotes.app-jetified-ui-test-manifest-1.6.1-62 C:\Users\15085\.gradle\caches\transforms-3\e92c3ea9bebb9a52e88f93ccb675585b\transformed\jetified-ui-test-manifest-1.6.1\res
+com.fleetingnotes.app-fragment-1.6.2-63 C:\Users\15085\.gradle\caches\transforms-3\f1c6ee00fc13b189e588bccaca657854\transformed\fragment-1.6.2\res
+com.fleetingnotes.app-recyclerview-1.1.0-64 C:\Users\15085\.gradle\caches\transforms-3\f762fb96fa4a486bf324c59f1fe6625a\transformed\recyclerview-1.1.0\res
+com.fleetingnotes.app-jetified-savedstate-ktx-1.2.1-65 C:\Users\15085\.gradle\caches\transforms-3\f88d089c4e47050d2d178cf25c00227c\transformed\jetified-savedstate-ktx-1.2.1\res
+com.fleetingnotes.app-resValues-66 D:\claude code -11\闪念笔记\FleetingNotes\app\build\generated\res\resValues\debug
+com.fleetingnotes.app-packageDebugResources-67 D:\claude code -11\闪念笔记\FleetingNotes\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.fleetingnotes.app-packageDebugResources-68 D:\claude code -11\闪念笔记\FleetingNotes\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.fleetingnotes.app-merged_res-69 D:\claude code -11\闪念笔记\FleetingNotes\app\build\intermediates\merged_res\debug
+com.fleetingnotes.app-debug-70 D:\claude code -11\闪念笔记\FleetingNotes\app\src\debug\res
+com.fleetingnotes.app-main-71 D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\res

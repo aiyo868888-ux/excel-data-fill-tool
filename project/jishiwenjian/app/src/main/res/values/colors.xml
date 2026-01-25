@@ -21,6 +21,7 @@
 
     <!-- 分割线 -->
     <color name="divider">#E0E0E0</color>
+    <color name="border">#E0E0E0</color>
 
     <!-- 状态色 -->
     <color name="success">#4CAF50</color>

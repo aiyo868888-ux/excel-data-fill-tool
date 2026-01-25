@@ -1,0 +1,263 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.fleetingnotes"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <!-- 悬浮窗权限 -->
+12    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+12-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:6:5-78
+12-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:6:22-75
+13
+14    <!-- 剪切板权限 (Android 12+) -->
+15    <uses-permission
+15-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:9:5-10:38
+16        android:name="android.permission.READ_CLIPBOARD"
+16-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:9:22-70
+17        android:minSdkVersion="33" />
+17-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:10:9-35
+18
+19    <!-- 通知权限 -->
+20    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+20-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:13:5-77
+20-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:13:22-74
+21
+22    <!-- 前台服务权限 (Android 14+) -->
+23    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+23-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:16:5-77
+23-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:16:22-74
+24    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+24-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:17:5-89
+24-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:17:22-86
+25
+26    <!-- 录音权限 -->
+27    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+27-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:20:5-71
+27-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:20:22-68
+28
+29    <!-- 相机权限 -->
+30    <uses-permission android:name="android.permission.CAMERA" />
+30-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:23:5-65
+30-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:23:22-62
+31
+32    <!-- 读取外部存储 -->
+33    <uses-permission
+33-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:26:5-27:38
+34        android:name="android.permission.READ_EXTERNAL_STORAGE"
+34-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:26:22-77
+35        android:maxSdkVersion="32" />
+35-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:27:9-35
+36    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+36-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:28:5-76
+36-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:28:22-73
+37
+38    <permission
+38-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+39        android:name="com.fleetingnotes.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+39-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+40        android:protectionLevel="signature" />
+40-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+41
+42    <uses-permission android:name="com.fleetingnotes.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+42-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+42-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+43
+44    <application
+44-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:30:5-92:19
+45        android:name="com.fleetingnotes.FleetingNotesApp"
+45-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:31:9-41
+46        android:allowBackup="true"
+46-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:32:9-35
+47        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+47-->[androidx.core:core:1.12.0] C:\Users\15085\.gradle\caches\transforms-3\8ed1a710b35aac8e62e0bc0ad75463d4\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
+48        android:dataExtractionRules="@xml/data_extraction_rules"
+48-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:33:9-65
+49        android:debuggable="true"
+50        android:extractNativeLibs="false"
+51        android:fullBackupContent="@xml/backup_rules"
+51-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:34:9-54
+52        android:icon="@android:drawable/sym_def_app_icon"
+52-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:35:9-58
+53        android:label="@string/app_name"
+53-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:36:9-41
+54        android:roundIcon="@android:drawable/sym_def_app_icon"
+54-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:37:9-63
+55        android:supportsRtl="true"
+55-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:38:9-35
+56        android:testOnly="true"
+57        android:theme="@style/Theme.FleetingNotes" >
+57-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:39:9-51
+58        <activity
+58-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:42:9-52:20
+59            android:name="com.fleetingnotes.presentation.MainActivity"
+59-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:43:13-54
+60            android:exported="true"
+60-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:44:13-36
+61            android:launchMode="singleTop"
+61-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:45:13-43
+62            android:theme="@style/Theme.FleetingNotes"
+62-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:46:13-55
+63            android:windowSoftInputMode="adjustResize" >
+63-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:47:13-55
+64            <intent-filter>
+64-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:48:13-51:29
+65                <action android:name="android.intent.action.MAIN" />
+65-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:17-69
+65-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:25-66
+66
+67                <category android:name="android.intent.category.LAUNCHER" />
+67-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:50:17-77
+67-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:50:27-74
+68            </intent-filter>
+69        </activity>
+70
+71        <!-- 悬浮窗服务 -->
+72        <service
+72-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:55:9-63:19
+73            android:name="com.fleetingnotes.service.FloatingWindowService"
+73-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:56:13-58
+74            android:enabled="true"
+74-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:57:13-35
+75            android:exported="false"
+75-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:58:13-37
+76            android:foregroundServiceType="specialUse" >
+76-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:59:13-55
+77            <intent-filter>
+77-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:60:13-62:29
+78                <action android:name="android.intent.action.MAIN" />
+78-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:17-69
+78-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:25-66
+79            </intent-filter>
+80        </service>
+81
+82        <!-- 剪切板监听服务 -->
+83        <service
+83-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:66:9-74:19
+84            android:name="com.fleetingnotes.service.ClipboardService"
+84-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:67:13-53
+85            android:enabled="true"
+85-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:68:13-35
+86            android:exported="false"
+86-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:69:13-37
+87            android:foregroundServiceType="specialUse" >
+87-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:70:13-55
+88            <intent-filter>
+88-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:60:13-62:29
+89                <action android:name="android.intent.action.MAIN" />
+89-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:17-69
+89-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:49:25-66
+90            </intent-filter>
+91        </service>
+92
+93        <!-- 笔记编辑 Activity - 透明对话框（照搬及时记） -->
+94        <activity
+94-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:77:9-81:58
+95            android:name="com.fleetingnotes.presentation.ui.edit.NoteEditActivity"
+95-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:78:13-66
+96            android:exported="false"
+96-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:79:13-37
+97            android:theme="@style/Theme.Transparent"
+97-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:80:13-53
+98            android:windowSoftInputMode="adjustResize" />
+98-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:81:13-55
+99
+100        <!-- 类型选择 Activity - 透明对话框 -->
+101        <activity
+101-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:84:9-90:58
+102            android:name="com.fleetingnotes.presentation.ui.edit.TypeSelectionActivity"
+102-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:85:13-71
+103            android:excludeFromRecents="true"
+103-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:89:13-46
+104            android:exported="false"
+104-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:86:13-37
+105            android:launchMode="singleTop"
+105-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:88:13-43
+106            android:theme="@style/Theme.Transparent"
+106-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:87:13-53
+107            android:windowSoftInputMode="adjustResize" />
+107-->D:\claude code -11\闪念笔记\FleetingNotes\app\src\main\AndroidManifest.xml:90:13-55
+108        <activity
+108-->[androidx.compose.ui:ui-tooling-android:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\1ebce7737195c1edc2585d8cc5576d9d\transformed\jetified-ui-tooling-release\AndroidManifest.xml:23:9-25:39
+109            android:name="androidx.compose.ui.tooling.PreviewActivity"
+109-->[androidx.compose.ui:ui-tooling-android:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\1ebce7737195c1edc2585d8cc5576d9d\transformed\jetified-ui-tooling-release\AndroidManifest.xml:24:13-71
+110            android:exported="true" />
+110-->[androidx.compose.ui:ui-tooling-android:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\1ebce7737195c1edc2585d8cc5576d9d\transformed\jetified-ui-tooling-release\AndroidManifest.xml:25:13-36
+111        <activity
+111-->[androidx.compose.ui:ui-test-manifest:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\e92c3ea9bebb9a52e88f93ccb675585b\transformed\jetified-ui-test-manifest-1.6.1\AndroidManifest.xml:23:9-25:39
+112            android:name="androidx.activity.ComponentActivity"
+112-->[androidx.compose.ui:ui-test-manifest:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\e92c3ea9bebb9a52e88f93ccb675585b\transformed\jetified-ui-test-manifest-1.6.1\AndroidManifest.xml:24:13-63
+113            android:exported="true" />
+113-->[androidx.compose.ui:ui-test-manifest:1.6.1] C:\Users\15085\.gradle\caches\transforms-3\e92c3ea9bebb9a52e88f93ccb675585b\transformed\jetified-ui-test-manifest-1.6.1\AndroidManifest.xml:25:13-36
+114
+115        <provider
+115-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+116            android:name="androidx.startup.InitializationProvider"
+116-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:25:13-67
+117            android:authorities="com.fleetingnotes.androidx-startup"
+117-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:26:13-68
+118            android:exported="false" >
+118-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:27:13-37
+119            <meta-data
+119-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+120                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+120-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:30:17-75
+121                android:value="androidx.startup" />
+121-->[androidx.emoji2:emoji2:1.3.0] C:\Users\15085\.gradle\caches\transforms-3\606ee550d45a78985899c614325cff40\transformed\jetified-emoji2-1.3.0\AndroidManifest.xml:31:17-49
+122            <meta-data
+122-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\15085\.gradle\caches\transforms-3\6eafc56fc1c0430d19291afbe487a5b0\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+123                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+123-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\15085\.gradle\caches\transforms-3\6eafc56fc1c0430d19291afbe487a5b0\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+124                android:value="androidx.startup" />
+124-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\15085\.gradle\caches\transforms-3\6eafc56fc1c0430d19291afbe487a5b0\transformed\jetified-lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+125            <meta-data
+125-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+126                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+126-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+127                android:value="androidx.startup" />
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+128        </provider>
+129
+130        <receiver
+130-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+131            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+131-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+132            android:directBootAware="false"
+132-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+133            android:enabled="true"
+133-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+134            android:exported="true"
+134-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+135            android:permission="android.permission.DUMP" >
+135-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+136            <intent-filter>
+136-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+137                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+137-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+137-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+138            </intent-filter>
+139            <intent-filter>
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+140                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+141            </intent-filter>
+142            <intent-filter>
+142-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+143                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+144            </intent-filter>
+145            <intent-filter>
+145-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+146                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\15085\.gradle\caches\transforms-3\da3eb28ddf669fb2c5917bb1dc509cf8\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+147            </intent-filter>
+148        </receiver>
+149    </application>
+150
+151</manifest>

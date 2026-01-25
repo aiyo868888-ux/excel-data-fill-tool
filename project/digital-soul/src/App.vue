@@ -1,0 +1,52 @@
+<template>
+  <div id="app">
+    <AppLayout>
+      <router-view />
+    </AppLayout>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import AppLayout from '@/components/layout/AppLayout.vue'
+
+onMounted(() => {
+  console.log('[App] Digital Soul application started')
+})
+</script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+</style>

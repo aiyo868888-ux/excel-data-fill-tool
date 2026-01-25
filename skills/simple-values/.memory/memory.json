@@ -1,0 +1,297 @@
+[
+  {
+    "id": "mktgb7if63k6on1l4gm",
+    "timestamp": "2026-01-25T08:02:52.743Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论"
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9jzveqy5sfi48",
+    "timestamp": "2026-01-25T08:03:53.335Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "极简主义",
+          "score": 5
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9sbiglnstc8xw",
+    "timestamp": "2026-01-25T08:03:53.344Z",
+    "content": "我们要数据驱动决策，不能凭感觉",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "决策方式讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "数据驱动",
+          "score": 4
+        },
+        {
+          "dimension": "决策风格",
+          "value": "直觉决策",
+          "score": 4
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9tfdhs0dkuvog",
+    "timestamp": "2026-01-25T08:03:53.345Z",
+    "content": "快速迭代，先上线再优化",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "开发节奏讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "快速试错",
+          "score": 4
+        },
+        {
+          "dimension": "工作态度",
+          "value": "快速交付",
+          "score": 8
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9u1c9ish57zef",
+    "timestamp": "2026-01-25T08:03:53.346Z",
+    "content": "用户体验是第一位的",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "需求优先级讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "用户体验",
+          "score": 5
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9vckvu8pxbqav",
+    "timestamp": "2026-01-25T08:03:53.347Z",
+    "content": "技术要服务于业务，不要为了技术而技术",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "CTO",
+      "context": "技术选型讨论",
+      "values": []
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9wyvw83y08ush",
+    "timestamp": "2026-01-25T08:03:53.348Z",
+    "content": "团队协作很重要，要多沟通",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "项目经理",
+      "context": "团队管理讨论",
+      "values": [
+        {
+          "dimension": "团队观念",
+          "value": "团队协作",
+          "score": 6
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9xbs1w8m876wf",
+    "timestamp": "2026-01-25T08:03:53.349Z",
+    "content": "要敢于尝试新东西，不怕失败",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "创始人",
+      "context": "创新讨论",
+      "values": [
+        {
+          "dimension": "风险态度",
+          "value": "风险偏好",
+          "score": 6
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgci9yitvwis0rv28",
+    "timestamp": "2026-01-25T08:03:53.350Z",
+    "content": "质量很重要，不能为了快就降低标准",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "质量vs速度讨论",
+      "values": []
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdotkcm76oybf0pt",
+    "timestamp": "2026-01-25T08:04:48.488Z",
+    "content": "我认为产品应该专注单点，做到极致",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "产品方向讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "极简主义",
+          "score": 5
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdotmzcjhjedsd6",
+    "timestamp": "2026-01-25T08:04:48.490Z",
+    "content": "我们要数据驱动决策，不能凭感觉",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "决策方式讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "数据驱动",
+          "score": 4
+        },
+        {
+          "dimension": "决策风格",
+          "value": "直觉决策",
+          "score": 4
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdotng6wptgh9jyv",
+    "timestamp": "2026-01-25T08:04:48.491Z",
+    "content": "快速迭代，先上线再优化",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "开发节奏讨论",
+      "values": [
+        {
+          "dimension": "决策风格",
+          "value": "快速试错",
+          "score": 4
+        },
+        {
+          "dimension": "工作态度",
+          "value": "快速交付",
+          "score": 8
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdoto36wlonl45vq",
+    "timestamp": "2026-01-25T08:04:48.492Z",
+    "content": "用户体验是第一位的",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "产品经理",
+      "context": "需求优先级讨论",
+      "values": [
+        {
+          "dimension": "产品哲学",
+          "value": "用户体验",
+          "score": 5
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdoto27t8qw3be28",
+    "timestamp": "2026-01-25T08:04:48.492Z",
+    "content": "技术要服务于业务，不要为了技术而技术",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "CTO",
+      "context": "技术选型讨论",
+      "values": []
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdotpsn7ei9cir8c",
+    "timestamp": "2026-01-25T08:04:48.493Z",
+    "content": "团队协作很重要，要多沟通",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "项目经理",
+      "context": "团队管理讨论",
+      "values": [
+        {
+          "dimension": "团队观念",
+          "value": "团队协作",
+          "score": 6
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdotqe84lbff7rd8",
+    "timestamp": "2026-01-25T08:04:48.495Z",
+    "content": "要敢于尝试新东西，不怕失败",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "创始人",
+      "context": "创新讨论",
+      "values": [
+        {
+          "dimension": "风险态度",
+          "value": "风险偏好",
+          "score": 6
+        }
+      ]
+    },
+    "project": "simple-values"
+  },
+  {
+    "id": "mktgdots50r5iv0inal",
+    "timestamp": "2026-01-25T08:04:48.496Z",
+    "content": "质量很重要，不能为了快就降低标准",
+    "category": "conversation",
+    "metadata": {
+      "speaker": "技术负责人",
+      "context": "质量vs速度讨论",
+      "values": []
+    },
+    "project": "simple-values"
+  }
+]

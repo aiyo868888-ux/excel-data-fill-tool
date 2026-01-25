@@ -1,0 +1,61 @@
+{
+  "version": "1.0",
+  "canvas": {
+    "width": 393,
+    "height": 852,
+    "backgroundColor": "#FAFAFA",
+    "name": "测试画布 - QQ音乐播放页"
+  },
+  "pages": [
+    {
+      "id": "test-page",
+      "name": "测试页面",
+      "elements": [
+        {
+          "type": "rectangle",
+          "id": "album-cover",
+          "x": 56.5,
+          "y": 120,
+          "width": 280,
+          "height": 280,
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 8,
+            "blur": 32,
+            "color": "rgba(0, 0, 0, 0.12)"
+          },
+          "label": "专辑封面"
+        },
+        {
+          "type": "text",
+          "id": "song-title",
+          "text": "告白气球",
+          "x": 196.5,
+          "y": 440,
+          "fontSize": 22,
+          "fontWeight": "700",
+          "textAlign": "center",
+          "color": "#000000",
+          "label": "歌曲名称"
+        },
+        {
+          "type": "circle",
+          "id": "play-button",
+          "cx": 196.5,
+          "cy": 594,
+          "r": 32,
+          "backgroundColor": "#FA233B",
+          "shadow": {
+            "offsetX": 0,
+            "offsetY": 4,
+            "blur": 16,
+            "color": "rgba(250, 35, 59, 0.4)"
+          },
+          "label": "播放按钮"
+        }
+      ]
+    }
+  ]
+}

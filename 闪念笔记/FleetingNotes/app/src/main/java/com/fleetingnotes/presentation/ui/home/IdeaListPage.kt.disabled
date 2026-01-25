@@ -1,0 +1,201 @@
+package com.fleetingnotes.presentation.ui.home
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fleetingnotes.data.model.IdeaNote
+import com.fleetingnotes.data.model.NoteType
+import com.fleetingnotes.presentation.theme.*
+import com.fleetingnotes.presentation.viewmodel.MainViewModel
+import timber.log.Timber
+
+/**
+ * ViewModel Factory
+ */
+private val MainViewModelFactory = object : androidx.lifecycle.ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        return MainViewModel.create(
+            repository = com.fleetingnotes.ServiceLocator.noteRepository
+        ) as T
+    }
+}
+
+/**
+ * 灵感列表页 - 显示所有灵感笔记
+ */
+@Composable
+fun IdeaListPage(
+    viewModel: MainViewModel = viewModel(factory = MainViewModelFactory)
+) {
+    val notes by viewModel.ideaNotes.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadNotes(NoteType.IDEA)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("💡 灵感") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { Timber.d("Add idea clicked") },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "添加灵感")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // 搜索框
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("搜索灵感...") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Search,
+                            contentDescription = "搜索"
+                        )
+                    },
+                    singleLine = true
+                )
+            }
+
+            // 灵感列表
+            items(
+                items = notes,
+                key = { it.id }
+            ) { note ->
+                IdeaCard(note = note as IdeaNote)
+            }
+        }
+    }
+}
+
+/**
+ * 灵感卡片 - 黄色主题
+ */
+@Composable
+fun IdeaCard(note: IdeaNote) {
+    val colorVariants = listOf(
+        Brush.horizontalGradient(
+            colors = listOf(Yellow100, Yellow200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Orange100, Orange200)
+        ),
+        Brush.horizontalGradient(
+            colors = listOf(Yellow200, Yellow300)
+        )
+    )
+
+    val randomGradient = colorVariants[note.id.hashCode().mod(colorVariants.size)]
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(randomGradient)
+                .padding(16.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // 内容
+                Text(
+                    text = note.content,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+
+                // 场景标签
+                if (note.scene != null) {
+                    Surface(
+                        color = Yellow500.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text(
+                            text = "📍 ${note.scene}",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+
+                // 底部信息
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = formatTime(note.createdAt),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Gray600
+                    )
+
+                    // 剪切板来源数量
+                    if (note.clipboardSources.isNotEmpty()) {
+                        Text(
+                            text = "📋 ${note.clipboardSources.size}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Gray600
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun formatTime(dateTime: LocalDateTime): String {
+    val now = LocalDateTime.now()
+    return when {
+        dateTime.toLocalDate() == now.toLocalDate() -> {
+            "今天 ${dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))}"
+        }
+        dateTime.toLocalDate() == now.minusDays(1).toLocalDate() -> "昨天"
+        else -> dateTime.format(DateTimeFormatter.ofPattern("MM-dd"))
+    }
+}

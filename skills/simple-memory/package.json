@@ -1,0 +1,15 @@
+{
+  "name": "simple-memory",
+  "version": "1.0.0",
+  "description": "极简记忆系统 - 专注单点，做到极致",
+  "main": "memory.js",
+  "scripts": {
+    "test": "node memory.js test",
+    "server": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "author": "orange",
+  "license": "MIT"
+}

@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/xml_data_extraction_rules.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/drawable_ic_idea.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/drawable/ic_idea.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/drawable_ic_insight.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/drawable/ic_insight.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/layout_activity_transparent.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/layout/activity_transparent.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/layout_dialog_type_selection.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/layout/dialog_type_selection.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/xml_backup_rules.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/drawable_ic_todo.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/drawable/ic_todo.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/layout_dialog_type_selection_test.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/layout/dialog_type_selection_test.xml"
+    },
+    {
+        "merged": "com.fleetingnotes.app-merged_res-70:/drawable_ic_settings.xml.flat",
+        "source": "com.fleetingnotes.app-main-72:/drawable/ic_settings.xml"
+    }
+]

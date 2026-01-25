@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>闪念笔记 - 待办对话框</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            padding: 12px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 对话框 */
+        .dialog {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            width: calc(100% - 24px);
+            max-height: calc(100% - 24px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* 顶部栏 */
+        .dialog-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .dialog-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .dialog-title .icon {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 内容区 */
+        .dialog-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 16px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 任务输入区 */
+        .task-section {
+            margin-bottom: 12px;
+        }
+
+        .task-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .input-textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-textarea:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .input-textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        /* 时间选择区 */
+        .time-section {
+            margin-bottom: 12px;
+        }
+
+        .time-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .time-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .time-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 4px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .time-btn.active {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .time-btn .icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .time-btn .label {
+            font-size: 9px;
+            color: #6b7280;
+        }
+
+        /* 时间详情 */
+        .time-detail {
+            padding: 8px 10px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .time-detail.show {
+            display: block;
+        }
+
+        .time-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .time-detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .time-label {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .time-value {
+            font-size: 11px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .time-select {
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #374151;
+        }
+
+        /* 优先级选择 */
+        .priority-selector {
+            display: flex;
+            gap: 6px;
+        }
+
+        .priority-btn {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .priority-btn:hover {
+            background: #f9fafb;
+        }
+
+        .priority-btn.active {
+            border-color: #ef4444;
+            font-weight: 600;
+        }
+
+        .priority-btn.high.active {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-btn.medium.active {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-btn.low.active {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .toolbar-left {
+            display: flex;
+            gap: 6px;
+        }
+
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 8px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .toolbar-btn.active {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        .toolbar-btn .icon {
+            font-size: 12px;
+        }
+
+        .clipboard-count {
+            min-width: 16px;
+            height: 16px;
+            background: #ef4444;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .toolbar-btn.has-clipboard .clipboard-count {
+            background: #10b981;
+        }
+
+        /* 悬浮窗状态 */
+        .floating-status {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            color: #6b7280;
+            padding: 3px 6px;
+            background: #fee2e2;
+            border-radius: 6px;
+        }
+
+        .floating-status .icon {
+            font-size: 11px;
+        }
+
+        .floating-status.ready {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* 标签栏 */
+        .tags-section {
+            padding: 6px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .tags-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tags-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 24px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 6px;
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #991b1b;
+        }
+
+        .tag-text {
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tag-remove {
+            width: 14px;
+            height: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 9px;
+            transition: all 0.2s ease;
+        }
+
+        .tag-remove:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tag-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 11px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .tag-input:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .tag-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .tags-hint {
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        /* 智能提示 */
+        .smart-hint {
+            padding: 6px 10px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        .smart-hint.show {
+            display: block;
+        }
+
+        .smart-hint .hint-content {
+            font-size: 11px;
+            color: #991b1b;
+            line-height: 1.4;
+        }
+
+        .smart-hint .hint-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .hint-btn {
+            padding: 4px 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hint-btn:hover {
+            background: #dc2626;
+        }
+
+        .hint-btn.secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .hint-btn.secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* 底部按钮区 */
+        .dialog-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 外部提示 */
+        .external-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* 滚动条美化 */
+        .dialog-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .dialog-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .dialog-content::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+
+        .dialog-content::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- 对话框 -->
+        <div class="dialog">
+            <!-- 顶部栏 -->
+            <div class="dialog-header">
+                <div class="dialog-title">
+                    <span class="icon">⚡</span>
+                    <span>待办</span>
+                </div>
+                <div class="close-btn">✕</div>
+            </div>
+
+            <!-- 内容区 -->
+            <div class="dialog-content">
+                <!-- 任务输入区 -->
+                <div class="task-section">
+                    <div class="task-section-title">要做什么？</div>
+                    <textarea
+                        class="input-textarea"
+                        id="taskTextarea"
+                        placeholder="在这里记录你的待办事项..."
+                    ></textarea>
+                </div>
+
+                <!-- 智能提示 -->
+                <div class="smart-hint" id="smartHint">
+                    <div class="hint-content" id="hintContent">
+                        💓 检测到多行内容，是否生成为多个待办？
+                    </div>
+                    <div class="hint-actions" id="hintActions">
+                        <button class="hint-btn" id="hintConfirm">生成3条</button>
+                        <button class="hint-btn secondary" id="hintIgnore">合并为1条</button>
+                    </div>
+                </div>
+
+                <!-- 时间选择区 -->
+                <div class="time-section">
+                    <div class="time-section-title">什么时候做？（可选）</div>
+
+                    <!-- 快速时间按钮 -->
+                    <div class="time-buttons">
+                        <div class="time-btn" data-time="today">
+                            <span class="icon">☀️</span>
+                            <span class="label">今天</span>
+                        </div>
+                        <div class="time-btn" data-time="tomorrow">
+                            <span class="icon">📅</span>
+                            <span class="label">明天</span>
+                        </div>
+                        <div class="time-btn" data-time="date">
+                            <span class="icon">📆</span>
+                            <span class="label">选日期</span>
+                        </div>
+                        <div class="time-btn" data-time="time">
+                            <span class="icon">⏰</span>
+                            <span class="label">提醒时间</span>
+                        </div>
+                    </div>
+
+                    <!-- 时间详情 -->
+                    <div class="time-detail" id="timeDetail">
+                        <div class="time-detail-row">
+                            <span class="time-label">📅 截止：</span>
+                            <span class="time-value" id="dueDateValue">2024-01-16 (今天)</span>
+                        </div>
+                        <div class="time-detail-row">
+                            <span class="time-label">⚡ 优先级：</span>
+                            <div class="priority-selector" id="prioritySelector">
+                                <button class="priority-btn high" data-priority="high">高</button>
+                                <button class="priority-btn medium active" data-priority="medium">中</button>
+                                <button class="priority-btn low" data-priority="low">低</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工具栏 -->
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <!-- 剪切板按钮 -->
+                        <div class="toolbar-btn" id="clipboardBtn">
+                            <span class="icon">📋</span>
+                            <span class="clipboard-count" id="clipboardCount">0</span>
+                        </div>
+
+                        <!-- 标签按钮 -->
+                        <div class="toolbar-btn" id="tagsBtn">
+                            <span class="icon">🏷️</span>
+                            <span>标签</span>
+                            <span class="clipboard-count" id="tagsCount">0</span>
+                        </div>
+                    </div>
+
+                    <!-- 悬浮窗状态 -->
+                    <div class="floating-status" id="floatingStatus">
+                        <span class="icon">💓</span>
+                        <span>可粘贴</span>
+                    </div>
+                </div>
+
+                <!-- 标签栏 -->
+                <div class="tags-section" id="tagsSection" style="display: none;">
+                    <div class="tags-input-wrapper">
+                        <!-- 已添加的标签 -->
+                        <div class="tags-display" id="tagsDisplay">
+                            <!-- 标签会动态添加到这里 -->
+                        </div>
+
+                        <!-- 标签输入框 -->
+                        <input
+                            type="text"
+                            class="tag-input"
+                            id="tagInput"
+                            placeholder="输入标签，按回车添加"
+                        />
+
+                        <!-- 提示 -->
+                        <div class="tags-hint">
+                            💡 提示：用空格或逗号分隔多个标签，如：工作 重要 项目
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部按钮 -->
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" id="continueBtn">继续记录</button>
+                <button class="btn btn-primary" id="saveBtn">保存并关闭</button>
+            </div>
+        </div>
+
+        <!-- 外部提示 -->
+        <div class="external-hint">模拟智能识别时间功能</div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const taskTextarea = document.getElementById('taskTextarea');
+        const timeBtns = document.querySelectorAll('.time-btn');
+        const timeDetail = document.getElementById('timeDetail');
+        const dueDateValue = document.getElementById('dueDateValue');
+        const priorityBtns = document.querySelectorAll('.priority-btn');
+        const clipboardBtn = document.getElementById('clipboardBtn');
+        const clipboardCount = document.getElementById('clipboardCount');
+        const floatingStatus = document.getElementById('floatingStatus');
+        const tagsBtn = document.getElementById('tagsBtn');
+        const tagsSection = document.getElementById('tagsSection');
+        const tagsDisplay = document.getElementById('tagsDisplay');
+        const tagInput = document.getElementById('tagInput');
+        const tagsCount = document.getElementById('tagsCount');
+        const saveBtn = document.getElementById('saveBtn');
+        const continueBtn = document.getElementById('continueBtn');
+        const toast = document.getElementById('toast');
+        const closeBtn = document.querySelector('.close-btn');
+        const smartHint = document.getElementById('smartHint');
+        const hintContent = document.getElementById('hintContent');
+        const hintActions = document.getElementById('hintActions');
+        const hintConfirm = document.getElementById('hintConfirm');
+        const hintIgnore = document.getElementById('hintIgnore');
+
+        let selectedTime = null;
+        let selectedPriority = 'medium';
+        let clipboardPasted = 0;
+        let tags = [];
+        let demoContent = [
+            "记得买牛奶",
+            "完成项目报告",
+            "给客户打电话",
+            "预约牙医"
+        ];
+        let demoIndex = 0;
+
+        // 时间按钮点击
+        timeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const time = btn.dataset.time;
+
+                // 切换激活状态
+                timeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                selectedTime = time;
+
+                // 显示时间详情
+                if (time === 'date' || time === 'time') {
+                    showToast(`📆 选择${btn.querySelector('.label').textContent}（演示）`);
+                } else {
+                    updateDueDate(time);
+                    timeDetail.classList.add('show');
+                }
+            });
+        });
+
+        // 更新截止日期显示
+        function updateDueDate(time) {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const dateMap = {
+                today: today,
+                tomorrow: tomorrow
+            };
+
+            const date = dateMap[time];
+            const dateStr = date.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' });
+            const label = time === 'today' ? '(今天)' : '(明天)';
+
+            dueDateValue.textContent = `${dateStr} ${label}`;
+        }
+
+        // 优先级选择
+        priorityBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const priority = btn.dataset.priority;
+
+                priorityBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                selectedPriority = priority;
+                showToast(`⚡ 优先级：${btn.textContent}`);
+            });
+        });
+
+        // 任务输入监听（智能识别）
+        taskTextarea.addEventListener('input', () => {
+            const value = taskTextarea.value.trim();
+
+            // 识别多行内容
+            const lines = value.split('\n').filter(line => line.trim().length > 0);
+            if (lines.length >= 2) {
+                showSmartHint(`💓 检测到 ${lines.length} 行内容，是否生成为 ${lines.length} 个待办？`, () => {
+                    // 模拟生成多个待办
+                    showToast(`⚡ 已生成 ${lines.length} 条待办`);
+                    hideSmartHint();
+                });
+            }
+            // 识别关键词
+            else if (value.includes('记得') || value.includes('别忘了')) {
+                showSmartHint('💓 检测到关键词"记得"，建议设为"今天"？', () => {
+                    selectTime('today');
+                    hideSmartHint();
+                });
+            }
+            else if (value.includes('明天')) {
+                showSmartHint('💓 检测到"明天"，自动设置时间？', () => {
+                    selectTime('tomorrow');
+                    hideSmartHint();
+                });
+            }
+            else {
+                hideSmartHint();
+            }
+        });
+
+        // 选择时间
+        function selectTime(time) {
+            const btn = document.querySelector(`.time-btn[data-time="${time}"]`);
+            if (btn) {
+                btn.click();
+            }
+        }
+
+        // 显示智能提示
+        function showSmartHint(message, onConfirm) {
+            hintContent.textContent = message;
+            smartHint.classList.add('show');
+
+            if (onConfirm) {
+                hintActions.style.display = 'flex';
+                hintConfirm.onclick = () => {
+                    onConfirm();
+                    hideSmartHint();
+                };
+                hintIgnore.onclick = () => {
+                    hideSmartHint();
+                };
+            } else {
+                hintActions.style.display = 'none';
+                setTimeout(hideSmartHint, 3000);
+            }
+        }
+
+        // 隐藏智能提示
+        function hideSmartHint() {
+            smartHint.classList.remove('show');
+        }
+
+        // 模拟剪切板粘贴
+        function simulatePaste() {
+            if (demoIndex < demoContent.length) {
+                const content = demoContent[demoIndex];
+                const currentContent = taskTextarea.value;
+
+                if (currentContent) {
+                    taskTextarea.value = currentContent + '\n' + content;
+                } else {
+                    taskTextarea.value = content;
+                }
+
+                taskTextarea.focus();
+                taskTextarea.setSelectionRange(taskTextarea.value.length, taskTextarea.value.length);
+
+                clipboardPasted++;
+                clipboardCount.textContent = clipboardPasted;
+                clipboardBtn.classList.add('has-clipboard');
+
+                // 更新悬浮窗状态
+                floatingStatus.classList.add('ready');
+                floatingStatus.innerHTML = '<span class="icon">✓</span><span>已添加</span>';
+
+                showToast(`📋 已添加第 ${clipboardPasted} 条内容`);
+
+                demoIndex++;
+
+                // 2秒后恢复悬浮窗状态
+                setTimeout(() => {
+                    floatingStatus.classList.remove('ready');
+                    floatingStatus.innerHTML = '<span class="icon">💓</span><span>可粘贴</span>';
+                }, 2000);
+            } else {
+                showToast('📋 演示内容已全部添加');
+            }
+        }
+
+        // 点击剪切板按钮
+        clipboardBtn.addEventListener('click', simulatePaste);
+
+        // 点击悬浮窗状态也触发粘贴
+        floatingStatus.addEventListener('click', simulatePaste);
+
+        // 标签功能
+        tagsBtn.addEventListener('click', () => {
+            tagsSection.style.display = tagsSection.style.display === 'none' ? 'block' : 'none';
+            if (tagsSection.style.display === 'block') {
+                tagsBtn.classList.add('active');
+                tagInput.focus();
+            } else {
+                tagsBtn.classList.remove('active');
+            }
+        });
+
+        // 添加标签
+        tagInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const input = tagInput.value.trim();
+                if (input) {
+                    const newTags = input
+                        .replace(/#/g, '')
+                        .split(/[,\s，]+/)
+                        .filter(tag => tag.trim().length > 0)
+                        .map(tag => tag.trim());
+
+                    newTags.forEach(tag => {
+                        if (!tags.includes(tag)) {
+                            tags.push(tag);
+                            addTagToDisplay(tag);
+                        }
+                    });
+
+                    tagInput.value = '';
+                    updateTagsCount();
+                }
+            }
+        });
+
+        // 添加标签到显示区
+        function addTagToDisplay(tag) {
+            const tagEl = document.createElement('div');
+            tagEl.className = 'tag';
+            tagEl.innerHTML = `
+                <span class="tag-text">#${tag}</span>
+                <span class="tag-remove" data-tag="${tag}">✕</span>
+            `;
+            tagsDisplay.appendChild(tagEl);
+        }
+
+        // 删除标签
+        tagsDisplay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-remove')) {
+                const tagToRemove = e.target.dataset.tag;
+                tags = tags.filter(t => t !== tagToRemove);
+                e.target.parentElement.remove();
+                updateTagsCount();
+                showToast(`🏷️ 已删除标签 #${tagToRemove}`);
+            }
+        });
+
+        // 更新标签计数
+        function updateTagsCount() {
+            tagsCount.textContent = tags.length;
+            if (tags.length > 0) {
+                tagsBtn.classList.add('active');
+            } else {
+                tagsBtn.classList.remove('active');
+            }
+        }
+
+        // 保存并关闭
+        saveBtn.addEventListener('click', () => {
+            const content = taskTextarea.value.trim();
+            if (content) {
+                const lines = content.split('\n').filter(line => line.trim().length > 0);
+                const count = lines.length;
+                const timeInfo = selectedTime ? ` (${document.querySelector('.time-btn.active .label').textContent})` : '';
+                const priorityInfo = ` (${document.querySelector('.priority-btn.active').textContent}优先级)`;
+
+                if (count > 1) {
+                    showToast(`⚡ 已保存 ${count} 条待办${timeInfo}`);
+                } else {
+                    showToast(`⚡ 已保存到待办${timeInfo}${priorityInfo}`);
+                }
+
+                setTimeout(() => {
+                    resetDialog();
+                }, 1500);
+            } else {
+                showToast('⚠️ 请输入内容');
+            }
+        });
+
+        // 继续记录
+        continueBtn.addEventListener('click', () => {
+            const content = taskTextarea.value.trim();
+            if (content) {
+                showToast('⚡ 已保存，可继续记录');
+                taskTextarea.value = '';
+                clipboardPasted = 0;
+                clipboardCount.textContent = '0';
+                clipboardBtn.classList.remove('has-clipboard');
+                demoIndex = 0;
+            } else {
+                showToast('⚠️ 请输入内容');
+            }
+        });
+
+        // 关闭按钮
+        closeBtn.addEventListener('click', () => {
+            if (taskTextarea.value.trim()) {
+                if (confirm('内容未保存，确定关闭吗？')) {
+                    resetDialog();
+                }
+            } else {
+                resetDialog();
+            }
+        });
+
+        // 重置对话框
+        function resetDialog() {
+            taskTextarea.value = '';
+            timeBtns.forEach(b => b.classList.remove('active'));
+            timeDetail.classList.remove('show');
+            priorityBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('.priority-btn.medium').classList.add('active');
+            selectedTime = null;
+            selectedPriority = 'medium';
+            clipboardPasted = 0;
+            clipboardCount.textContent = '0';
+            clipboardBtn.classList.remove('has-clipboard');
+            demoIndex = 0;
+            tags = [];
+            tagsDisplay.innerHTML = '';
+            tagsCount.textContent = '0';
+            tagsBtn.classList.remove('active');
+            tagsSection.style.display = 'none';
+            hideSmartHint();
+        }
+
+        // 显示 Toast
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                saveBtn.click();
+            }
+            if (e.key === 'Escape') {
+                closeBtn.click();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+                continueBtn.click();
+            }
+        });
+
+        // 自动聚焦任务输入框
+        taskTextarea.focus();
+    </script>
+</body>
+</html>

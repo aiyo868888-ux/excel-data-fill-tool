@@ -1,0 +1,370 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "qq-music-player",
+      "x": 0,
+      "y": 0,
+      "name": "QQ音乐播放页",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAFAFA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "status-bar",
+          "x": 0,
+          "y": 0,
+          "name": "状态栏",
+          "fill": "#FAFAFA",
+          "width": 393,
+          "height": 44
+        },
+        {
+          "type": "rectangle",
+          "id": "nav-bar",
+          "x": 0,
+          "y": 44,
+          "name": "导航栏",
+          "fill": "#FAFAFA",
+          "width": 393,
+          "height": 44,
+          "stroke": {
+            "align": "inside",
+            "thickness": 0.5,
+            "fill": "#E5E5E5"
+          }
+        },
+        {
+          "type": "text",
+          "id": "nav-title",
+          "x": 196.5,
+          "y": 66,
+          "name": "导航标题",
+          "fill": "#000000",
+          "content": "正在播放",
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "600",
+          "textAlign": "center"
+        },
+        {
+          "type": "text",
+          "id": "nav-back",
+          "x": 16,
+          "y": 62,
+          "name": "返回",
+          "fill": "#007AFF",
+          "content": "<",
+          "fontFamily": "Inter",
+          "fontSize": 24
+        },
+        {
+          "type": "text",
+          "id": "nav-more",
+          "x": 361,
+          "y": 62,
+          "name": "更多",
+          "fill": "#007AFF",
+          "content": "⋯",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "textAlign": "right"
+        },
+        {
+          "type": "rectangle",
+          "id": "album-cover-bg",
+          "x": 56.5,
+          "y": 120,
+          "name": "专辑封面背景",
+          "fill": "#FFFFFF",
+          "width": 280,
+          "height": 280,
+          "cornerRadius": 12,
+          "effects": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#000000",
+              "offset": {
+                "x": 0,
+                "y": 8
+              },
+              "blur": 32,
+              "fill": "#000000",
+              "a": 0.12
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "album-icon",
+          "x": 196.5,
+          "y": 250,
+          "name": "专辑图标",
+          "fill": "#C7C7CC",
+          "content": "🎵",
+          "fontSize": 72,
+          "textAlign": "center"
+        },
+        {
+          "type": "text",
+          "id": "song-title",
+          "x": 196.5,
+          "y": 440,
+          "name": "歌曲标题",
+          "fill": "#000000",
+          "content": "告白气球",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "700",
+          "textAlign": "center"
+        },
+        {
+          "type": "text",
+          "id": "artist-name",
+          "x": 196.5,
+          "y": 472,
+          "name": "歌手名",
+          "fill": "#8E8E93",
+          "content": "周杰伦 · 床边故事",
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "textAlign": "center"
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-bg",
+          "x": 32,
+          "y": 520,
+          "name": "进度条背景",
+          "fill": "#E5E5E5",
+          "width": 329,
+          "height": 4,
+          "cornerRadius": 2
+        },
+        {
+          "type": "rectangle",
+          "id": "progress-fill",
+          "x": 32,
+          "y": 520,
+          "name": "进度条填充",
+          "fill": "#FA233B",
+          "width": 140,
+          "height": 4,
+          "cornerRadius": 2
+        },
+        {
+          "type": "ellipse",
+          "id": "progress-dot",
+          "cx": 172,
+          "cy": 522,
+          "name": "进度点",
+          "fill": "#FA233B",
+          "width": 8,
+          "height": 8,
+          "effects": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#FA233B",
+              "offset": {
+                "x": 0,
+                "y": 2
+              },
+              "blur": 8,
+              "a": 0.3
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "time-current",
+          "x": 32,
+          "y": 538,
+          "name": "当前时间",
+          "fill": "#8E8E93",
+          "content": "1:35",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "time-total",
+          "x": 361,
+          "y": 538,
+          "name": "总时间",
+          "fill": "#8E8E93",
+          "content": "3:45",
+          "fontFamily": "Inter",
+          "fontSize": 11,
+          "fontWeight": "500",
+          "textAlign": "right"
+        },
+        {
+          "type": "text",
+          "id": "btn-prev",
+          "x": 80,
+          "y": 585,
+          "name": "上一曲",
+          "fill": "#000000",
+          "content": "⏮",
+          "fontSize": 28
+        },
+        {
+          "type": "ellipse",
+          "id": "btn-play-bg",
+          "cx": 196.5,
+          "cy": 612,
+          "name": "播放按钮背景",
+          "fill": "#FA233B",
+          "width": 64,
+          "height": 64,
+          "effects": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#FA233B",
+              "offset": {
+                "x": 0,
+                "y": 4
+              },
+              "blur": 16,
+              "a": 0.4
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "btn-play",
+          "x": 196.5,
+          "y": 625,
+          "name": "播放图标",
+          "fill": "#FFFFFF",
+          "content": "▶",
+          "fontSize": 24,
+          "textAlign": "center"
+        },
+        {
+          "type": "text",
+          "id": "btn-next",
+          "x": 277,
+          "y": 585,
+          "name": "下一曲",
+          "fill": "#000000",
+          "content": "⏭",
+          "fontSize": 28
+        },
+        {
+          "type": "text",
+          "id": "action-loop",
+          "x": 56,
+          "y": 665,
+          "name": "循环",
+          "fill": "#8E8E93",
+          "content": "🔁",
+          "fontSize": 24
+        },
+        {
+          "type": "text",
+          "id": "action-shuffle",
+          "x": 130,
+          "y": 665,
+          "name": "随机",
+          "fill": "#8E8E93",
+          "content": "🔀",
+          "fontSize": 24
+        },
+        {
+          "type": "text",
+          "id": "action-queue",
+          "x": 263,
+          "y": 665,
+          "name": "列表",
+          "fill": "#8E8E93",
+          "content": "📋",
+          "fontSize": 24
+        },
+        {
+          "type": "text",
+          "id": "action-like",
+          "x": 337,
+          "y": 665,
+          "name": "喜欢",
+          "fill": "#FA233B",
+          "content": "❤",
+          "fontSize": 24
+        },
+        {
+          "type": "rectangle",
+          "id": "tab-bar",
+          "x": 0,
+          "y": 769,
+          "name": "标签栏",
+          "fill": "#F9F9F9",
+          "width": 393,
+          "height": 83,
+          "stroke": {
+            "align": "inside",
+            "thickness": 0.5,
+            "fill": "#E5E5E5"
+          }
+        },
+        {
+          "type": "text",
+          "id": "tab-home",
+          "x": 45,
+          "y": 795,
+          "name": "首页",
+          "fill": "#8E8E93",
+          "content": "🏠",
+          "fontSize": 22
+        },
+        {
+          "type": "text",
+          "id": "tab-discover",
+          "x": 117,
+          "y": 795,
+          "name": "发现",
+          "fill": "#8E8E93",
+          "content": "🔍",
+          "fontSize": 22
+        },
+        {
+          "type": "text",
+          "id": "tab-library",
+          "x": 189,
+          "y": 795,
+          "name": "乐库",
+          "fill": "#8E8E93",
+          "content": "📚",
+          "fontSize": 22
+        },
+        {
+          "type": "text",
+          "id": "tab-profile",
+          "x": 261,
+          "y": 795,
+          "name": "我的",
+          "fill": "#8E8E93",
+          "content": "👤",
+          "fontSize": 22
+        },
+        {
+          "type": "text",
+          "id": "tab-playing",
+          "x": 333,
+          "y": 795,
+          "name": "播放中",
+          "fill": "#FA233B",
+          "content": "🎵",
+          "fontSize": 22
+        }
+      ]
+    }
+  ]
+}

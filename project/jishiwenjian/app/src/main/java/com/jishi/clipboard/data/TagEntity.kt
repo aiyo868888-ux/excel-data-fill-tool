@@ -1,14 +1,20 @@
 package com.jishi.clipboard.data
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "tags")
+/**
+ * 剪贴板-标签关联表（多对多）
+ */
+@Entity(
+    tableName = "clipboard_tag_relations",
+    indices = [Index(value = ["clipboardId"]), Index(value = ["tagDefinitionId"])]
+)
 data class TagEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val name: String,
     val clipboardId: Long,
-    val color: String = "#4ECDC4",
+    val tagDefinitionId: Long,
     val createdAt: Long = System.currentTimeMillis()
 )
