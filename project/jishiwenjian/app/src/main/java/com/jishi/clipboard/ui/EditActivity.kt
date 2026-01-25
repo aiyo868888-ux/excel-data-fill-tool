@@ -18,6 +18,9 @@ import java.lang.ref.WeakReference
 @AndroidEntryPoint
 class EditActivity : AppCompatActivity() {
 
+    // 使用成员变量而不是局部变量，确保闭包能正确访问
+    private var isDismissedBySave = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transparent) // 空布局
@@ -63,18 +66,31 @@ class EditActivity : AppCompatActivity() {
             initialContent = ""
         )
 
-        var isDismissedBySave = false
+        // 重置标志
+        isDismissedBySave = false
 
         dialog.setOnSaveListener { _, _ ->
             // 标记为保存引起的关闭
             isDismissedBySave = true
-            // 保存成功后关闭 Activity
-            finish()
+
+            // 先关闭对话框
+            try {
+                dialog.dismissAllowingStateLoss()
+            } catch (e: Exception) {
+                // 忽略异常
+            }
+
+            // 然后关闭 Activity（延迟一小段时间确保 dismiss 完成）
+            Handler(Looper.getMainLooper()).postDelayed({
+                finish()
+            }, 50)
         }
 
         dialog.setOnDismissListener {
-            // 只有在非保存情况下才关闭 Activity
+            // 清除对话框引用
             DialogManager.clearCurrentEditDialog()
+
+            // 只有在非保存情况下才关闭 Activity
             if (!isDismissedBySave) {
                 finish()
             }

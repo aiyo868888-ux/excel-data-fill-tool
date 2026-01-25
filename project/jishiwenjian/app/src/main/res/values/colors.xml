@@ -1,27 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 主色调 - 优雅的深靛蓝色 -->
+    <!-- ==================== 灵感类型颜色（黄色系） ==================== -->
+    <color name="idea_primary">#F59E0B</color>
+    <color name="idea_background_start">#FFFBEB</color>
+    <color name="idea_background_end">#FEF3C7</color>
+    <color name="idea_border">#FDE68A</color>
+    <color name="idea_text">#78350F</color>
+    <color name="idea_tag_background">#FFFFFF</color>
+    <color name="idea_tag_text">#92400E</color>
+
+    <!-- 灵感变体2 -->
+    <color name="idea_v2_start">#FEF9C3</color>
+    <color name="idea_v2_end">#FEF08A</color>
+    <color name="idea_v2_border">#FACC15</color>
+
+    <!-- 灵感变体3 -->
+    <color name="idea_v3_start">#FFEDD5</color>
+    <color name="idea_v3_end">#FED7AA</color>
+    <color name="idea_v3_border">#FDBA74</color>
+
+    <!-- ==================== 启发类型颜色（蓝色系） ==================== -->
+    <color name="insight_primary">#3B82F6</color>
+    <color name="insight_background_start">#EFF6FF</color>
+    <color name="insight_background_end">#DBEAFE</color>
+    <color name="insight_border">#BFDBFE</color>
+    <color name="insight_text">#1E40AF</color>
+    <color name="insight_tag_background">#FFFFFF</color>
+    <color name="insight_tag_text">#1E40AF</color>
+
+    <!-- 启发变体2 -->
+    <color name="insight_v2_start">#E0E7FF</color>
+    <color name="insight_v2_end">#C7D2FE</color>
+    <color name="insight_v2_border">#A5B4FC</color>
+
+    <!-- 启发变体3 -->
+    <color name="insight_v3_start">#F3E8FF</color>
+    <color name="insight_v3_end">#E9D5FF</color>
+    <color name="insight_v3_border">#D8B4FE</color>
+
+    <!-- ==================== 待办类型颜色（红色系） ==================== -->
+    <color name="todo_primary">#EF4444</color>
+    <color name="todo_background_start">#FEF2F2</color>
+    <color name="todo_background_end">#FEE2E2</color>
+    <color name="todo_border">#FECACA</color>
+    <color name="todo_text">#991B1B</color>
+    <color name="todo_tag_background">#FFFFFF</color>
+    <color name="todo_tag_text">#991B1B</color>
+
+    <!-- 待办变体2 -->
+    <color name="todo_v2_start">#FCE7F3</color>
+    <color name="todo_v2_end">#FBCFE8</color>
+    <color name="todo_v2_border">#F9A8D4</color>
+
+    <!-- 待办变体3 -->
+    <color name="todo_v3_start">#FFE4E6</color>
+    <color name="todo_v3_end">#FECDD3</color>
+    <color name="todo_v3_border">#FDA4AF</color>
+
+    <!-- 待办优先级 -->
+    <color name="todo_priority_high">#DC2626</color>
+    <color name="todo_priority_medium">#D97706</color>
+    <color name="todo_priority_low">#059669</color>
+
+    <!-- ==================== 设置页面颜色 ==================== -->
+    <color name="settings_primary">#6B7280</color>
+    <color name="settings_background">#F3F4F6</color>
+    <color name="settings_border">#E5E7EB</color>
+
+    <!-- 数据统计卡片渐变 -->
+    <color name="stats_gradient_start">#667EEA</color>
+    <color name="stats_gradient_end">#764BA2</color>
+
+    <!-- ==================== 通用颜色 ==================== -->
+    <!-- 主色调（默认靛蓝） -->
     <color name="primary">#5C6BC0</color>
     <color name="primary_dark">#3F51B5</color>
     <color name="primary_light">#E8EAF6</color>
 
-    <!-- 强调色 - 温暖的橙色 -->
-    <color name="accent">#FF7043</color>
-    <color name="accent_light">#FF8A65</color>
-
     <!-- 背景色 -->
-    <color name="background">#FAFAFA</color>
+    <color name="background">#FFFFFF</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F5F5F5</color>
+    <color name="surface_variant">#F3F4F6</color>
 
     <!-- 文本色 -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_hint">#9E9E9E</color>
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
 
     <!-- 分割线 -->
-    <color name="divider">#E0E0E0</color>
-    <color name="border">#E0E0E0</color>
+    <color name="divider">#E5E7EB</color>
+    <color name="border">#E5E7EB</color>
 
     <!-- 状态色 -->
     <color name="success">#4CAF50</color>
@@ -29,9 +97,17 @@
     <color name="error">#F44336</color>
 
     <!-- 卡片阴影 -->
-    <color name="shadow_light">#1A000000</color>
-    <color name="shadow_medium">#26000000</color>
-    <color name="shadow_dark">#42000000</color>
+    <color name="shadow_light">#0D000000</color>
+    <color name="shadow_medium">#1A000000</color>
+
+    <!-- 底部导航 -->
+    <color name="nav_active_idea">#FEF3C7</color>
+    <color name="nav_active_insight">#DBEAFE</color>
+    <color name="nav_active_todo">#FEE2E2</color>
+    <color name="nav_active_settings">#F3F4F6</color>
+
+    <!-- 兼容旧颜色 -->
+    <color name="accent_light">#FF8A65</color>
 
     <!-- 基础色 -->
     <color name="black">#FF000000</color>

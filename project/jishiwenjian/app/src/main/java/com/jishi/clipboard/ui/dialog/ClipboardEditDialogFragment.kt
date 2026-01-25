@@ -509,8 +509,8 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                 reminderDialog.setOnConfirmListener {
                     android.util.Log.d("ClipboardEdit", "用户确认提醒（待办模式）")
                     Toast.makeText(requireContext(), "✅ 已保存并设置提醒", Toast.LENGTH_SHORT).show()
+                    // 触发保存监听器（由 EditActivity 负责 dismiss 和 finish）
                     onSaveListener?.invoke(content, listOf())
-                    dismiss()
                 }
                 android.util.Log.d("ClipboardEdit", ">>> 监听器设置完成")
 
@@ -583,8 +583,8 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                     reminderDialog.setOnConfirmListener {
                         android.util.Log.d("ClipboardEdit", "用户确认提醒")
                         Toast.makeText(requireContext(), "✅ 已保存并设置提醒", Toast.LENGTH_SHORT).show()
+                        // 触发保存监听器（由 EditActivity 负责 dismiss 和 finish）
                         onSaveListener?.invoke(content, tags)
-                        dismiss()
                     }
                     android.util.Log.d("ClipboardEdit", ">>> 监听器设置完成")
 
@@ -615,17 +615,17 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                     android.util.Log.d("ClipboardEdit", "执行更新操作")
                     clipboardRepository.updateClipboard(editClipboardId, content, tags)
                     Toast.makeText(requireContext(), "✅ 已更新", Toast.LENGTH_SHORT).show()
-                    onSaveListener?.invoke(content, tags)
                 } else {
                     android.util.Log.d("ClipboardEdit", "执行新增操作")
                     clipboardRepository.saveClipboard(content, tags)
                     Toast.makeText(requireContext(), "✅ 已保存", Toast.LENGTH_SHORT).show()
-                    onSaveListener?.invoke(content, tags)
                 }
 
-                // ✅ 保存后清空所有状态并关闭对话框
+                // ✅ 保存后清空所有状态
                 DialogManager.clearState()
-                dismiss()
+
+                // 触发保存监听器（由 EditActivity 负责 dismiss 和 finish）
+                onSaveListener?.invoke(content, tags)
             } catch (e: Exception) {
                 android.util.Log.e("ClipboardEdit", "保存失败", e)
                 Timber.e(e, "保存失败")

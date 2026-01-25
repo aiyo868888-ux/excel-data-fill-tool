@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.jishi.clipboard.data.ClipboardEntity
 import com.jishi.clipboard.databinding.ItemClipboardBinding
+import com.jishi.clipboard.utils.CardStyleHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
  * 剪贴板列表适配器
+ * 支持卡片式样式，根据内容类型自动应用颜色
  */
 class ClipboardAdapter(
     private val onDeleteClick: (ClipboardEntity) -> Unit,
@@ -40,6 +42,9 @@ class ClipboardAdapter(
         fun bind(item: ClipboardEntity) {
             binding.contentText.text = item.content
             binding.timeText.text = formatTime(item.createdAt)
+
+            // 应用卡片样式（根据内容类型）
+            CardStyleHelper.setCardStyle(binding.root as com.google.android.material.card.MaterialCardView, item)
 
             // 点击整个卡片跳转到详情页
             binding.root.setOnClickListener {
