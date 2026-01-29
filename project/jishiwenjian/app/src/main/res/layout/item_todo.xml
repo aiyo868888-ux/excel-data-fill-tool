@@ -1,51 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 待办列表项布局 - 修复版 -->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="4dp"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="8dp">
+    android:layout_marginHorizontal="@dimen/card_margin_h"
+    android:layout_marginVertical="@dimen/card_margin_v"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="@dimen/corner_radius_card"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/card_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:paddingStart="0dp"
+        android:paddingEnd="@dimen/card_padding"
+        android:paddingTop="@dimen/card_padding"
+        android:paddingBottom="@dimen/card_padding">
+
+        <!-- 左侧色条 -->
+        <View
+            android:id="@+id/indicatorView"
+            android:layout_width="@dimen/card_indicator_width"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_card_indicator_todo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 优先级标志 -->
+        <TextView
+            android:id="@+id/priorityTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:text="🟡"
+            android:textSize="@dimen/text_size_content"
+            app:layout_constraintStart_toEndOf="@id/indicatorView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 复选框 -->
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/todoCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:buttonTint="@color/primary" />
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:buttonTint="@color/todo_primary"
+            app:layout_constraintStart_toEndOf="@id/priorityTextView"
+            app:layout_constraintTop_toTopOf="@id/priorityTextView"
+            app:layout_constraintBottom_toBottomOf="@id/priorityTextView" />
 
-        <!-- 任务描述 -->
+        <!-- 任务描述 - 使用 wrap_content 避免被挤压 -->
         <TextView
             android:id="@+id/taskTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:layout_marginEnd="@dimen/spacing_sm"
+            android:textSize="@dimen/text_size_content"
             android:textColor="@color/text_primary"
-            android:maxLines="2"
+            android:maxLines="3"
             android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
             app:layout_constraintStart_toEndOf="@id/todoCheckBox"
-            app:layout_constraintEnd_toStartOf="@id/deleteImageView"
-            app:layout_constraintTop_toTopOf="@id/todoCheckBox"
-            tools:text="开会" />
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"
+            app:layout_constraintTop_toTopOf="@id/priorityTextView"
+            app:layout_constraintBottom_toBottomOf="@id/priorityTextView"
+            tools:text="开会讨论项目进度" />
 
-        <!-- 标签 -->
+        <!-- 标签组 -->
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/tagsChipGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="@id/taskTextView"
-            app:layout_constraintEnd_toEndOf="@id/taskTextView"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintStart_toStartOf="@id/priorityTextView"
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"
             app:layout_constraintTop_toBottomOf="@id/taskTextView" />
 
         <!-- 时间信息 -->
@@ -53,24 +87,27 @@
             android:id="@+id/timeTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="12sp"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:textSize="@dimen/text_size_caption"
             android:textColor="@color/text_secondary"
-            android:drawablePadding="4dp"
-            app:layout_constraintStart_toStartOf="@id/tagsChipGroup"
-            app:layout_constraintEnd_toEndOf="@id/tagsChipGroup"
+            app:layout_constraintStart_toStartOf="@id/priorityTextView"
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"
             app:layout_constraintTop_toBottomOf="@id/tagsChipGroup"
             tools:text="明天 15:00" />
 
-        <!-- 删除按钮 -->
+        <!-- 删除按钮 - 放在最后确保 z-order 最高 -->
         <TextView
-            android:id="@+id/deleteImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/deleteButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:text="🗑️"
             android:textSize="20sp"
+            android:gravity="center"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="删除"
+            android:clickable="true"
+            android:focusable="true"
+            android:duplicateParentState="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
