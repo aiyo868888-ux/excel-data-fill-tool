@@ -35,11 +35,11 @@ class ClipboardMonitorService : Service() {
             lastContent = currentContent
             Timber.d("剪贴板内容已更新，开始保存")
 
-            // 保存到数据库
+            // 保存到数据库（默认类型：灵感）
             serviceScope.launch {
                 try {
-                    clipboardRepository.saveClipboard(currentContent, emptyList())
-                    Timber.d("剪贴板内容已保存")
+                    clipboardRepository.saveClipboard(currentContent, emptyList(), "灵感")
+                    Timber.d("剪贴板内容已保存（默认类型：灵感）")
                 } catch (e: Exception) {
                     Timber.e(e, "保存剪贴板内容失败")
                 }

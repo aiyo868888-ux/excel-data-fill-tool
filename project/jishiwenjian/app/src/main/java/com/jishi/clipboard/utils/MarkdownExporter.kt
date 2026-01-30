@@ -1,264 +1,208 @@
 package com.jishi.clipboard.utils
 
 import com.jishi.clipboard.data.ClipboardEntity
-import com.jishi.clipboard.data.TagDefinition
-import com.jishi.clipboard.repository.ClipboardRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.jishi.clipboard.util.ImageUtils
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
- * Markdown 导出器
- * 将剪贴板数据导出为格式化的 Markdown 文件
+ * Markdown 导出工具
+ * 将笔记数据转换为 Markdown 格式
  */
-class MarkdownExporter(
-    private val repository: ClipboardRepository
-) {
+object MarkdownExporter {
 
-    companion object {
-        private const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
-        private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
-    }
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     /**
-     * 导出所有剪贴板数据为 Markdown
-     * @param outputDir 输出目录
-     * @param includeTags 是否包含标签信息
-     * @param groupByDate 是否按日期分组
-     * @return 导出的文件路径
+     * 导出所有笔记为 Markdown 格式
+     * @param inspirations 灵感列表
+     * @param insights 启发列表
+     * @param todos 待办列表
+     * @param tagsMap 标签映射 (entityId -> tags)
+     * @param imageBaseDir 图片文件的基础目录(用于相对路径)
      */
-    suspend fun exportToMarkdown(
-        outputDir: File,
-        includeTags: Boolean = true,
-        groupByDate: Boolean = false
-    ): File = withContext(Dispatchers.IO) {
-
-        // 确保输出目录存在
-        if (!outputDir.exists()) {
-            outputDir.mkdirs()
-        }
-
-        // 获取所有数据
-        val allClipboards = repository.getAllClipboardsSync()
-        val tagDefinitions = repository.getAllTagDefinitionsSync()
-        val allTags = repository.getAllTagsSync()
-
-        // 生成文件名
-        val timestamp = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(Date())
-        val outputFile = File(outputDir, "clipboard_backup_$timestamp.md")
-
-        // 构建 Markdown 内容
-        val markdown = buildMarkdownContent(
-            allClipboards,
-            tagDefinitions,
-            allTags,
-            includeTags,
-            groupByDate
-        )
-
-        // 写入文件
-        outputFile.writeText(markdown, Charsets.UTF_8)
-
-        outputFile
-    }
-
-    /**
-     * 构建 Markdown 内容
-     */
-    private fun buildMarkdownContent(
-        clipboards: List<ClipboardEntity>,
-        tagDefinitions: List<TagDefinition>,
-        tags: List<com.jishi.clipboard.data.TagEntity>,
-        includeTags: Boolean,
-        groupByDate: Boolean
+    fun exportToMarkdown(
+        inspirations: List<ClipboardEntity>,
+        insights: List<ClipboardEntity>,
+        todos: List<ClipboardEntity>,
+        tagsMap: Map<Long, List<String>> = emptyMap(),
+        imageBaseDir: String? = null
     ): String {
-
-        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
         val sb = StringBuilder()
 
         // 标题
-        sb.appendLine("# 剪贴板备份")
+        sb.appendLine("# 及时记 - 笔记导出")
         sb.appendLine()
         sb.appendLine("**导出时间**: ${dateFormat.format(Date())}")
-        sb.appendLine("**记录数量**: ${clipboards.size} 条")
-        sb.appendLine("**标签数量**: ${tagDefinitions.size} 个")
         sb.appendLine()
         sb.appendLine("---")
         sb.appendLine()
 
-        // 按日期分组或按顺序导出
-        val groupedClipboards = if (groupByDate) {
-            clipboards.groupBy {
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(it.createdAt))
-            }
-        } else {
-            mapOf("全部" to clipboards)
-        }
-
-        // 遍历并导出每条记录
-        var index = 1
-        groupedClipboards.forEach { (group, items) ->
-
-            // 日期分组标题
-            if (groupByDate && group != "全部") {
+        // 灵感
+        if (inspirations.isNotEmpty()) {
+            sb.appendLine("## 📝 灵感")
+            sb.appendLine()
+            inspirations.forEach { entity ->
+                sb.appendLine(exportEntity(entity, "灵感", tagsMap[entity.id], imageBaseDir))
                 sb.appendLine()
-                sb.appendLine("## 📅 $group (${items.size}条)")
-                sb.appendLine()
-            }
-
-            items.forEach { clipboard ->
-                // 获取此剪贴板的标签
-                val clipboardTags = if (includeTags) {
-                    tags
-                        .filter { it.clipboardId == clipboard.id }
-                        .mapNotNull { tagRelation ->
-                            tagDefinitions.find { it.id == tagRelation.tagDefinitionId }
-                        }
-                } else {
-                    emptyList()
-                }
-
-                // 标题
-                val preview = clipboard.content.take(50).let {
-                    if (clipboard.content.length > 50) "$it..." else it
-                }
-                sb.appendLine("### $index. $preview")
-
-                // 元数据
-                sb.appendLine()
-                sb.appendLine("**创建时间**: ${dateFormat.format(Date(clipboard.createdAt))}")
-                sb.appendLine("**更新时间**: ${dateFormat.format(Date(clipboard.updatedAt))}")
-                sb.appendLine("**字符数**: ${clipboard.content.length}")
-
-                // 标签
-                if (includeTags && clipboardTags.isNotEmpty()) {
-                    val tagNames = clipboardTags.joinToString(", ") { "#${it.name}" }
-                    sb.appendLine("**标签**: $tagNames")
-                }
-
-                sb.appendLine()
-
-                // 内容
-                sb.appendLine("<details>")
-                sb.appendLine("<summary>点击查看完整内容</summary>")
-                sb.appendLine()
-                sb.appendLine("```")
-                sb.appendLine(clipboard.content)
-                sb.appendLine("```")
-                sb.appendLine()
-                sb.appendLine("</details>")
-                sb.appendLine()
-                sb.appendLine("---")
-                sb.appendLine()
-
-                index++
             }
         }
 
-        // 标签统计
-        if (includeTags && tagDefinitions.isNotEmpty()) {
+        // 启发
+        if (insights.isNotEmpty()) {
+            sb.appendLine("## 💡 启发")
             sb.appendLine()
-            sb.appendLine("## 🏷️ 标签统计")
-            sb.appendLine()
-
-            tagDefinitions
-                .sortedByDescending { it.useCount }
-                .forEach { tag ->
-                    val count = tags.count { it.tagDefinitionId == tag.id }
-                    sb.appendLine("- **#${tag.name}**: 使用 ${tag.useCount} 次,关联 $count 条记录")
-                }
-
-            sb.appendLine()
+            insights.forEach { entity ->
+                sb.appendLine(exportEntity(entity, "启发", tagsMap[entity.id], imageBaseDir))
+                sb.appendLine()
+            }
         }
 
-        // 文件结尾
-        sb.appendLine()
-        sb.appendLine("---")
-        sb.appendLine()
-        sb.appendLine("*本文件由及时记剪贴板管理器自动生成*")
+        // 待办
+        if (todos.isNotEmpty()) {
+            sb.appendLine("## ✅ 待办")
+            sb.appendLine()
+            todos.forEach { entity ->
+                sb.appendLine(exportEntity(entity, "待办", tagsMap[entity.id], imageBaseDir))
+                sb.appendLine()
+            }
+        }
 
         return sb.toString()
     }
 
     /**
-     * 导出指定日期范围的剪贴板数据
+     * 导出单个笔记
+     * @param entity 笔记实体
+     * @param type 类型标签
+     * @param tags 标签列表
+     * @param imageBaseDir 图片基础目录(用于计算相对路径)
      */
-    suspend fun exportDateRange(
-        outputDir: File,
-        startDate: Long,
-        endDate: Long
-    ): File = withContext(Dispatchers.IO) {
+    private fun exportEntity(
+        entity: ClipboardEntity,
+        type: String,
+        tags: List<String>?,
+        imageBaseDir: String?
+    ): String {
+        val sb = StringBuilder()
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs()
+        // 时间戳和类型
+        val time = dateFormat.format(Date(entity.createdAt))
+        sb.appendLine("### 📅 $time")
+
+        // 显示标签
+        if (!tags.isNullOrEmpty()) {
+            val tagStr = tags.joinToString(" ") { "#${it.trim()}" }
+            sb.appendLine()
+            sb.appendLine("**标签**: $tagStr")
         }
 
-        val allClipboards = repository.getAllClipboardsSync()
-        val filtered = allClipboards.filter {
-            it.createdAt in startDate..endDate
-        }
+        sb.appendLine()
 
-        val timestamp = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(Date())
-        val outputFile = File(outputDir, "clipboard_range_$timestamp.md")
+        // 处理内容中的图片
+        val contentWithImages = processImagesInContent(entity.content, entity.images ?: "", imageBaseDir)
+        sb.appendLine(contentWithImages)
 
-        // 复用导出逻辑
-        val tagDefinitions = repository.getAllTagDefinitionsSync()
-        val allTags = repository.getAllTagsSync()
+        // 分隔线
+        sb.appendLine()
+        sb.appendLine("---")
+        sb.appendLine()
 
-        val markdown = buildMarkdownContent(
-            filtered,
-            tagDefinitions,
-            allTags,
-            includeTags = true,
-            groupByDate = true
-        )
-
-        outputFile.writeText(markdown, Charsets.UTF_8)
-
-        outputFile
+        return sb.toString()
     }
 
     /**
-     * 导出指定标签的剪贴板数据
+     * 处理内容中的图片
+     * @param content 原始内容
+     * @param imagesJson 图片JSON数据
+     * @param exportImagesDir 导出图片的目标目录
      */
-    suspend fun exportByTag(
-        outputDir: File,
-        tagId: Long
-    ): File = withContext(Dispatchers.IO) {
+    private fun processImagesInContent(content: String, imagesJson: String, exportImagesDir: String?): String {
+        val sb = StringBuilder()
+        val images = ImageUtils.parseImagesFromJson(imagesJson)
 
-        if (!outputDir.exists()) {
-            outputDir.mkdirs()
+        if (images.isEmpty()) {
+            // 没有图片,直接返回内容
+            return content
         }
 
-        val allClipboards = repository.getAllClipboardsSync()
-        val allTags = repository.getAllTagsSync()
+        // 添加内容文本
+        sb.appendLine(content)
+        sb.appendLine()
 
-        // 筛选指定标签的剪贴板
-        val clipboardIds = allTags
-            .filter { it.tagDefinitionId == tagId }
-            .map { it.clipboardId }
-            .distinct()
+        // 添加图片
+        sb.appendLine("**图片**:")
+        sb.appendLine()
 
-        val filtered = allClipboards.filter { it.id in clipboardIds }
+        images.forEachIndexed { index, imagePath ->
+            val sourceFile = File(imagePath)
 
-        val tag = repository.getAllTagDefinitionsSync().find { it.id == tagId }
-        val timestamp = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault()).format(Date())
-        val outputFile = File(outputDir, "clipboard_tag_${tag?.name ?: "unknown"}_$timestamp.md")
+            if (sourceFile.exists()) {
+                try {
+                    if (exportImagesDir != null) {
+                        // 复制图片到导出目录
+                        val timestamp = System.currentTimeMillis()
+                        val targetFile = File(exportImagesDir, "image_${timestamp}_$index.jpg")
 
-        val tagDefinitions = repository.getAllTagDefinitionsSync()
+                        // 使用流复制文件
+                        FileInputStream(sourceFile).use { input ->
+                            FileOutputStream(targetFile).use { output ->
+                                input.copyTo(output)
+                            }
+                        }
 
-        val markdown = buildMarkdownContent(
-            filtered,
-            tagDefinitions,
-            allTags,
-            includeTags = true,
-            groupByDate = false
-        )
+                        // 使用相对路径引用图片
+                        sb.appendLine("![图片${index + 1}](images/${targetFile.name})")
+                    } else {
+                        // 没有指定导出目录,使用原始路径
+                        sb.appendLine("![图片${index + 1}]($imagePath)")
+                    }
+                } catch (e: Exception) {
+                    // 复制失败,显示占位符
+                    sb.appendLine("*图片${index + 1}: 无法复制图片 (${e.message})*")
+                }
+            } else {
+                // 图片不存在,显示占位符
+                sb.appendLine("*图片${index + 1}: 文件不存在 ($imagePath)*")
+            }
 
-        outputFile.writeText(markdown, Charsets.UTF_8)
+            sb.appendLine()
+        }
 
-        outputFile
+        return sb.toString()
+    }
+
+    /**
+     * 导出指定类型的笔记
+     * @param entities 笔记列表
+     * @param type 类型名称
+     * @param tagsMap 标签映射
+     * @param imageBaseDir 图片基础目录
+     */
+    fun exportByType(
+        entities: List<ClipboardEntity>,
+        type: String,
+        tagsMap: Map<Long, List<String>> = emptyMap(),
+        imageBaseDir: String? = null
+    ): String {
+        val sb = StringBuilder()
+
+        sb.appendLine("# 及时记 - ${type}导出")
+        sb.appendLine()
+        sb.appendLine("**导出时间**: ${dateFormat.format(Date())}")
+        sb.appendLine()
+        sb.appendLine("---")
+        sb.appendLine()
+
+        entities.forEach { entity ->
+            sb.appendLine(exportEntity(entity, type, tagsMap[entity.id], imageBaseDir))
+            sb.appendLine()
+        }
+
+        return sb.toString()
     }
 }

@@ -48,6 +48,7 @@ data class SyncMetadata(
 data class ClipboardEntityDto(
     val id: Long,
     val content: String,
+    val type: String = "灵感", // 内容类型：灵感、启发、待办
     val createdAt: Long,
     val updatedAt: Long
 )
@@ -99,6 +100,7 @@ data class TagRelationDto(
 fun ClipboardEntity.toDto() = ClipboardEntityDto(
     id = id,
     content = content,
+    type = type,
     createdAt = createdAt,
     updatedAt = updatedAt
 )
@@ -134,6 +136,7 @@ fun TagEntity.toDto() = TagRelationDto(
 fun ClipboardEntityDto.toEntity() = ClipboardEntity(
     id = id,
     content = content,
+    type = type,
     createdAt = createdAt,
     updatedAt = updatedAt
 )

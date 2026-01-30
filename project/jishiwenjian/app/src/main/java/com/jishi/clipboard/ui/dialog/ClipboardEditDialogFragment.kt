@@ -8,19 +8,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.jishi.clipboard.R
-import com.jishi.clipboard.data.TagDefinition
 import com.jishi.clipboard.reminder.DateTimeExtractor
 import com.jishi.clipboard.repository.ClipboardRepository
-import com.jishi.clipboard.repository.TagRepository
+import com.jishi.clipboard.ui.adapter.ImagePreviewAdapter
+import com.jishi.clipboard.util.ImageUtils
 import com.jishi.clipboard.utils.ClipboardUpdateEvent
 import com.jishi.clipboard.utils.DialogManager
+import com.jishi.clipboard.utils.PasteRequestEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -40,27 +47,59 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
     lateinit var clipboardRepository: ClipboardRepository
 
     @Inject
-    lateinit var tagRepository: TagRepository
-
-    @Inject
     lateinit var todoRepository: com.jishi.clipboard.repository.TodoRepository
 
     @Inject
     lateinit var reminderScheduler: com.jishi.clipboard.reminder.ReminderScheduler
 
     private lateinit var contentEditText: TextInputEditText
-    private lateinit var tagsChipGroup: com.google.android.material.chip.ChipGroup
-    private lateinit var customTagInput: TextInputEditText
+    private lateinit var imagePreviewRecyclerView: RecyclerView
+    private lateinit var imagePreviewAdapter: ImagePreviewAdapter
 
-    private val selectedTags = mutableSetOf<String>()
+    // 优先级选择控件
+    private lateinit var priorityContainer: LinearLayout
+    private lateinit var priorityRadioGroup: RadioGroup
+
+    private val selectedImages = mutableListOf<String>()
     private var onSaveListener: ((String, List<String>) -> Unit)? = null
     private var onDismissListener: (() -> Unit)? = null
+
+    // 内容类型：灵感/启发/待办（与导航栏对应）
+    private var contentType: String = "灵感"
+
+    // 待应用的内容类型（在 onViewCreated 后应用）
+    private var pendingContentType: String? = null
+
+    // 优先级选择
+    private var selectedPriority: String = "MEDIUM"  // 默认中优先级
 
     // 记录上次粘贴的内容，用于防重复检测
     private var lastPastedContent: String? = null
 
     private var editMode = false
     private var editClipboardId = -1L
+
+    // 图片选择器
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        uris?.forEach { uri ->
+            lifecycleScope.launch {
+                try {
+                    val imagePath = ImageUtils.saveImageToLocal(requireContext(), uri)
+                    if (imagePath != null) {
+                        selectedImages.add(imagePath)
+                        updateImagePreview()
+                    } else {
+                        Toast.makeText(requireContext(), "图片保存失败", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "保存图片失败")
+                    Toast.makeText(requireContext(), "图片保存失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -108,7 +147,6 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
         DialogManager.setCurrentEditDialog(this)
 
         initViews()
-        loadTagsFromDatabase()
         handleArguments()
     }
 
@@ -146,6 +184,20 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    /**
+     * 监听悬浮窗粘贴请求
+     * 使用 EventBus 避免时序问题
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPasteRequestEvent(event: PasteRequestEvent) {
+        Timber.d("收到粘贴请求事件: ${event.content.take(30)}...")
+
+        // 延迟一小段时间确保 EditText 完全初始化
+        contentEditText.postDelayed({
+            pasteToCursor(event.content)
+        }, 100)
+    }
+
     private fun showNewContentDetectedDialog(newContent: String) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("检测到新剪切板内容")
@@ -153,8 +205,6 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
             .setPositiveButton("清空重新添加") { _, _ ->
                 // 清空当前状态
                 contentEditText.text?.clear()
-                selectedTags.clear()
-                tagsChipGroup.clearCheck()
                 DialogManager.clearState()
 
                 // 添加新内容
@@ -213,30 +263,53 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
             .show()
     }
 
-    private fun loadTagsFromDatabase() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // 初始化默认标签（如果数据库为空）
-                tagRepository.initDefaultTagsIfNeeded()
-
-                // 加载所有标签（✅ 过滤掉"待办"标签）
-                tagRepository.getAllTagDefinitions().collect { tags ->
-                    tags.filter { it.name != "待办" }.forEach { tagDef ->
-                        val chip = createChip(tagDef.name)
-                        tagsChipGroup.addView(chip)
-                    }
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "加载标签失败")
-            }
-        }
-    }
-
     private fun initViews() {
         contentEditText = requireView().findViewById(R.id.contentEditText)
-        tagsChipGroup = requireView().findViewById(R.id.tagsChipGroup)
-        customTagInput = requireView().findViewById(R.id.customTagInput)
-        val customTagInputLayout = requireView().findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.customTagInputLayout)
+
+        // NestedScrollView 会自动处理嵌套滚动，不需要额外设置
+        contentEditText.setVerticalScrollBarEnabled(true)
+
+        imagePreviewRecyclerView = requireView().findViewById(R.id.imagePreviewRecyclerView)
+
+        // 优先级选择控件
+        priorityContainer = requireView().findViewById(R.id.priorityContainer)
+        priorityRadioGroup = requireView().findViewById(R.id.priorityRadioGroup)
+
+        // 应用待定内容类型（如果有）
+        applyContentTypeVisibility()
+
+        // 初始化元数据上下文
+        initMetadata()
+
+        // 初始化图片预览适配器
+        imagePreviewAdapter = ImagePreviewAdapter(
+            onDeleteClick = { imagePath ->
+                selectedImages.remove(imagePath)
+                ImageUtils.deleteImage(imagePath)
+                updateImagePreview()
+            }
+        )
+        
+        imagePreviewRecyclerView.apply {
+            layoutManager = GridLayoutManager(requireContext(), 4)
+            adapter = imagePreviewAdapter
+        }
+
+        // 标签按钮 - 插入 # 符号
+        requireView().findViewById<View>(R.id.btnTag).setOnClickListener {
+            val cursor = contentEditText.selectionStart
+            contentEditText.text?.insert(cursor, "#")
+        }
+
+        // 添加图片按钮
+        requireView().findViewById<View>(R.id.btnAddImage).setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+
+        // 更多按钮 - 打开格式工具弹窗
+        requireView().findViewById<View>(R.id.btnMore).setOnClickListener {
+            showFormatToolsDialog()
+        }
 
         // 保存按钮
         requireView().findViewById<View>(R.id.btnSave).setOnClickListener {
@@ -248,156 +321,164 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
-        // 自定义标签输入 - 监听软键盘完成按钮
-        customTagInput.setOnEditorActionListener { _, _, _ ->
-            addCustomTag()
-            true
-        }
-
-        // 监听自定义标签输入框右侧的+号按钮
-        customTagInputLayout?.setEndIconOnClickListener {
-            addCustomTag()
+        // 优先级选择监听
+        priorityRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            selectedPriority = when (checkedId) {
+                R.id.rbHigh -> "HIGH"
+                R.id.rbMedium -> "MEDIUM"
+                R.id.rbLow -> "LOW"
+                else -> "MEDIUM"
+            }
         }
     }
-
-    private fun createChip(tagName: String): Chip {
-        return Chip(requireContext()).apply {
-            text = tagName
-            isCheckable = true
-            isClickable = true
-
-            // 统一椭圆风格
-            chipCornerRadius = 16f
-
-            // 设置关闭图标（删除按钮）
-            isCloseIconVisible = false
-            setCloseIconResource(android.R.drawable.ic_delete)
-            closeIconSize = 36f
-            setCloseIconTintResource(android.R.color.darker_gray)
-
-            // 长按显示删除按钮
-            setOnLongClickListener {
-                isCloseIconVisible = true
-                true
-            }
-
-            // 点击删除按钮
-            setOnCloseIconClickListener {
-                deleteTagFromGroup(this, tagName)
-            }
-
-            setOnCheckedChangeListener { _, isChecked ->
-                synchronized(selectedTags) {
-                    if (isChecked) {
-                        selectedTags.add(tagName)
-                        // 选中时：实心背景 + 白色文字
-                        setChipBackgroundColorResource(R.color.primary)
-                        setTextColor(android.graphics.Color.WHITE)
-
-                        // ✅ 点击标签后显示子标签（不保存）
-                        lifecycleScope.launch {
-                            showChildTags(tagName)
-                        }
-                    } else {
-                        selectedTags.remove(tagName)
-                        // 未选中时：透明背景 + 主题色文字
-                        setChipBackgroundColorResource(android.R.color.transparent)
-                        setTextColor(context.getColor(R.color.primary))
-                        chipStrokeWidth = 0f
-                    }
-                }
-            }
-
-            // 初始化为未选中状态
-            setChipBackgroundColorResource(android.R.color.transparent)
-            setTextColor(context.getColor(R.color.primary))
-            chipStrokeWidth = 0f
+    
+    private fun updateImagePreview() {
+        if (selectedImages.isEmpty()) {
+            imagePreviewRecyclerView.visibility = View.GONE
+        } else {
+            imagePreviewRecyclerView.visibility = View.VISIBLE
+            imagePreviewAdapter.submitList(selectedImages.toList())
         }
     }
 
     /**
-     * 显示子标签（不保存，只导航）
+     * 显示格式工具弹窗
      */
-    private suspend fun showChildTags(parentTagName: String) {
+    private fun showFormatToolsDialog() {
         try {
-            // 获取父标签
-            val parentTag = tagRepository.getTagDefinitionByName(parentTagName)
-            if (parentTag != null) {
-                // 获取子标签
-                val childTags = tagRepository.getChildTagsSync(parentTag.id)
-
-                if (childTags.isNotEmpty()) {
-                    // 清空当前标签显示
-                    tagsChipGroup.removeAllViews()
-
-                    // 显示子标签
-                    childTags.forEach { childTag ->
-                        val chip = createChip(childTag.name)
-                        tagsChipGroup.addView(chip)
+            // 先创建对话框实例
+            val dialog = FormatToolsDialog()
+            dialog.setOnToolSelected { tool ->
+                when (tool) {
+                    "quote" -> insertQuote()
+                    "list" -> insertList()
+                    "code" -> insertCodeBlock()
+                    "divider" -> insertDivider()
+                    "clear" -> clearFormat()
+                    "voice" -> {
+                        Toast.makeText(requireContext(), "语音功能即将推出", Toast.LENGTH_SHORT).show()
                     }
-
-                    Toast.makeText(requireContext(), "📁 ${parentTagName} 的子标签", Toast.LENGTH_SHORT).show()
                 }
             }
+
+            // 使用 childFragmentManager 显示
+            dialog.show(childFragmentManager, FormatToolsDialog.TAG)
         } catch (e: Exception) {
-            Timber.e(e, "加载子标签失败")
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "无法打开工具菜单: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun deleteTagFromGroup(chip: Chip, tagName: String) {
-        synchronized(selectedTags) {
-            selectedTags.remove(tagName)
-        }
-        tagsChipGroup.removeView(chip)
+    /**
+     * 插入引用块
+     */
+    private fun insertQuote() {
+        val cursor = contentEditText.selectionStart
+        contentEditText.text?.insert(cursor, "> ")
+        contentEditText.requestFocus()
     }
 
-    private fun addCustomTag() {
-        val tagName = customTagInput.text.toString().trim()
+    /**
+     * 插入列表
+     */
+    private fun insertList() {
+        val cursor = contentEditText.selectionStart
+        contentEditText.text?.insert(cursor, "- ")
+        contentEditText.requestFocus()
+    }
 
-        if (tagName.isNotEmpty() && !selectedTags.contains(tagName)) {
-            val chip = createChip(tagName)
-            chip.isChecked = true
-            tagsChipGroup.addView(chip)
-            customTagInput.text?.clear()
+    /**
+     * 插入代码块
+     */
+    private fun insertCodeBlock() {
+        val cursor = contentEditText.selectionStart
+        contentEditText.text?.insert(cursor, "```\n```\n")
+        // 将光标移动到代码块中间
+        contentEditText.setSelection(cursor + 4)
+        contentEditText.requestFocus()
+    }
+
+    /**
+     * 插入分割线
+     */
+    private fun insertDivider() {
+        val cursor = contentEditText.selectionStart
+        contentEditText.text?.insert(cursor, "\n---\n")
+        contentEditText.requestFocus()
+    }
+
+    /**
+     * 清空格式
+     * 如果有选中文本，清除选中部分的格式
+     * 如果没有选中文本，清除全部格式
+     */
+    private fun clearFormat() {
+        val start = contentEditText.selectionStart
+        val end = contentEditText.selectionEnd
+
+        if (start != end) {
+            // 有选中文本：清除选中文本的格式
+            val text = contentEditText.text?.toString()?.substring(start, end) ?: ""
+            val cleanText = text.replace(Regex("""[*_`#>\-\[\]()"""), "")
+            contentEditText.text?.replace(start, end, cleanText)
+        } else {
+            // 无选中文本：清除全部格式
+            val fullText = contentEditText.text?.toString() ?: ""
+            val cleanText = fullText.replace(Regex("""[*_`#>\-\[\]()"""), "")
+            contentEditText.setText(cleanText)
         }
+        contentEditText.requestFocus()
     }
 
     private fun handleArguments() {
         editMode = arguments?.getBoolean(ARG_EDIT_MODE, false) ?: false
         editClipboardId = arguments?.getLong(ARG_EDIT_CLIPBOARD_ID, -1L) ?: -1L
 
-        val initialContent = arguments?.getString(ARG_INITIAL_CONTENT)
-
         when {
             editMode && editClipboardId != -1L -> {
-                // 编辑模式：加载现有内容和标签
-                contentEditText.setText(initialContent)
-                contentEditText.setSelection(contentEditText.length())
-
-                // 加载标签
+                // 编辑模式：从数据库加载现有内容
                 lifecycleScope.launch {
                     try {
-                        val tags = clipboardRepository.getTagsForClipboard(editClipboardId)
-                        tags.forEach { tagDef ->
-                            // 找到对应的 chip 并选中
-                            val chipCount = tagsChipGroup.childCount
-                            for (i in 0 until chipCount) {
-                                val chip = tagsChipGroup.getChildAt(i) as? Chip
-                                if (chip?.text == tagDef.name) {
-                                    chip.isChecked = true
-                                    break
-                                }
+                        val clipboard = clipboardRepository.getClipboardById(editClipboardId)
+                        if (clipboard != null) {
+                            // 设置内容
+                            contentEditText.setText(clipboard.content)
+                            contentEditText.setSelection(contentEditText.length())
+
+                            // 加载图片
+                            clipboard.images?.let { imagesJson ->
+                                val images = com.jishi.clipboard.util.ImageUtils.parseImagesFromJson(imagesJson)
+                                selectedImages.clear()
+                                selectedImages.addAll(images)
+                                updateImagePreview()
+                            }
+
+                            // 解析并设置优先级
+                            val metadataMap = try {
+                                com.google.gson.Gson().fromJson(clipboard.metadata, Map::class.java) as? Map<String, Any>
+                            } catch (e: Exception) {
+                                null
+                            }
+                            val priority = metadataMap?.get("priority") as? String ?: "MEDIUM"
+                            selectedPriority = priority
+                            when (priority) {
+                                "HIGH" -> priorityRadioGroup.check(R.id.rbHigh)
+                                "MEDIUM" -> priorityRadioGroup.check(R.id.rbMedium)
+                                "LOW" -> priorityRadioGroup.check(R.id.rbLow)
                             }
                         }
                     } catch (e: Exception) {
-                        Timber.e(e, "加载标签失败")
+                        Timber.e(e, "加载待办内容失败")
                     }
                 }
             }
-            !initialContent.isNullOrEmpty() -> {
-                // 使用传入的内容
-                contentEditText.setText(initialContent)
-                contentEditText.setSelection(contentEditText.length())
+            else -> {
+                // 新建模式：使用 initialContent（如果有的话）
+                val initialContent = arguments?.getString(ARG_INITIAL_CONTENT)
+                if (!initialContent.isNullOrEmpty()) {
+                    contentEditText.setText(initialContent)
+                    contentEditText.setSelection(contentEditText.length())
+                }
             }
         }
     }
@@ -410,21 +491,107 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
             return
         }
 
-        val tags = synchronized(selectedTags) { selectedTags.toList() }
+        // 从内容中提取标签
+        val tags = extractTagsFromContent(content)
 
-        // 检查是否有"待办"标签
-        val hasTodoTag = tags.contains("待办")
+        // 检查内容类型是否为"待办"
+        val isTodoType = contentType == "待办"
+
+        android.util.Log.d("ClipboardEdit", "保存检查: contentType=$contentType, isTodoType=$isTodoType, tags=$tags")
 
         when {
-            hasTodoTag -> {
-                // 有"待办"标签，先保存剪贴板，然后显示提醒确认对话框
+            // 优先检查编辑模式
+            editMode && editClipboardId != -1L -> {
+                // 编辑模式：更新现有条目
                 lifecycleScope.launch {
                     try {
-                        // 1. 保存剪贴板（✅ 过滤掉"待办"标签）
-                        val filteredTags = tags.filter { it != "待办" }
-                        val clipboardId = clipboardRepository.saveClipboard(content, filteredTags)
+                        // 读取优先级
+                        val checkedId = priorityRadioGroup.checkedRadioButtonId
+                        selectedPriority = when (checkedId) {
+                            R.id.rbHigh -> "HIGH"
+                            R.id.rbMedium -> "MEDIUM"
+                            R.id.rbLow -> "LOW"
+                            else -> "MEDIUM"
+                        }
 
-                        android.util.Log.d("ClipboardEdit", "保存剪贴板成功，clipboardId=$clipboardId，过滤后标签=$filteredTags")
+                        android.util.Log.d("ClipboardEdit", "编辑模式 - 更新待办，id=$editClipboardId, 优先级: $selectedPriority")
+
+                        // 构建 metadata
+                        val metadata = mapOf(
+                            "priority" to selectedPriority,
+                            "status" to "PENDING"
+                        )
+
+                        // 更新现有条目
+                        clipboardRepository.updateClipboard(
+                            id = editClipboardId,
+                            content = content,
+                            tags = tags,
+                            type = contentType,
+                            images = selectedImages,
+                            metadata = com.google.gson.Gson().toJson(metadata)
+                        )
+
+                        android.util.Log.d("ClipboardEdit", "更新成功，id=$editClipboardId")
+
+                        // 触发监听器并关闭对话框
+                        onSaveListener?.invoke(content, tags)
+                        safeDismissDialog()
+
+                        // 提取时间并显示提醒确认（可选）
+                        val extractedTime = DateTimeExtractor.extract(content)
+                        if (extractedTime != null) {
+                            showReminderConfirmationForTodo(editClipboardId, content, extractedTime)
+                        }
+
+                    } catch (e: Exception) {
+                        android.util.Log.e("ClipboardEdit", "更新失败", e)
+                        Timber.e(e, "更新失败")
+                        Toast.makeText(requireContext(), "❌ 更新失败: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            isTodoType -> {
+                // 新建模式：创建新待办
+                lifecycleScope.launch {
+                try {
+                    // 1. 保存剪贴板（带类型和优先级）
+                    // 注意：待办类型不过滤标签，直接使用 tags
+
+                    // 保存前确保 selectedPriority 是最新值（从 RadioGroup 读取）
+                    val checkedId = priorityRadioGroup.checkedRadioButtonId
+                    selectedPriority = when (checkedId) {
+                        R.id.rbHigh -> "HIGH"
+                        R.id.rbMedium -> "MEDIUM"
+                        R.id.rbLow -> "LOW"
+                        else -> "MEDIUM"
+                    }
+
+                    android.util.Log.d("ClipboardEdit", "新建模式 - 保存待办，优先级: $selectedPriority, RadioGroup选中ID: $checkedId")
+
+                    // 构建 metadata，包含优先级
+                    val metadata = mapOf(
+                        "priority" to selectedPriority,
+                        "status" to "PENDING"
+                    )
+
+                    val clipboardId = clipboardRepository.saveClipboard(
+                        content = content,
+                        tags = tags,  // 待办类型不过滤标签
+                        type = contentType,
+                        images = selectedImages,
+                        metadata = com.google.gson.Gson().toJson(metadata)
+                    )
+
+                        android.util.Log.d("ClipboardEdit", "保存剪贴板成功，clipboardId=$clipboardId，标签=$tags")
+
+                        // 先触发保存监听器并关闭当前对话框
+                        onSaveListener?.invoke(content, tags)
+                        try {
+                            dismiss()
+                        } catch (e: Exception) {
+                            android.util.Log.e("ClipboardEdit", "dismiss失败", e)
+                        }
 
                         // 2. 提取时间
                         val extractedTime = DateTimeExtractor.extract(content)
@@ -455,22 +622,48 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
     fun saveCurrentClipboardContent(content: String) {
         lifecycleScope.launch {
             try {
-                val tags = synchronized(selectedTags) { selectedTags.toList() }
+                // 从内容中提取标签
+                val tags = extractTagsFromContent(content)
 
-                // 检查是否有"待办"标签
-                val hasTodoTag = tags.contains("待办")
+                // 检查内容类型是否为"待办"
+                val isTodoType = contentType == "待办"
 
-                if (hasTodoTag) {
-                    // 有"待办"标签，特殊处理
-                    val filteredTags = tags.filter { it != "待办" }
-                    val clipboardId = clipboardRepository.saveClipboard(content, filteredTags)
+                android.util.Log.d("ClipboardEdit", "快速保存检查: contentType=$contentType, isTodoType=$isTodoType")
+
+                if (isTodoType) {
+                    // 待办类型，保存优先级
+
+                    // 保存前确保 selectedPriority 是最新值（从 RadioGroup 读取）
+                    val checkedId = priorityRadioGroup.checkedRadioButtonId
+                    selectedPriority = when (checkedId) {
+                        R.id.rbHigh -> "HIGH"
+                        R.id.rbMedium -> "MEDIUM"
+                        R.id.rbLow -> "LOW"
+                        else -> "MEDIUM"
+                    }
+
+                    android.util.Log.d("ClipboardEdit", "快速保存待办，优先级: $selectedPriority, RadioGroup选中ID: $checkedId")
+
+                    // 构建 metadata，包含优先级
+                    val metadata = mapOf(
+                        "priority" to selectedPriority,
+                        "status" to "PENDING"
+                    )
+
+                    val clipboardId = clipboardRepository.saveClipboard(
+                        content = content,
+                        tags = tags,  // 待办类型不过滤标签
+                        type = contentType,
+                        images = selectedImages,
+                        metadata = com.google.gson.Gson().toJson(metadata)
+                    )
 
                     val extractedTime = DateTimeExtractor.extract(content)
                     showReminderConfirmationForTodo(clipboardId, content, extractedTime ?: createDefaultTime())
                 } else {
-                    // 普通保存
-                    clipboardRepository.saveClipboard(content, tags)
-                    Toast.makeText(requireContext(), "✅ 已保存", Toast.LENGTH_SHORT).show()
+                    // 普通保存（带类型）
+                    clipboardRepository.saveClipboard(content, tags, contentType, selectedImages)
+                    Toast.makeText(requireContext(), "✅ 已保存到【$contentType】", Toast.LENGTH_SHORT).show()
 
                     // 清空内容输入框，但保留已选标签
                     contentEditText.text?.clear()
@@ -558,8 +751,8 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
         lifecycleScope.launch {
             try {
                 android.util.Log.d("ClipboardEdit", ">>> 开始保存到数据库...")
-                // 先保存到数据库
-                val clipboardId = clipboardRepository.saveClipboard(content, tags)
+                // 先保存到数据库（带类型）
+                val clipboardId = clipboardRepository.saveClipboard(content, tags, contentType, selectedImages)
                 android.util.Log.d("ClipboardEdit", ">>> 数据库保存完成, clipboardId=$clipboardId")
 
                 // 检查 clipboardId 是否有效
@@ -606,26 +799,32 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun saveToDatabase(content: String, tags: List<String>) {
-        android.util.Log.d("ClipboardEdit", "saveToDatabase 开始: editMode=$editMode, clipboardId=$editClipboardId")
-        android.util.Log.d("ClipboardEdit", "内容长度: ${content.length}, 标签数量: ${tags.size}")
+        android.util.Log.d("ClipboardEdit", "========== saveToDatabase 开始 ==========")
+        android.util.Log.d("ClipboardEdit", "editMode=$editMode, clipboardId=$editClipboardId")
+        android.util.Log.d("ClipboardEdit", "内容长度: ${content.length}, 标签数量: ${tags.size}, 图片数量: ${selectedImages.size}")
+        android.util.Log.d("ClipboardEdit", "标签列表: $tags")
+        android.util.Log.d("ClipboardEdit", "内容类型: $contentType")
 
         lifecycleScope.launch {
             try {
                 if (editMode && editClipboardId != -1L) {
                     android.util.Log.d("ClipboardEdit", "执行更新操作")
-                    clipboardRepository.updateClipboard(editClipboardId, content, tags)
+                    clipboardRepository.updateClipboard(editClipboardId, content, tags, contentType, selectedImages)
                     Toast.makeText(requireContext(), "✅ 已更新", Toast.LENGTH_SHORT).show()
                 } else {
-                    android.util.Log.d("ClipboardEdit", "执行新增操作")
-                    clipboardRepository.saveClipboard(content, tags)
-                    Toast.makeText(requireContext(), "✅ 已保存", Toast.LENGTH_SHORT).show()
+                    android.util.Log.d("ClipboardEdit", "执行新增操作，类型=$contentType")
+                    val savedId = clipboardRepository.saveClipboard(content, tags, contentType, selectedImages)
+                    android.util.Log.d("ClipboardEdit", "保存成功！返回 ID: $savedId")
+                    Toast.makeText(requireContext(), "✅ 已保存到【$contentType】(ID:$savedId)", Toast.LENGTH_SHORT).show()
                 }
 
                 // ✅ 保存后清空所有状态
                 DialogManager.clearState()
 
+                android.util.Log.d("ClipboardEdit", "触发保存监听器")
                 // 触发保存监听器（由 EditActivity 负责 dismiss 和 finish）
                 onSaveListener?.invoke(content, tags)
+                android.util.Log.d("ClipboardEdit", "========== saveToDatabase 完成 ==========")
             } catch (e: Exception) {
                 android.util.Log.e("ClipboardEdit", "保存失败", e)
                 Timber.e(e, "保存失败")
@@ -686,10 +885,7 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                     android.util.Log.d("ClipboardEdit", "✅ 提醒调度${if (success) "成功" else "失败"}")
                 }
 
-                // 4. 移除"待办"标签（防止重复转换）
-                val updatedTags = tags.filter { it.name != "待办" }
-                clipboardRepository.updateClipboardTags(clipboardId, updatedTags)
-                android.util.Log.d("ClipboardEdit", "✅ 已移除「待办」标签")
+                android.util.Log.d("ClipboardEdit", "✅ 已创建待办，标签从内容解析")
 
                 Toast.makeText(
                     requireContext(),
@@ -697,7 +893,7 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                onSaveListener?.invoke(content, updatedTags.map { it.name })
+                onSaveListener?.invoke(content, emptyList()) // 标签从内容解析
 
             } else {
                 android.util.Log.w("ClipboardEdit", "⚠️ 解析失败，保留剪贴板记录")
@@ -706,7 +902,7 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
                     "⚠️ 无法解析待办内容，已保存为普通剪贴板",
                     Toast.LENGTH_SHORT
                 ).show()
-                onSaveListener?.invoke(content, tags.map { it.name })
+                onSaveListener?.invoke(content, emptyList()) // 标签从内容解析
             }
 
         } catch (e: Exception) {
@@ -763,24 +959,63 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
 
     /**
      * 设置默认标签（根据类型选择）
-     * 使用统一的标签创建逻辑，确保所有类型（灵感/启发/待办）行为一致
+     * 注意：这里设置的是内容类型，不是标签！
      */
-    fun setDefaultTag(tagName: String) {
-        lifecycleScope.launch {
-            try {
-                // 使用 getOrCreateContentTypeTag 确保标签存在
-                val tagDef = tagRepository.getOrCreateContentTypeTag(tagName)
+    fun setDefaultTag(typeName: String) {
+        // 保存内容类型
+        contentType = typeName
+        pendingContentType = typeName
 
-                selectedTags.add(tagName)
-                // 创建并选中标签
-                val chip = createChip(tagName)
-                chip.isChecked = true
-                tagsChipGroup.addView(chip)
+        // 尝试立即应用，如果视图已创建
+        applyContentTypeVisibility()
+    }
 
-                Timber.d("设置默认标签: $tagName, 颜色: ${tagDef.color}")
-            } catch (e: Exception) {
-                Timber.e(e, "设置默认标签失败: $tagName")
+    /**
+     * 应用内容类型的可见性设置
+     */
+    private fun applyContentTypeVisibility() {
+        if (!::priorityContainer.isInitialized) return
+
+        try {
+            val typeName = pendingContentType ?: contentType
+            // 如果是待办类型，显示优先级选择
+            if (typeName == "待办") {
+                priorityContainer.visibility = View.VISIBLE
+            } else {
+                priorityContainer.visibility = View.GONE
             }
+            Timber.d("设置内容类型: $typeName, 优先级选择${if (typeName == "待办") "显示" else "隐藏"}")
+        } catch (e: Exception) {
+            Timber.e(e, "设置内容类型失败")
+        }
+    }
+
+    /**
+     * 初始化元数据上下文（时间 + 来源）
+     */
+    private fun initMetadata() {
+        try {
+            val timeText = requireView().findViewById<android.widget.TextView>(R.id.timeText)
+            val sourceText = requireView().findViewById<android.widget.TextView>(R.id.sourceText)
+
+            // 格式化时间：显示为"今天 14:30"格式
+            val calendar = java.util.Calendar.getInstance()
+            val hour = calendar.get(java.util.Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(java.util.Calendar.MINUTE)
+            timeText.text = "📅 今天 ${String.format("%02d:%02d", hour, minute)}"
+
+            // 根据是否来自剪贴板显示来源
+            val initialContent = arguments?.getString(ARG_INITIAL_CONTENT, "") ?: ""
+            if (initialContent.isNotEmpty()) {
+                sourceText.visibility = android.view.View.VISIBLE
+                sourceText.text = "📺 来自复制"
+            } else {
+                sourceText.visibility = android.view.View.GONE
+            }
+
+            Timber.d("元数据初始化完成：${timeText.text}, 来源=${if(sourceText.visibility == android.view.View.VISIBLE) sourceText.text else "无"}")
+        } catch (e: Exception) {
+            Timber.e(e, "元数据初始化失败")
         }
     }
 
@@ -806,6 +1041,30 @@ class ClipboardEditDialogFragment : BottomSheetDialogFragment() {
         } catch (e: Exception) {
             Timber.e(e, "显示键盘失败")
         }
+    }
+
+    /**
+     * 安全关闭对话框
+     */
+    private fun safeDismissDialog() {
+        try {
+            dismiss()
+        } catch (e: Exception) {
+            android.util.Log.e("ClipboardEdit", "关闭对话框失败", e)
+            Timber.e(e, "关闭对话框失败")
+        }
+    }
+
+    /**
+     * 从内容中提取标签
+     * 匹配 #标签 格式
+     */
+    private fun extractTagsFromContent(content: String): List<String> {
+        val tagPattern = Regex("#([\\u4e00-\\u9fa5a-zA-Z0-9_]+)")
+        return tagPattern.findAll(content)
+            .map { it.groupValues[1] }
+            .distinct()
+            .toList()
     }
 
     companion object {

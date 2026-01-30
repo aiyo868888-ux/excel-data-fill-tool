@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.jishi.clipboard.R
+import com.jishi.clipboard.utils.TagParser
 import kotlinx.coroutines.flow.first
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -89,8 +90,8 @@ class DetailActivity : AppCompatActivity() {
                 contentText.text = clipboard!!.content
                 timeText.text = "创建时间: ${formatTime(clipboard!!.createdAt)}"
 
-                // 加载标签 - getTagsForClipboard 现在直接返回 List
-                val tags = repository.getTagsForClipboard(clipboardId)
+                // 从内容提取标签
+                val tags = TagParser.extractTags(clipboard!!.content)
                 displayTags(tags)
             } catch (e: Exception) {
                 Timber.e(e, "加载数据失败")
@@ -99,7 +100,15 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayTags(tags: List<com.jishi.clipboard.data.TagDefinition>) {
+    private fun TagParser.extractTags(content: String): List<String> {
+        val tagPattern = Regex("#([\\u4e00-\\u9fa5a-zA-Z0-9_]+)")
+        return tagPattern.findAll(content)
+            .map { it.groupValues[1] }
+            .distinct()
+            .toList()
+    }
+
+    private fun displayTags(tags: List<String>) {
         tagsContainer.removeAllViews()
 
         if (tags.isEmpty()) {
@@ -113,20 +122,15 @@ class DetailActivity : AppCompatActivity() {
             return
         }
 
-        tags.forEach { tag ->
+        tags.forEach { tagName ->
             val chip = com.google.android.material.chip.Chip(this).apply {
-                text = tag.name
+                text = "#$tagName"
                 textSize = 14f
                 chipCornerRadius = 16f
                 setChipBackgroundColorResource(R.color.primary)
                 setTextColor(resources.getColor(R.color.primary, null))
                 // 使用透明度让文字可见
                 setTextColor(android.graphics.Color.parseColor("#FFFFFF"))
-
-                // 点击跳转到标签详情
-                setOnClickListener {
-                    openTagDetail(tag.name)
-                }
             }
             val layoutParams = android.widget.LinearLayout.LayoutParams(
                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -137,13 +141,6 @@ class DetailActivity : AppCompatActivity() {
             chip.layoutParams = layoutParams
             tagsContainer.addView(chip)
         }
-    }
-
-    private fun openTagDetail(tagName: String) {
-        val intent = Intent(this, TagDetailActivity::class.java).apply {
-            putExtra(TagDetailActivity.EXTRA_TAG_NAME, tagName)
-        }
-        startActivity(intent)
     }
 
     private fun copyToClipboard() {

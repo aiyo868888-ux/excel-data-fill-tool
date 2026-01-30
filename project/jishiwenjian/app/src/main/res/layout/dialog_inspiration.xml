@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 灵感对话框布局 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💡 新建灵感"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#f59e0b" />
+
+    <EditText
+        android:id="@+id/etContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="记录你的灵感..."
+        android:minHeight="120dp"
+        android:maxHeight="300dp"
+        android:scrollbars="vertical"
+        android:overScrollMode="always"
+        android:gravity="top"
+        android:background="@android:color/transparent"
+        android:textSize="16sp"
+        android:textColor="#1f2937"
+        android:textColorHint="#9ca3af"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="保存"
+        android:backgroundTint="#f59e0b" />
+</LinearLayout>

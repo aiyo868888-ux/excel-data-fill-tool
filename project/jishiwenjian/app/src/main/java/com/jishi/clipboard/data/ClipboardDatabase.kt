@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [ClipboardEntity::class, TagEntity::class, TagDefinition::class, Reminder::class, TodoEntity::class],
-    version = 6,
+    version = 9,
     exportSchema = false
 )
 abstract class ClipboardDatabase : RoomDatabase() {
@@ -77,6 +77,30 @@ abstract class ClipboardDatabase : RoomDatabase() {
                 """)
             }
         }
+        
+        // 迁移策略：版本 6 → 7（添加 type 字段到 clipboards 表）
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 添加 type 字段，默认值为"灵感"
+                database.execSQL("ALTER TABLE clipboards ADD COLUMN type TEXT NOT NULL DEFAULT '灵感'")
+            }
+        }
+        
+        // 迁移策略：版本 7 → 8（添加 images 字段到 clipboards 表）
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 添加 images 字段，存储图片路径的 JSON 数组（可选）
+                database.execSQL("ALTER TABLE clipboards ADD COLUMN images TEXT")
+            }
+        }
+
+        // 迁移策略：版本 8 → 9（添加 metadata 字段到 clipboards 表）
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 添加 metadata 字段，存储待办专属信息（JSON格式）
+                database.execSQL("ALTER TABLE clipboards ADD COLUMN metadata TEXT NOT NULL DEFAULT '{}'")
+            }
+        }
 
         @Volatile
         private var INSTANCE: ClipboardDatabase? = null
@@ -88,7 +112,7 @@ abstract class ClipboardDatabase : RoomDatabase() {
                     ClipboardDatabase::class.java,
                     DATABASE_NAME
                 )
-                .addMigrations(MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                 // 生产环境：移除 fallbackToDestructiveMigration
                 // 如需数据丢失容忍度，可添加 .fallbackToDestructiveMigrationOnDowngrade()
                 .build()

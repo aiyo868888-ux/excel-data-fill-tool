@@ -3,13 +3,10 @@ package com.jishi.clipboard.di
 import android.content.Context
 import com.jishi.clipboard.data.ClipboardDao
 import com.jishi.clipboard.data.ClipboardDatabase
-import com.jishi.clipboard.data.ClipboardTagRelationDao
 import com.jishi.clipboard.data.ReminderDao
-import com.jishi.clipboard.data.TagDao
 import com.jishi.clipboard.data.TodoDao
 import com.jishi.clipboard.repository.ClipboardRepository
 import com.jishi.clipboard.repository.ReminderRepository
-import com.jishi.clipboard.repository.TagRepository
 import com.jishi.clipboard.repository.TodoRepository
 import dagger.Module
 import dagger.Provides
@@ -36,33 +33,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTagDao(database: ClipboardDatabase): TagDao {
-        return database.tagDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideClipboardTagRelationDao(database: ClipboardDatabase): ClipboardTagRelationDao {
-        return database.clipboardTagRelationDao()
-    }
-
-    @Provides
-    @Singleton
     fun provideClipboardRepository(
-        clipboardDao: ClipboardDao,
-        tagDao: TagDao,
-        relationDao: ClipboardTagRelationDao
+        clipboardDao: ClipboardDao
     ): ClipboardRepository {
-        return ClipboardRepository(clipboardDao, tagDao, relationDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideTagRepository(
-        tagDao: TagDao,
-        relationDao: ClipboardTagRelationDao
-    ): TagRepository {
-        return TagRepository(tagDao, relationDao)
+        return ClipboardRepository(clipboardDao)
     }
 
     @Provides

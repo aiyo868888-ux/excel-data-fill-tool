@@ -205,10 +205,10 @@
                     android:layout_marginBottom="12dp" />
 
                 <Button
-                    android:id="@+id/tagManageButton"
+                    android:id="@+id/exportButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="管理标签"
+                    android:text="📤 导出笔记"
                     android:textSize="14sp"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_marginBottom="8dp" />

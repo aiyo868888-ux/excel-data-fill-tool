@@ -12,11 +12,43 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/bottom_sheet_handle" />
 
+    <!-- 元数据上下文（轻提示） -->
+    <LinearLayout
+        android:id="@+id/metadataContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 今天 14:30"
+            android:textSize="12sp"
+            android:textColor="#9ca3af"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/sourceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="📺 来自复制"
+            android:textSize="12sp"
+            android:textColor="#9ca3af"
+            android:maxLines="1"
+            android:visibility="gone" />
+    </LinearLayout>
+
     <!-- 内容区域 -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/contentScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -45,7 +77,7 @@
                     android:id="@+id/contentInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="剪贴板内容"
+                    android:hint="这个让我想到..."
                     app:hintEnabled="false"
                     app:boxBackgroundMode="none"
                     app:counterEnabled="true"
@@ -57,8 +89,10 @@
                         android:id="@+id/contentEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="80dp"
-                        android:maxHeight="200dp"
+                        android:minHeight="120dp"
+                        android:maxHeight="300dp"
+                        android:scrollbars="vertical"
+                        android:overScrollMode="always"
                         android:gravity="top|start"
                         android:padding="16dp"
                         android:textSize="15sp"
@@ -71,102 +105,155 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 标签选择区 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="选择标签"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="12dp" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/tagsChipGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:chipSpacingHorizontal="8dp"
-                app:chipSpacingVertical="8dp" />
-
-            <!-- 自定义标签输入 -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- 图片预览区 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imagePreviewRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/surface_variant"
-                app:strokeWidth="0dp">
+                android:visibility="gone" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/customTagInputLayout"
+            <!-- 优先级选择（仅待办类型显示） -->
+            <LinearLayout
+                android:id="@+id/priorityContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="优先级"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioGroup
+                    android:id="@+id/priorityRadioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="添加自定义标签"
-                    app:hintEnabled="false"
-                    app:boxBackgroundMode="none"
-                    app:endIconDrawable="@drawable/ic_add"
-                    app:endIconMode="custom"
-                    app:endIconTint="@color/text_hint">
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/customTagInput"
-                        android:layout_width="match_parent"
+                    <RadioButton
+                        android:id="@+id/rbHigh"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:textSize="15sp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_hint"
-                        android:background="@null"
-                        android:imeOptions="actionDone"
-                        android:inputType="text" />
+                        android:layout_weight="1"
+                        android:text="🔴 高"
+                        android:textSize="14sp"
+                        android:buttonTint="@color/todo_priority_high" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <RadioButton
+                        android:id="@+id/rbMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🟡 中"
+                        android:textSize="14sp"
+                        android:buttonTint="@color/todo_priority_medium"
+                        android:checked="true" />
 
-            </com.google.android.material.card.MaterialCardView>
+                    <RadioButton
+                        android:id="@+id/rbLow"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🟢 低"
+                        android:textSize="14sp"
+                        android:buttonTint="@color/todo_priority_low" />
+                </RadioGroup>
+            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- 底部按钮 -->
+    <!-- 底部工具栏 - Flomo 风格 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
-        android:paddingTop="12dp"
+        android:padding="12dp"
+        android:paddingTop="8dp"
         android:paddingBottom="16dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:background="@color/surface"
         android:layout_marginTop="8dp">
 
+        <!-- 标签按钮 -->
+        <TextView
+            android:id="@+id/btnTag"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="添加标签"
+            android:gravity="center"
+            android:text="#"
+            android:textColor="#6366f1"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- 图片按钮 -->
+        <ImageButton
+            android:id="@+id/btnAddImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="添加图片"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:tint="#3b82f6" />
+
+        <!-- 更多按钮 -->
+        <TextView
+            android:id="@+id/btnMore"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="更多工具"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#6b7280"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- 弹性间距 -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- 取消按钮 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
             android:layout_marginEnd="8dp"
             android:text="取消"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textColor="@color/text_secondary"
             app:backgroundTint="@color/surface_variant"
-            app:cornerRadius="12dp"
+            app:cornerRadius="20dp"
             app:strokeWidth="0dp"
             app:elevation="0dp" />
 
+        <!-- 保存按钮 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="64dp"
             android:text="保存"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textColor="@color/white"
             app:backgroundTint="@color/primary"
-            app:cornerRadius="12dp"
+            app:cornerRadius="20dp"
             app:elevation="2dp" />
 
     </LinearLayout>

@@ -17,9 +17,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.jishi.clipboard.R
+import com.jishi.clipboard.data.ClipboardEntity
 import com.jishi.clipboard.repository.ClipboardRepository
 import com.jishi.clipboard.service.FloatingWindowService
+import com.jishi.clipboard.ui.dialog.ExportDialog
+import com.jishi.clipboard.utils.ExportHelper
 import com.jishi.clipboard.utils.ReminderPreferences
+import com.jishi.clipboard.utils.TagParser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -35,10 +39,13 @@ class SettingsFragment : Fragment() {
     @Inject
     lateinit var repository: ClipboardRepository
 
+    @Inject
+    lateinit var unifiedRepository: com.jishi.clipboard.repository.UnifiedContentRepository
+
     private lateinit var statusText: TextView
     private lateinit var toggleButton: Button
     private lateinit var permissionButton: Button
-    private lateinit var tagManageButton: Button
+    private lateinit var exportButton: Button
     private lateinit var clearDataButton: Button
     private lateinit var todoReminderSwitch: Switch
     private lateinit var todoReminderTimeText: TextView
@@ -70,7 +77,7 @@ class SettingsFragment : Fragment() {
         statusText = requireView().findViewById(R.id.statusText)
         toggleButton = requireView().findViewById(R.id.toggleButton)
         permissionButton = requireView().findViewById(R.id.permissionButton)
-        tagManageButton = requireView().findViewById(R.id.tagManageButton)
+        exportButton = requireView().findViewById(R.id.exportButton)
         clearDataButton = requireView().findViewById(R.id.clearDataButton)
         todoReminderSwitch = requireView().findViewById(R.id.todoReminderSwitch)
         todoReminderTimeText = requireView().findViewById(R.id.todoReminderTimeText)
@@ -86,10 +93,11 @@ class SettingsFragment : Fragment() {
             requestPermission()
         }
 
-        // 标签管理按钮
-        tagManageButton.setOnClickListener {
-            val intent = Intent(requireContext(), com.jishi.clipboard.ui.TagManageActivity::class.java)
-            startActivity(intent)
+        // 导出按钮
+        exportButton.setOnClickListener {
+            ExportHelper.showExportDialog(this) { exportType ->
+                handleExportRequest(exportType)
+            }
         }
 
         // 清空数据按钮
@@ -230,6 +238,84 @@ class SettingsFragment : Fragment() {
         return false
     }
 
+    /**
+     * 处理导出请求
+     */
+    private fun handleExportRequest(exportType: ExportDialog.ExportType) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                Toast.makeText(requireContext(), "正在生成导出文件...", Toast.LENGTH_SHORT).show()
+
+                // 获取数据
+                val inspirations = when (exportType) {
+                    ExportDialog.ExportType.ALL, ExportDialog.ExportType.INSPIRATION -> {
+                        unifiedRepository.getInspirations()
+                    }
+                    else -> emptyList()
+                }
+
+                val insights = when (exportType) {
+                    ExportDialog.ExportType.ALL, ExportDialog.ExportType.INSIGHT -> {
+                        unifiedRepository.getInsights()
+                    }
+                    else -> emptyList()
+                }
+
+                val todos = when (exportType) {
+                    ExportDialog.ExportType.ALL, ExportDialog.ExportType.TODO -> {
+                        unifiedRepository.getTodos()
+                    }
+                    else -> emptyList()
+                }
+
+                // 从内容提取所有标签
+                val allEntities = inspirations + insights + todos
+                val tagsMap = mutableMapOf<Long, List<String>>()
+                allEntities.forEach { entity ->
+                    val tags = TagParser.extractTags(entity.content)
+                    tagsMap[entity.id] = tags
+                }
+
+                // 执行导出
+                val result = ExportHelper.exportNotes(
+                    requireContext(),
+                    inspirations,
+                    insights,
+                    todos,
+                    exportType,
+                    tagsMap
+                )
+
+                result.fold(
+                    onSuccess = { file ->
+                        Toast.makeText(
+                            requireContext(),
+                            "✅ 导出成功: ${file.name}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        // 自动打开分享菜单
+                        ExportHelper.shareFile(requireContext(), file)
+                    },
+                    onFailure = { e ->
+                        Timber.e(e, "导出失败")
+                        Toast.makeText(
+                            requireContext(),
+                            "❌ 导出失败: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                )
+            } catch (e: Exception) {
+                Timber.e(e, "导出过程中发生错误")
+                Toast.makeText(
+                    requireContext(),
+                    "❌ 导出失败: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_OVERLAY_PERMISSION) {
@@ -240,5 +326,13 @@ class SettingsFragment : Fragment() {
     companion object {
         private const val REQUEST_OVERLAY_PERMISSION = 1001
         fun newInstance() = SettingsFragment()
+    }
+
+    private fun TagParser.extractTags(content: String): List<String> {
+        val tagPattern = Regex("#([\\u4e00-\\u9fa5a-zA-Z0-9_]+)")
+        return tagPattern.findAll(content)
+            .map { it.groupValues[1] }
+            .distinct()
+            .toList()
     }
 }

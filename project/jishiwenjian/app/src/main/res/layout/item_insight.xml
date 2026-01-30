@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 启发列表项布局 -->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/card_margin_h"
+    android:layout_marginVertical="@dimen/card_margin_v"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="@dimen/corner_radius_card"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/card_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="@dimen/card_padding"
+        android:paddingTop="@dimen/card_padding"
+        android:paddingBottom="@dimen/card_padding">
+
+        <!-- 左侧色条 -->
+        <View
+            android:id="@+id/indicatorView"
+            android:layout_width="@dimen/card_indicator_width"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_card_indicator_insight"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 标签组（第一行） -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/tagsChipGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/indicatorView"
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 内容文本（第二行） -->
+        <TextView
+            android:id="@+id/contentText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="内容文本"
+            android:textSize="@dimen/text_size_content"
+            android:textColor="@color/text_primary"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
+            app:layout_constraintStart_toEndOf="@id/indicatorView"
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"
+            app:layout_constraintTop_toBottomOf="@id/tagsChipGroup" />
+
+        <!-- 图片预览区（隐藏时不占用空间） -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imagePreviewRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="@id/contentText"
+            app:layout_constraintEnd_toEndOf="@id/contentText"
+            app:layout_constraintTop_toBottomOf="@id/contentText" />
+
+        <!-- 时间信息（第三行） -->
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="12:30"
+            android:textSize="@dimen/text_size_caption"
+            android:textColor="@color/text_secondary"
+            app:layout_constraintStart_toStartOf="@id/contentText"
+            app:layout_constraintEnd_toEndOf="@id/contentText"
+            app:layout_constraintTop_toBottomOf="@id/imagePreviewRecyclerView" />
+
+        <!-- 删除按钮（右上角） -->
+        <TextView
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🗑️"
+            android:textSize="20sp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="删除"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

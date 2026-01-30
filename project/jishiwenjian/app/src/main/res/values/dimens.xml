@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 圆角 -->
+    <dimen name="corner_radius_card">16dp</dimen>
+    <dimen name="corner_radius_button">12dp</dimen>
+    <dimen name="corner_radius_chip">8dp</dimen>
+
+    <!-- 间距（基于8dp网格） -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+
+    <!-- 卡片 -->
+    <dimen name="card_margin_h">16dp</dimen>
+    <dimen name="card_margin_v">6dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_indicator_width">4dp</dimen>
+
+    <!-- 字体 -->
+    <dimen name="text_size_content">16sp</dimen>
+    <dimen name="text_size_label">12sp</dimen>
+    <dimen name="text_size_caption">12sp</dimen>
+</resources>

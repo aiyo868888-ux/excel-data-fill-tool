@@ -20,6 +20,7 @@ import com.jishi.clipboard.repository.UnifiedContentRepository
 import com.jishi.clipboard.ui.TodoAdapter
 import com.jishi.clipboard.ui.dialog.ClipboardEditDialogFragment
 import com.jishi.clipboard.utils.ShareHelper
+import com.jishi.clipboard.utils.TagParser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -111,10 +112,9 @@ class TodoFragment : Fragment() {
                     Timber.d("========== 待办数据更新 ==========")
                     Timber.d("收到 ClipboardEntity 数量: ${entities.size}")
 
-                    // 转换为 TodoItem，并为每个 entity 预加载标签
+                    // 转换为 TodoItem，标签从内容解析
                     val todoItems = entities.map { entity ->
-                        val tags = unifiedRepository.getTagsForClipboard(entity.id)
-                            .map { it.name }
+                        val tags = TagParser.extractTags(entity.content)
                         unifiedRepository.clipboardToTodoItem(entity, tags)
                     }
 
@@ -239,5 +239,13 @@ class TodoFragment : Fragment() {
 
     companion object {
         fun newInstance() = TodoFragment()
+    }
+
+    private fun TagParser.extractTags(content: String): List<String> {
+        val tagPattern = Regex("#([\\u4e00-\\u9fa5a-zA-Z0-9_]+)")
+        return tagPattern.findAll(content)
+            .map { it.groupValues[1] }
+            .distinct()
+            .toList()
     }
 }

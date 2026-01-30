@@ -27,7 +27,6 @@
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/primary"
         app:itemTextColor="@color/primary"
-        app:itemActiveIndicatorStyle="@style/Widget.Material3.BottomNavigationView.ActiveIndicator"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

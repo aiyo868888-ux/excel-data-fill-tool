@@ -97,6 +97,10 @@ dependencies {
     // EventBus
     implementation("org.greenrobot:eventbus:3.3.1")
 
+    // Glide - 图片加载库
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    ksp("com.github.bumptech.glide:ksp:4.16.0")
+
     // Ktor Server
     implementation("io.ktor:ktor-server-core:2.3.7")
     implementation("io.ktor:ktor-server-netty:2.3.7")
@@ -116,11 +120,17 @@ dependencies {
     // Kotlinx Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
+    // Gson for JSON file storage
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Ktor Client
     implementation("io.ktor:ktor-client-core:2.3.7")
     implementation("io.ktor:ktor-client-okhttp:2.3.7")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-client-logging:2.3.7")
+
+    // NanoHTTPD - 轻量级 HTTP 服务器（用于导出功能）
+    implementation("org.nanohttpd:nanohttpd:2.3.1")
 
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")

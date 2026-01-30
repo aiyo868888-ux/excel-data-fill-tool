@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="导出笔记"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择要导出的内容类型："
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/exportTypeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rbExportAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全部导出"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbExportInspiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅灵感" />
+
+        <RadioButton
+            android:id="@+id/rbExportInsight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅启发" />
+
+        <RadioButton
+            android:id="@+id/rbExportTodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅待办" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnExport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="导出" />
+    </LinearLayout>
+
+</LinearLayout>

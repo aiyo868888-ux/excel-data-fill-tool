@@ -43,9 +43,6 @@ class ClipboardAdapter(
             binding.contentText.text = item.content
             binding.timeText.text = formatTime(item.createdAt)
 
-            // 应用卡片样式（根据内容类型）
-            CardStyleHelper.setCardStyle(binding.root as com.google.android.material.card.MaterialCardView, item)
-
             // 点击整个卡片跳转到详情页
             binding.root.setOnClickListener {
                 onItemClick(item)

@@ -71,23 +71,26 @@
     <color name="stats_gradient_start">#667EEA</color>
     <color name="stats_gradient_end">#764BA2</color>
 
-    <!-- ==================== 通用颜色 ==================== -->
-    <!-- 主色调（默认靛蓝） -->
+    <!-- ==================== 新设计系统颜色（极简统一） ==================== -->
+    <color name="page_background">#FAFAFA</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_hint">#9CA3AF</color>
+    <color name="border_color">#E5E7EB</color>
+
+    <!-- 优先级 -->
+    <color name="priority_high">#DC2626</color>
+    <color name="priority_medium">#D97706</color>
+    <color name="priority_low">#059669</color>
+
+    <!-- ==================== 兼容旧代码 ==================== -->
     <color name="primary">#5C6BC0</color>
     <color name="primary_dark">#3F51B5</color>
-    <color name="primary_light">#E8EAF6</color>
-
-    <!-- 背景色 -->
+    <color name="primary_light">#9FA8DA</color>
     <color name="background">#FFFFFF</color>
     <color name="surface">#FFFFFF</color>
     <color name="surface_variant">#F3F4F6</color>
-
-    <!-- 文本色 -->
-    <color name="text_primary">#1F2937</color>
-    <color name="text_secondary">#6B7280</color>
-    <color name="text_hint">#9CA3AF</color>
-
-    <!-- 分割线 -->
     <color name="divider">#E5E7EB</color>
     <color name="border">#E5E7EB</color>
 

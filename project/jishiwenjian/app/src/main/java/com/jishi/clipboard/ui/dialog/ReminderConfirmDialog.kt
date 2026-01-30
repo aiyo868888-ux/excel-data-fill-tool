@@ -29,9 +29,6 @@ class ReminderConfirmDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var todoRepository: com.jishi.clipboard.repository.TodoRepository
 
-    @Inject
-    lateinit var tagRepository: com.jishi.clipboard.repository.TagRepository
-
     private lateinit var contentText: android.widget.TextView
     private lateinit var extractedTimeText: android.widget.TextView
     private lateinit var typeNotification: android.widget.CheckBox
